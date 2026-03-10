@@ -167,7 +167,7 @@ const tableData = ref([
 
 <style scoped>
 .activity-link {
-  color: rgb(0, 47, 167);
+  color: var(--o-color-link1);
   text-decoration: none;
 }
 

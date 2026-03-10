@@ -1,6 +1,6 @@
 # OSelect
 
-输入框包含 `normal`、`success`、`warning`、`danger` 四种主题色；
+选择框包含 `normal`（默认）、`success`、`warning`、`danger` 四种主题色；
 
 三种尺寸：`small`、`medium`、`large` ；
 

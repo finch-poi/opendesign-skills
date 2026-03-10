@@ -1,6 +1,6 @@
 # OButton
 
-按钮包含 `primary`、`success`、`warning`、`danger` `brand` 五种主题色；
+按钮包含 `normal`（默认）、`brand` 两种主题色；
 
 三种尺寸：`small`、`medium`、`large` ；
 
