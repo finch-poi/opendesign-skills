@@ -1,6 +1,6 @@
 ---
 name: opendesign-components
-description: OpenDesign 组件库使用指南。当需要使用 OpenDesign Vue 组件库快速搭建页面时使用此 skill。支持所有 OpenDesign 组件，包括按钮、表单、表格、对话框、卡片等常用 UI 组件。使用场景：(1) 使用 OpenDesign 组件构建 Vue 页面，(2) 查找组件使用方法和属性说明，(3) 获取组件代码示例
+description: OpenDesign 组件库使用指南。当需要使用 OpenDesign Vue 组件库快速搭建页面时使用此 skill。支持所有 OpenDesign 组件（46 个），包括按钮、表单、表格、对话框、卡片、图标、滑块、步骤条、轻提示等常用 UI 组件。使用场景：(1) 使用 OpenDesign 组件构建 Vue 页面，(2) 查找组件使用方法和属性说明，(3) 获取组件代码示例
 ---
 
 # OpenDesign 组件库使用指南
@@ -125,6 +125,7 @@ import { OButton, OInput, OCard } from '@opensig/opendesign';
 - [OCascader](#ocascader) — 级联选择
 - [OCheckbox / OCheckboxGroup](#ocheckbox--ocheckboxgroup) — 多选框
 - [OCollapse](#ocollapse) — 折叠面板
+- [OConfigProvider](#oconfigprovider) — 全局配置
 - [ODataTable](#odatatable) — 数据表格（高级）
 - [ODialog](#odialog) — 对话框
 - [ODivider](#odivider) — 分割线
@@ -132,6 +133,7 @@ import { OButton, OInput, OCard } from '@opensig/opendesign';
 - [OFigure](#ofigure) — 图片
 - [OForm / OFormItem](#oform--oformitem) — 表单
 - [OGrid / ORow / OCol](#ogrid--orow--ocol) — 栅格布局
+- [OIcon](#oicon) — 图标
 - [OInput](#oinput) — 输入框
 - [OInputNumber](#oinputnumber) — 数字输入框
 - [OIpInput](#oipinput) — IP 地址输入框
@@ -150,11 +152,13 @@ import { OButton, OInput, OCard } from '@opensig/opendesign';
 - [OScrollbar / OScroller](#oscrollbar--oscroller) — 滚动条
 - [OSelect](#oselect) — 选择器
 - [OSkeleton](#oskeleton) — 骨架屏
+- [OSlider](#oslider) — 滑块
 - [OStep / OStepItem](#ostep--ostepitem) — 步骤条
 - [OSwitch](#oswitch) — 开关
 - [OTab / OTabPane](#otab--otabpane) — 标签页
 - [OTag](#otag) — 标签
 - [OTextarea](#otextarea) — 文本域
+- [OToast](#otoast) — 轻提示
 - [OToggle](#otoggle) — 选择块
 - [OUpload](#oupload) — 上传
 - [OVirtualList](#ovirtuallist) — 虚拟列表
@@ -270,6 +274,8 @@ import { OButton, OInput, OCard } from '@opensig/opendesign';
   下拉
 </OButton>
 ```
+
+> 详细使用说明和完整属性列表，请查看 [references/button.md](references/button.md)
 
 ---
 
@@ -389,6 +395,48 @@ type CascaderOptionT = {
 </OCollapse>
 ```
 
+> 详细使用说明和完整属性列表，请查看 [references/collapse.md](references/collapse.md)
+
+---
+
+## OConfigProvider
+
+全局配置组件，本身不渲染任何可见内容，通过 Vue provide/inject 向后代组件注入统一配置。
+
+**属性**：
+- `locale` — 语言词条对象（`{ locale: string; [key: string]: string }`），优先级高于全局 `useLocale()` 设置。词条中支持 `{0}` 占位符进行变量替换
+- `link` — OLink 全局点击配置（`{ click: (e, params, attrs) => void }`），仅在 OLink 的 `global` 属性为 true（默认）时触发
+
+**插槽**：`default`（子组件内容）
+
+### 示例代码
+
+```vue
+<script setup>
+import { ref } from 'vue';
+import { OConfigProvider } from '@opensig/opendesign';
+
+const locale = ref({
+  locale: 'en-US',
+  'pagination.goto': 'go to',
+  'pagination.total': 'Total: {0}',
+});
+const linkConfig = {
+  click: (e, params, attrs) => {
+    console.log('Link clicked:', params.href);
+  },
+};
+</script>
+
+<template>
+  <OConfigProvider :locale="locale" :link="linkConfig">
+    <RouterView />
+  </OConfigProvider>
+</template>
+```
+
+> 详细使用说明和完整属性列表，请查看 [references/config-provider.md](references/config-provider.md)
+
 ---
 
 ## ODataTable
@@ -442,6 +490,8 @@ type CascaderOptionT = {
 </ODataTable>
 ```
 
+> 详细使用说明和完整属性列表，请查看 [references/data-table.md](references/data-table.md)
+
 ---
 
 ## ODialog
@@ -476,6 +526,8 @@ type CascaderOptionT = {
   分隔文字
 </ODivider>
 ```
+
+> 详细使用说明和完整属性列表，请查看 [references/divider.md](references/divider.md)
 
 ---
 
@@ -523,6 +575,8 @@ type CascaderOptionT = {
 **`href`** — 链接（渲染为 `<a>` 标签）
 
 **注意**：`preview` 和 `href` 不能同时使用
+
+> 详细使用说明和完整属性列表，请查看 [references/figure.md](references/figure.md)
 
 ---
 
@@ -576,6 +630,43 @@ type CascaderOptionT = {
 - `align` — 辅轴对齐方式
 - 响应式属性：`pcS`、`laptop`、`pad`、`padV`、`phone`（控制不同断点下的 flex）
 
+> 详细使用说明和完整属性列表，请查看 [references/grid.md](references/grid.md)
+
+---
+
+## OIcon
+
+通用图标容器，展示 SVG 图标，也可作为图标按钮使用。图标大小继承上下文 font-size（默认 1em）。
+
+**属性**：
+- `icon` — 图标组件（如 `OIconAdd`、`OIconEdit`）
+- `button` — 图标按钮模式（悬停/激活样式，自动 pointer 光标和 tabindex）
+- `disabled` — 禁用（配合 button 使用）
+- `loading` — 加载状态（显示旋转动画替换原图标）
+
+**插槽**：`default`（自定义图标内容，使用后 icon 属性和 loading 内置图标不渲染）
+
+### 示例代码
+
+```vue
+<script setup>
+import { OIcon, OIconAdd, OIconDelete } from '@opensig/opendesign';
+</script>
+
+<template>
+  <!-- 纯展示 -->
+  <OIcon :icon="OIconAdd" />
+
+  <!-- 图标按钮 -->
+  <OIcon :icon="OIconDelete" button @click="handleDelete" />
+
+  <!-- 自定义大小 -->
+  <OIcon :icon="OIconAdd" style="font-size: 32px" />
+</template>
+```
+
+> 详细使用说明和完整图标清单，请查看 [references/icon.md](references/icon.md)
+
 ---
 
 ## OInput
@@ -586,7 +677,17 @@ type CascaderOptionT = {
 
 **形状 `variant`**：`solid`、`outline`（默认）、`text`
 
-**其他属性**：`disabled`、`readonly`、`clearable`、`maxLength`、`showLength`、`inputOnOutlimit`、`placeholder`、`autoWidth`
+**输入类型 `type`**：`text`（默认）、`password`
+
+**其他属性**：`disabled`、`readonly`、`clearable`、`maxLength`、`placeholder`、`autoWidth`、`inputId`
+
+**字符计数 `showLength`**：`'always'`（始终显示）、`'auto'`（默认，有 maxLength 时显示）、`'never'`（不显示）
+
+**超限输入 `inputOnOutlimit`**：超过 maxLength 时是否仍允许输入。默认 `true`
+
+**格式化与校验**：`format`（格式化函数）、`validate`（校验函数）、`valueOnInvalidChange`（校验不通过时是否更新 modelValue）
+
+**密码框**：`showPasswordEvent`（切换明文的触发方式 `'click'`/`'mousedown'`）、`passwordPlaceholder`（密码占位符）
 
 **`round`**：圆角值（`pill` 或 CSS border-radius 值）
 
@@ -599,7 +700,7 @@ type CascaderOptionT = {
 ### 示例代码
 
 ```vue
-<OInput v-model="inputVal" placeholder="请输入" clearable show-length :max-length="100" />
+<OInput v-model="inputVal" placeholder="请输入" clearable show-length="always" :max-length="100" />
 ```
 
 > 详细使用说明和完整属性列表，请查看 [references/input.md](references/input.md)
@@ -638,6 +739,8 @@ type CascaderOptionT = {
 <OInputNumber v-model="count" :min="0" :max="100" :step="5" controls="right" />
 ```
 
+> 详细使用说明和完整属性列表，请查看 [references/input-number.md](references/input-number.md)
+
 ---
 
 ## OIpInput
@@ -667,6 +770,8 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 <OIpInput v-model="ipAddress" @change="(valid, ip) => console.log(valid, ip)" />
 ```
 
+> 详细使用说明和完整属性列表，请查看 [references/ip-input.md](references/ip-input.md)
+
 ---
 
 ## OLayer
@@ -687,6 +792,8 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 
 `buttonClose`：是否渲染关闭按钮
 
+> 详细使用说明和完整属性列表，请查看 [references/layer.md](references/layer.md)
+
 ---
 
 ## OLink
@@ -705,6 +812,8 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 </OLink>
 ```
 
+> 详细使用说明和完整属性列表，请查看 [references/link.md](references/link.md)
+
 ---
 
 ## OLoading
@@ -720,6 +829,8 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 ```vue
 <OLoading :visible="isLoading" label="加载中..." />
 ```
+
+> 详细使用说明和完整属性列表，请查看 [references/loading.md](references/loading.md)
 
 ---
 
@@ -746,6 +857,8 @@ IP 地址输入框，自动分段处理 IPv4 地址。
   </OSubMenu>
 </OMenu>
 ```
+
+> 详细使用说明和完整属性列表，请查看 [references/menu.md](references/menu.md)
 
 ---
 
@@ -789,6 +902,8 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 />
 ```
 
+> 详细使用说明和完整属性列表，请查看 [references/pagination.md](references/pagination.md)
+
 ---
 
 ## OPopover
@@ -829,6 +944,10 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 7. `wrapClass` — 挂载容器类名
 8. `bodyClass` — 内容体类名
 
+**插槽**：`default`（弹出内容）、`target`（触发目标）、`anchor`（锚点内容，`anchor` 属性为 true 时渲染）
+
+**事件**：`@update:visible`、`@change`
+
 > 详细使用说明和完整属性列表，请查看 [references/popup.md](references/popup.md)
 
 ---
@@ -850,6 +969,8 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 <OProgress type="line" :percentage="60" color="primary" />
 <OProgress type="circle" :percentage="75" color="success" :stroke-width="8" />
 ```
+
+> 详细使用说明和完整属性列表，请查看 [references/progress.md](references/progress.md)
 
 ---
 
@@ -905,6 +1026,8 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 <ORate v-model="score" :count="5" allow-half clearable />
 <ORate v-model="score" readonly :labels="['很差', '较差', '一般', '较好', '很好']" />
 ```
+
+> 详细使用说明和完整属性列表，请查看 [references/rate.md](references/rate.md)
 
 ---
 
@@ -962,7 +1085,11 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 
 **`optionWidthMode`**：`'auto'`/`'min-width'`/`'width'`
 
-**插槽**：`default`（选项）、`empty`（空状态）、`arrow`（下拉箭头）、`suffix`、`tag-fold`
+**子组件**：
+- `OOption` — 单个选项（`label`、`value`、`disabled`）
+- `OOptionGroup` — 选项分组（`name` 属性设置分组名）
+
+**插槽**：`default`（选项）、`empty`（空状态）、`arrow`（下拉箭头，slot props: `{ active }`）、`suffix`（后缀，slot props: `{ active }`）、`tag-fold`（折叠标签）、`action`（底部操作区）
 
 **事件**：`@change`、`@clear`、`@options-visible-change`
 
@@ -975,6 +1102,42 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 ```
 
 > 详细使用说明和完整属性列表，请查看 [references/select.md](references/select.md)
+
+---
+
+## OSlider
+
+滑动条组件，通过拖拽选择数值。支持单值和范围选择，可选配输入框、气泡提示和自定义标记。
+
+**属性**：
+
+| 属性 | 类型 | 默认 | 说明 |
+|------|------|------|------|
+| `modelValue` | `number \| number[]` | `0` | 绑定值（v-model），范围模式传数组 |
+| `min` | `number` | `0` | 最小值 |
+| `max` | `number` | `100` | 最大值 |
+| `step` | `number` | `1` | 步长 |
+| `range` | `boolean` | `false` | 范围选择模式 |
+| `showStops` | `boolean` | `false` | 显示间隔刻度点 |
+| `showInput` | `boolean` | `false` | 显示输入框（非 range 模式） |
+| `showPopover` | `boolean` | `true` | 显示数值气泡 |
+| `marks` | `Record<number, string \| { style, label }>` | — | 自定义标记 |
+| `unit` | `string` | — | 输入框单位文字 |
+| `disabled` | `boolean` | `false` | 禁用 |
+
+**插槽**：`unit`（替换输入框单位文字）
+
+**事件**：`@input`（滑动过程中实时触发）、`@change`（滑动结束后触发）
+
+### 示例代码
+
+```vue
+<OSlider v-model="value" :min="0" :max="100" :step="5" show-input unit="kg" />
+<OSlider v-model="rangeVal" range />
+<OSlider v-model="level" show-stops :step="10" :marks="{ 0: '低', 50: '中', 100: '高' }" />
+```
+
+> 详细使用说明和完整属性列表，请查看 [references/slider.md](references/slider.md)
 
 ---
 
@@ -1023,6 +1186,8 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 </OStep>
 ```
 
+> 详细使用说明和完整属性列表，请查看 [references/step.md](references/step.md)
+
 ---
 
 ## OSwitch
@@ -1038,6 +1203,8 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 ```vue
 <OSwitch v-model="enabled" checked-value="on" unchecked-value="off" />
 ```
+
+> 详细使用说明和完整属性列表，请查看 [references/switch.md](references/switch.md)
 
 ---
 
@@ -1155,12 +1322,58 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 
 ---
 
+## OToast
+
+轻提示组件，用于操作后的即时反馈。支持内联使用和命令式调用（`useToast`）。
+
+**内联属性**：
+- `visible`（v-model）— 是否可见
+- `message` — 提示文字
+- `duration` — 自动消失时间（ms），不传或 ≤0 不自动消失
+- `position` — 定位方向：`'top'`、`'center'`、`'bottom'`（默认）
+- `long` — 长提示模式（命令式默认 3500ms）
+- `beforeClose` — 关闭前钩子
+
+**命令式调用**：
+
+```typescript
+const toast = useToast(target?);
+toast.show('操作成功');           // 字符串
+toast.show({ content: '...', long: true }); // 对象配置
+toast.close();                   // 关闭本实例提示
+toast.closeAll();                // 关闭全部提示
+```
+
+命令式默认 `duration: 2000ms`（long 模式 3500ms），`position: 'bottom'`。支持 `targetAlign`/`targetOffset` 指定目标元素附近定位。
+
+**插槽**：`default`（替换提示内容，使用后 message 失效）
+
+**事件**：`@duration-end`、`@close`
+
+### 示例代码
+
+```vue
+<!-- 命令式调用 -->
+<script setup>
+import { useToast, OButton } from '@opensig/opendesign';
+const { show: showToast } = useToast();
+const handleClick = () => showToast('操作成功');
+</script>
+<template>
+  <OButton @click="handleClick">操作</OButton>
+</template>
+```
+
+> 详细使用说明和完整属性列表，请查看 [references/toast.md](references/toast.md)
+
+---
+
 ## OToggle
 
 选择块，指示当前状态并提供切换操作的表单控件。
 
 **属性**：
-- `checked` (v-model) — 双向绑定选中状态
+- `checked` (v-model:checked) — 双向绑定选中状态
 - `defaultChecked` — 非受控模式下是否默认选中
 - `round` — 圆角值
 - `icon` — 前缀图标
@@ -1174,6 +1387,8 @@ IP 地址输入框，自动分段处理 IPv4 地址。
   <OToggle :value="'option2'">选项2</OToggle>
 </ORadioGroup>
 ```
+
+> 详细使用说明和完整属性列表，请查看 [references/toggle.md](references/toggle.md)
 
 ---
 
@@ -1273,13 +1488,13 @@ IP 地址输入框，自动分段处理 IPv4 地址。
 ### 数据展示
 
 ```vue
-<OTable :columns="columns" :data="tableData" border="row">
+<ODataTable :columns="columns" :data="tableData" border="row">
   <template #td_status="{ row }">
     <OTag :color="row.status === 'active' ? 'success' : 'normal'">
       {{ row.status }}
     </OTag>
   </template>
-</OTable>
+</ODataTable>
 <OPagination v-model:current-page="page" :total="total" />
 ```
 

@@ -1,1 +1,5 @@
 .idea
+
+# Skill 生成过程文件
+*.review.md
+generation-progress.md

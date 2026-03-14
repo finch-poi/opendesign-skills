@@ -1,131 +1,163 @@
-# OVirtualList
+# OVirtualList 虚拟滚动列表
 
-虚拟滚动列表，高性能渲染大量数据（万级别）。通过只渲染可视区域内的列表项，避免 DOM 数量过多导致的性能问题。
+## Part A：设计理解卡
 
-## Props
+OVirtualList 是虚拟滚动列表组件，用于高性能渲染大量数据（万级别）。通过只渲染可视区域内的列表项，避免 DOM 数量过多导致的性能问题。支持固定高度和不定高度两种模式，内置滚动条。
 
-| 属性 | 类型 | 默认 | 说明 |
-|------|------|------|------|
-| `list` | `unknown[]` | — | 数据列表（必需） |
-| `itemSize` | `number` | — | 列表项固定高度（px）。已知时设置可大幅提升性能 |
-| `defaultItemSize` | `number` | `80` | 未知高度时的估算值（px） |
-| `buffer` | `number` | `1` | 缓冲区倍数（相对可视区域的上下额外渲染量，1 = 1倍可视高度） |
-| `defaultStartIndex` | `number` | `0` | 初始滚动到的索引位置 |
-| `scrollbar` | `boolean \| Object` | `true` | 滚动条配置（`false` 隐藏，对象参数同 OScrollbar） |
+### 数据
 
-## 插槽
+**list**（属性）：列表数据数组。每项需包含唯一 id。动态追加数据时 id 用于保持滚动位置。必填。
 
-| 插槽 | 参数 | 说明 |
-|------|------|------|
-| `default` | `{ item: any, index: number }` | 列表项模板（必需） |
+### 项高度
 
-## 事件
+**itemSize**（属性）：每项的固定高度（像素）。所有项等高时传入此值，性能最优。不传则为不定高模式。
 
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `renderChange` | `{ start: number, end: number, visible: number, count: number }` | 渲染范围变化时触发 |
+**defaultItemSize**（属性）：不定高模式下每项的预估默认高度。用于初始渲染计算。默认 80。
 
-## 暴露方法
+### 滚动
 
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `scrollToView` | `(index: number, align?: 'start' \| 'center' \| 'end', behavior?: ScrollBehavior)` | 滚动到指定索引的列表项 |
+**defaultStartIndex**（属性）：初始滚动到第几项。默认 0（最顶部）。
 
-## 示例代码
+**buffer**（属性）：前后预留的额外渲染项数。增大可减少快速滚动时的白屏。默认 1。
 
-```vue
-<template>
-  <!-- 基础用法：固定高度列表项（性能最佳） -->
-  <OVirtualList
-    :list="bigList"
-    :item-size="60"
-    style="height: 400px;"
-  >
-    <template #default="{ item, index }">
-      <div class="list-item">
-        <span class="index">{{ index + 1 }}</span>
-        <span>{{ item.name }}</span>
-      </div>
-    </template>
-  </OVirtualList>
+### 滚动条
 
-  <!-- 动态高度列表项 -->
-  <OVirtualList
-    :list="dynamicList"
-    :default-item-size="80"
-    style="height: 500px;"
-  >
-    <template #default="{ item }">
-      <div class="card">
-        <h4>{{ item.title }}</h4>
-        <p>{{ item.description }}</p>
-      </div>
-    </template>
-  </OVirtualList>
+**scrollbar**（属性）：滚动条配置。true 使用默认配置（always 显示、medium 尺寸），传对象可自定义。默认 true。
 
-  <!-- 跳转到指定位置 -->
-  <OButton @click="scrollToItem(99)">跳转到第100项</OButton>
-  <OVirtualList
-    ref="virtualListRef"
-    :list="bigList"
-    :item-size="60"
-    style="height: 400px;"
-  >
-    <template #default="{ item, index }">
-      <div class="list-item">{{ index }}: {{ item.name }}</div>
-    </template>
-  </OVirtualList>
-</template>
+### 插槽区域
 
-<script setup lang="ts">
-import { ref } from 'vue'
-import { OVirtualList } from '@opensig/opendesign'
+**default 插槽**（插槽）：列表项渲染内容。接收 item（当前项数据）和 index（索引）两个插槽参数。
 
-// 生成大量数据
-const bigList = Array.from({ length: 10000 }, (_, i) => ({
-  id: i,
-  name: `列表项 ${i + 1}`,
-}))
+### 事件
 
-const dynamicList = Array.from({ length: 1000 }, (_, i) => ({
-  title: `标题 ${i + 1}`,
-  description: `这是第 ${i + 1} 项的描述内容，长度不固定`,
-}))
+**renderChange**（事件）：可视区域渲染范围变化时触发。可获取 start（渲染起始）、end（渲染结束）、visible（可视起始）、count（可视数量）。
 
-const virtualListRef = ref()
+### 注意事项
 
-const scrollToItem = (index: number) => {
-  virtualListRef.value?.scrollToView(index, 'start', 'smooth')
-}
-</script>
+虚拟滚动的子项不能使用 margin，会导致总高度计算不准确。应使用 padding 替代。
 
-<style scoped>
-.list-item {
-  display: flex;
-  align-items: center;
-  padding: var(--o-gap-3) var(--o-gap-4);
-  border-bottom: 1px solid var(--o-color-control1);
-  height: 60px;
-  box-sizing: border-box;
-}
+📱 **响应式行为**：本组件无响应式差异。
 
-.card {
-  padding: var(--o-gap-4);
-  border-bottom: 1px solid var(--o-color-control1);
-}
-</style>
-```
+---
 
-## 注意事项
+## Part B：代码调用参考
 
-- **必须设置容器高度**：父容器或组件本身需要有确定的高度（`height` 或 `max-height`），否则虚拟列表无法计算可视区域
-- **固定高度优先**：已知列表项高度时务必传入 `itemSize`，性能远优于动态计算
-- **列表项 key**：`#default` 插槽中如需使用 `v-for`，`:key` 应绑定到 `item` 的唯一标识，而非 `index`
-
-## 导入方式
+### 导入方式
 
 ```vue
 <script setup>
 import { OVirtualList } from '@opensig/opendesign';
 </script>
 ```
+
+### 类型定义
+
+```typescript
+interface RenderIndexInfo {
+  start: number;   // 渲染起始索引（含 buffer）
+  end: number;     // 渲染结束索引（含 buffer）
+  visible: number; // 可视区域起始索引
+  count: number;   // 可视区域项数
+}
+```
+
+### Props 表
+
+| 参数名 | 类型 | 可选值 | 默认值 | 说明 |
+|--------|------|--------|--------|------|
+| list | `Array<unknown>` | — | `[]` | 列表数据（必填，需含 id） |
+| itemSize | `number` | — | — | 固定项高度 |
+| defaultItemSize | `number` | — | `80` | 不定高默认高度 |
+| defaultStartIndex | `number` | — | `0` | 初始滚动位置 |
+| buffer | `number` | — | `1` | 前后预留项数 |
+| scrollbar | `boolean \| Partial<BaseScrollerPropsT>` | — | `true` | 滚动条配置 |
+
+### Events 表
+
+| 事件名 | 参数 | 触发时机 |
+|--------|------|---------|
+| renderChange | `(renderIndex: RenderIndexInfo)` | 渲染范围变化时 |
+
+### Slots 表
+
+| 插槽名 | Slot Props | 触发条件 | 替换范围 | 回退内容 |
+|--------|-----------|---------|---------|---------|
+| default | `{ item: any, index: number }` | 始终 | 每个列表项 | 无 |
+
+### 暴露方法
+
+| 方法名 | 参数 | 说明 |
+|--------|------|------|
+| scrollToView(index, align?, behavior?) | `index: number, align?: 'start' \| 'end' \| 'center' \| 'nearest' \| number, behavior?: ScrollBehavior` | 滚动到指定项。align 默认 'start'，behavior 默认 'instant'。不定高场景下仅支持 'instant' |
+
+### 典型使用场景与调用模板
+
+**场景 1：固定高度列表**
+适用于：所有项等高的大数据列表
+```vue
+<script setup>
+import { ref } from 'vue';
+const list = ref(Array.from({ length: 10000 }, (_, i) => ({ id: i, name: `项目 ${i}` })));
+</script>
+<template>
+  <OVirtualList :list="list" :item-size="48" style="height: 400px;">
+    <template #default="{ item, index }">
+      <div style="height: 48px; padding: 12px;">{{ item.name }}</div>
+    </template>
+  </OVirtualList>
+</template>
+```
+
+**场景 2：不定高度列表**
+适用于：每项高度不同的列表
+```vue
+<OVirtualList :list="list" :default-item-size="80" :buffer="3" style="height: 500px;">
+  <template #default="{ item }">
+    <div style="padding: 16px;">{{ item.content }}</div>
+  </template>
+</OVirtualList>
+```
+
+**场景 3：滚动到指定位置**
+适用于：跳转到某一项
+```vue
+<script setup>
+import { ref } from 'vue';
+const virtualListRef = ref();
+const jumpTo = (index) => {
+  virtualListRef.value?.scrollToView(index, 'center');
+};
+</script>
+<template>
+  <OButton @click="jumpTo(500)">跳到第 500 项</OButton>
+  <OVirtualList ref="virtualListRef" :list="list" :item-size="48" style="height: 400px;">
+    <template #default="{ item }">
+      <div style="height: 48px;">{{ item.name }}</div>
+    </template>
+  </OVirtualList>
+</template>
+```
+
+**场景 4：自定义滚动条**
+适用于：自定义滚动条外观
+```vue
+<OVirtualList :list="list" :item-size="48" :scrollbar="{ showType: 'hover', size: 'small' }" style="height: 400px;">
+  <template #default="{ item }">
+    <div style="height: 48px;">{{ item.name }}</div>
+  </template>
+</OVirtualList>
+```
+
+### 常见 prop 组合速查
+
+| 场景 | 推荐 prop 组合 | 说明 |
+|------|---------------|------|
+| 固定高度 | `:list` + `:item-size` | 性能最优 |
+| 不定高度 | `:list` + `:default-item-size` | 动态测量 |
+| 大量数据 | `:buffer="3"` | 减少白屏 |
+| 初始位置 | `:default-start-index` | 从中间开始 |
+| 隐藏滚动条 | `:scrollbar="false"` | 无滚动条 |
+
+### 响应式行为表
+
+本组件无响应式差异。
