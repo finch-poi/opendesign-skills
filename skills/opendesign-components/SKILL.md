@@ -22,6 +22,12 @@ npm install @opensig/opendesign @opensig/opendesign-token
 
 ### 2. 选择主题并引入样式
 
+首先引入样式
+```typescript
+// main.ts
+import '@opensig/opendesign/es/index.css' // 引入组件样式文件
+```
+
 六套主题对应不同社区，**项目初始化时选定其中一套**，引入对应的 token 文件：
 
 **openEuler 社区项目：**
@@ -29,7 +35,6 @@ npm install @opensig/opendesign @opensig/opendesign-token
 // main.ts
 import '@opensig/opendesign-token/themes/e.dark.token.css'  // openEuler 主题 token
 import '@opensig/opendesign-token/themes/e.light.token.css'  // openEuler 主题 token
-import '@opensig/opendesign-token/fonts/font-harmony.css' // 鸿蒙字体
 ```
 
 **Ascend 社区项目：**
@@ -37,7 +42,6 @@ import '@opensig/opendesign-token/fonts/font-harmony.css' // 鸿蒙字体
 // main.ts
 import '@opensig/opendesign-token/themes/a.dark.token.css'  // Ascend 主题 token
 import '@opensig/opendesign-token/themes/a.light.token.css'  // Ascend 主题 token
-import '@opensig/opendesign-token/fonts/font-harmony.css' // 鸿蒙字体
 ```
 
 **Kunpeng 社区项目：**
@@ -45,7 +49,6 @@ import '@opensig/opendesign-token/fonts/font-harmony.css' // 鸿蒙字体
 // main.ts
 import '@opensig/opendesign-token/themes/k.dark.token.css'  // Kunpeng 主题 token
 import '@opensig/opendesign-token/themes/k.light.token.css'  // Kunpeng 主题 token
-import '@opensig/opendesign-token/fonts/font-harmony.css' // 鸿蒙字体
 ```
 
 **MindSpore 社区项目：**
@@ -53,7 +56,6 @@ import '@opensig/opendesign-token/fonts/font-harmony.css' // 鸿蒙字体
 // main.ts
 import '@opensig/opendesign-token/themes/m.dark.token.css'  // MindSpore 主题 token
 import '@opensig/opendesign-token/themes/m.light.token.css'  // MindSpore 主题 token
-import '@opensig/opendesign-token/fonts/font-harmony.css' // 鸿蒙字体
 ```
 
 **Gauss 社区项目：**
@@ -61,7 +63,6 @@ import '@opensig/opendesign-token/fonts/font-harmony.css' // 鸿蒙字体
 // main.ts
 import '@opensig/opendesign-token/themes/g.dark.token.css'  // Gauss 主题 token
 import '@opensig/opendesign-token/themes/g.light.token.css'  // Gauss 主题 token
-import '@opensig/opendesign-token/fonts/font-harmony.css' // 鸿蒙字体
 ```
 
 **UBMC 社区项目：**
@@ -69,7 +70,6 @@ import '@opensig/opendesign-token/fonts/font-harmony.css' // 鸿蒙字体
 // main.ts
 import '@opensig/opendesign-token/themes/u.dark.token.css'  // UBMC 主题 token
 import '@opensig/opendesign-token/themes/u.light.token.css'  // UBMC 主题 token
-import '@opensig/opendesign-token/fonts/font-harmony.css' // 鸿蒙字体
 ```
 
 ### 3. 切换 dark/light 模式
@@ -100,6 +100,13 @@ document.documentElement.setAttribute('data-o-theme', 'e.light')
 import {initRound} from '@opensig/opendesign'
 
 initRound('pill') // 'pill'代表全圆角，通常在Ascend社区使用
+```
+
+### 5. 引入鸿蒙字体
+
+```typescript
+// main.ts
+import '@opensig/opendesign-token/fonts/font-harmony.css' // 鸿蒙字体
 ```
 
 ---
