@@ -88,7 +88,19 @@ OUpload 是文件上传组件，支持点击选择和拖拽上传。包含三种
 
 **itemClick**（事件）：点击文件项时触发。
 
-📱 **响应式行为**：本组件无响应式差异。
+📱 **响应式行为**：在笔记本尺寸及以下（≤1440px），拖拽区域内边距缩至 16px 8px，卡片宽度缩至 96px，拖拽区最大宽度缩至 400px；在平板及以下（≤1080px），文件列表项图标操作始终可见；在平板竖屏及以下（≤840px），拖拽区最大宽度缩至 240px。
+
+🧩 **布局结构**：上传组件由选择区域和文件列表区域垂直排列组成。选择区域分为按钮模式（text/picture 列表类型）和拖拽模式两种。文件列表区域根据 listType 分为三种布局：text 模式为行列表（图标+文件名+操作按钮）、picture 模式为带缩略图的行列表、picture-card 模式为网格卡片布局（卡片内含缩略图和操作遮罩层）。picture-card 模式下末尾有一个"点击上传"的添加卡片。
+```yaml
+# 简化结构摘要（完整版见 Part B）
+direction: vertical
+regions: [select-wrap(选择区域+拖拽区域), file-list(文件列表)]
+```
+
+🔍 **设计稿识别指南**：
+- **视觉特征指纹**：带有"点击上传"按钮或虚线边框拖拽区域的文件上传组件 → 匹配 OUpload；卡片网格 + 添加按钮（+号） → 匹配 OUpload（picture-card 模式）；文件名列表 + 各文件有删除/重试图标 → 匹配 OUpload（text/picture 模式）
+- **Token → Prop 映射**：虚线边框大区域 + 拖拽提示文字 → draggable=true；网格卡片布局 + 带缩略图 → listType="picture-card"；行列表 + 小缩略图 → listType="picture"；纯文件名行列表 → listType="text"（默认）；有"+ 点击上传"蓝色胶囊按钮 → 默认选择按钮；卡片尺寸 120px 方形 → picture-card 默认；进度条 → showProgress=true
+- **易混淆组件区分**：与 OButton 区分——上传按钮只是 OUpload 的触发子元素，完整的上传组件还包含文件列表和拖拽区域；与 OFigure/OImage 区分——OUpload 的 picture-card 模式包含缩略图但主要目的是上传管理，OFigure 是纯图片展示
 
 ---
 
@@ -276,4 +288,133 @@ const fileList = ref([]);
 
 ### 响应式行为表
 
-本组件无响应式差异。
+| 维度 | ≤840px | 841–1080px | 1081–1440px | >1440px |
+|------|--------|-----------|------------|---------|
+| 拖拽区内边距 | 16px 8px | 16px 8px | 16px 8px | 32px 24px |
+| 拖拽区最大宽度 | 240px | 400px | 400px | 480px |
+| 卡片宽度 | 96px | 96px | 96px | 120px |
+| 文件行操作图标 | 始终可见 | 始终可见 | hover 时显示 | hover 时显示 |
+| 添加卡片字号 | tip2 | tip2 | tip2 | 标准 |
+
+### 组件布局结构
+
+**桌面端 >1440px**
+```yaml
+layout:
+  element: div.o-upload
+  direction: vertical
+  regions:
+    # 选择区域（text/picture 模式）
+    - name: select-wrap
+      element: div.o-upload-select-wrap
+      condition: listType 为 text 或 picture
+      direction: horizontal
+      children:
+        - name: select-button
+          element: div.o-upload-select
+          children:
+            - { type: slot, name: default }  # 或默认 OButton "点击上传"
+        - name: select-extra
+          element: div.o-upload-select-extra
+          condition: 有 select-extra 插槽时
+          children:
+            - { type: slot, name: select-extra }
+
+    # 拖拽区域（draggable 模式）
+    - name: drag-area
+      element: div.o-upload-drag
+      condition: draggable=true
+      direction: vertical
+      align: center
+      padding: 32px 24px
+      max-width: 480px
+      border: 1px solid var(--o-color-control1)
+      border-radius: var(--o-radius_control-s)
+      bg: var(--o-color-control2-light)
+      children:
+        - { type: slot, name: select-drag }  # 或默认: IconAdd + 拖拽提示文字
+        - { type: slot, name: select-drag-extra }
+
+    # 文件列表区域
+    - name: file-list
+      element: div.o-upload-list
+      children:
+        # text/picture 模式: 垂直行列表
+        - name: row-item  # 每个文件
+          element: div.o-upload-row-item
+          direction: horizontal
+          align: center
+          children:
+            - thumbnail  # picture 模式有缩略图
+            - icon  # text 模式有文件图标
+            - label  # 文件名
+            - action-icons  # 删除/重试/预览/下载按钮
+            - progress-bar  # 上传进度条（showProgress 时）
+
+        # picture-card 模式: 网格卡片列表
+        - name: card-item  # 每个文件卡片
+          element: div.o-upload-card-item
+          width: 120px
+          height: 120px
+          gap: 8px
+          border-radius: var(--o-radius_control-s)
+          children:
+            - thumbnail/file-icon  # 缩略图或文件图标
+            - overlay-icons  # 悬浮操作层（预览/删除/重试）
+            - progress-bar  # 上传进度条
+
+        - name: add-card  # 添加按钮卡片（picture-card 模式末尾）
+          element: div.o-upload-card-add
+          condition: listType=picture-card
+          children:
+            - { type: slot, name: select-add }  # 或默认: IconAdd + btnLabel
+```
+
+**≤1440px**
+```yaml
+# drag: padding 16px 8px, max-width 400px
+# card: width 96px, font-size tip2
+```
+
+**≤1080px**
+```yaml
+# row-item: 操作图标始终可见（无需 hover）
+# card-item: 遮罩层始终可见
+```
+
+**≤840px**
+```yaml
+# drag: max-width 240px
+```
+
+### 设计稿识别指南
+
+**视觉特征指纹**
+
+1. 带"+ 点击上传"蓝色胶囊按钮 + 下方文件名列表 → 匹配 OUpload（text 模式）
+2. 虚线边框矩形区域 + "点击或拖拽文件到此处"提示文字 + 加号图标 → 匹配 OUpload（draggable 模式）
+3. 方形缩略图卡片网格 + 末尾有加号添加卡片 → 匹配 OUpload（picture-card 模式）
+4. 文件名列表 + 带小缩略图 + 操作图标（删除/重试/预览） → 匹配 OUpload（picture 模式）
+
+**设计 Token → Prop 值映射表**
+
+| 设计稿属性 | 值 / 范围 | 对应 Prop | Prop 值 | 备注 |
+|-----------|----------|----------|---------|------|
+| 布局 | 网格卡片 + 缩略图 | listType | `'picture-card'` | — |
+| 布局 | 行列表 + 小缩略图 | listType | `'picture'` | — |
+| 布局 | 纯文件名行列表 | listType | `'text'` | 默认 |
+| 选择方式 | 虚线边框拖拽区域 | draggable | `true` | — |
+| 选择方式 | 按钮点击 | draggable | `false` | 默认 |
+| 卡片尺寸 | 120×120px | — | — | picture-card 默认 |
+| 拖拽区域 | 最大宽度 480px | — | — | 默认 |
+| 进度条 | 文件上传中有进度条 | showProgress | `true` | — |
+| 按钮文字 | 自定义文字 | btnLabel | 字符串值 | — |
+
+**易混淆组件区分表**
+
+| 本组件 | 易混淆组件 | 关键区分依据 |
+|--------|-----------|-------------|
+| OUpload | OButton | 上传按钮只是 OUpload 的子元素，完整组件还包含文件列表和拖拽区域 |
+| OUpload（picture-card） | OFigure/OImage | OUpload 的卡片包含上传管理功能（删除/重试/进度），OFigure 是纯图片展示 |
+| OUpload（draggable） | 自定义拖拽区域 | OUpload 拖拽区域有完整的文件选择、上传、列表管理功能 |
+| OUpload（text） | 普通文件列表 | OUpload 文件列表项有上传状态、进度条和操作按钮（删除/重试） |

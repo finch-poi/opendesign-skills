@@ -30,6 +30,19 @@ OResult 是结果页组件，用于操作完成后展示结果状态。支持四
 
 📱 **响应式行为**：在平板竖屏到笔记本尺寸（841–1440px），图标、标题文字、描述文字缩小、间距减少；在平板竖屏及以下（≤840px），图标和标题文字进一步缩小，标题区域由水平布局变为垂直布局（图标在标题上方）。
 
+🧩 **布局结构**：OResult 为垂直布局的结果页容器。从上到下依次排列：图片区（可选）→ 标题行（图标 + 标题文字，水平排列）→ 描述文字 → 操作按钮区 → 详细内容区。在小屏下标题行变为垂直排列（图标在上、标题在下）。
+```yaml
+# 简化结构摘要（完整版见 Part B）
+direction: column
+regions: [image(顶部图片), header(图标+标题), description(描述), extra(操作按钮), content(详细内容)]
+responsive: ≤840px header 变为 column 布局
+```
+
+🔍 **设计稿识别指南**：
+- **视觉特征指纹**：页面中心区域，垂直排列的状态图标 + 大标题 + 描述文字 + 操作按钮；状态图标为圆形彩色图标（勾号/感叹号/叉号等）
+- **Token → Prop 映射**：绿色勾号图标 → status="success"；蓝色信息图标 → status="info"；橙色警告图标 → status="warning"；红色错误图标 → status="danger"；顶部有插画图片 → 使用 #image 插槽；底部有按钮 → 使用 #extra 插槽
+- **易混淆组件区分**：与空数据页区分——OResult 有明确的状态图标和操作反馈语义，空数据页通常只有插画 + 简单文字；与 ODialog 区分——OResult 是页面级结果展示，ODialog 是弹窗层
+
 ---
 
 ## Part B：代码调用参考
@@ -131,4 +144,110 @@ type ResultStatusT = 'info' | 'success' | 'warning' | 'danger';
 | 标题文字 | text1 | text2 | 标准 |
 | 描述文字 | tip2 | tip1 | 标准 |
 | 标题布局 | 垂直（图标在上） | 水平 | 水平 |
+
+### 组件布局结构
+
+**桌面端 >1440px**
+```yaml
+layout:
+  tag: div
+  direction: vertical
+  align: center
+  class: o-result o-result-{status}
+  regions:
+    - name: result-image
+      condition: $slots.image
+      description: 顶部图片/插画区域
+      size: var(--result-image-width) × var(--result-image-height)  # 240×210px
+      gap-bottom: var(--result-image-gap)  # 16px
+      children:
+        - { type: slot, name: image }
+    - name: result-header
+      condition: status || $slots.icon || title || $slots.title
+      direction: horizontal
+      align: center
+      children:
+        - name: result-icon
+          condition: status || $slots.icon
+          size: var(--result-icon-size)  # 控件 xl
+          color: var(--result-icon-color)  # 跟随 status
+          gap-right: var(--result-icon-gap)  # 12px
+          children:
+            - { type: slot, name: icon, fallback: "状态对应默认图标" }
+        - name: result-title
+          font-size: var(--result-title-text-size)  # h3
+          line-height: var(--result-title-text-height)
+          color: var(--result-title-color)
+          children:
+            - { type: slot, name: title, fallback: "{{ title }}" }
+    - name: result-description
+      condition: description || $slots.description
+      font-size: var(--result-desc-text-size)  # text1
+      line-height: var(--result-desc-text-height)
+      color: var(--result-desc-color)  # info3
+      gap-top: var(--result-desc-gap)  # 12px
+      children:
+        - { type: slot, name: description, fallback: "{{ description }}" }
+    - name: result-extra
+      condition: $slots.extra
+      gap-top: var(--result-extra-gap)  # 24px
+      children:
+        - { type: slot, name: extra }  # 操作按钮区
+    - name: result-content
+      condition: $slots.default
+      children:
+        - { type: slot, name: default }  # 详细内容区
+  status-colors:
+    info: "var(--o-color-primary1)"
+    success: "var(--o-color-success1)"
+    warning: "var(--o-color-warning1)"
+    danger: "var(--o-color-danger1)"
+```
+
+**841–1440px**
+```yaml
+# 图片: 160×140px, gap 8px
+# 图标: 控件 l
+# 标题: text2
+# 描述: tip1, gap 8px
+```
+
+**≤840px**
+```yaml
+# 图标: 48px, gap 8px
+# 标题: text1
+# 描述: tip2, gap 8px
+# header 由 horizontal 变为 vertical (flex-direction: column)
+# 图标 margin-right: 0, margin-bottom: gap
+```
+
+### 设计稿识别指南
+
+**视觉特征指纹**
+
+1. 页面中心垂直排列：彩色状态图标 + 大标题文字 + 描述文字 → 匹配 OResult
+2. 绿色圆形勾号图标 + "成功"类标题 → 匹配 OResult（status="success"）
+3. 顶部有插画图片 + 标题 + 操作按钮 → 匹配 OResult（带 #image 和 #extra 插槽）
+4. 无状态图标、仅有插画 + 标题 + 按钮 → 匹配 OResult（空数据/异常态，不传 status）
+
+**设计 Token → Prop 值映射表**
+
+| 设计稿属性 | 值 / 范围 | 对应 Prop | Prop 值 | 备注 |
+|-----------|----------|----------|---------|------|
+| 状态图标颜色 | 蓝色（`--o-color-primary1`） | status | `'info'` | — |
+| 状态图标颜色 | 绿色（`--o-color-success1`） | status | `'success'` | — |
+| 状态图标颜色 | 橙色（`--o-color-warning1`） | status | `'warning'` | — |
+| 状态图标颜色 | 红色（`--o-color-danger1`） | status | `'danger'` | — |
+| 状态图标 | 无图标 | status | 不传 | 适合空数据页 |
+| 顶部区域 | 有插画/图片 | — | 使用 `#image` 插槽 | — |
+| 标题下方 | 有操作按钮 | — | 使用 `#extra` 插槽 | — |
+| 底部 | 有详细内容 | — | 使用 `default` 插槽 | — |
+
+**易混淆组件区分表**
+
+| 本组件 | 易混淆组件 | 关键区分依据 |
+|--------|-----------|-------------|
+| OResult | 空数据页 | OResult 有状态语义（成功/失败/警告），空数据页通常只展示插画和简单文案 |
+| OResult | ODialog | OResult 是页面级结果展示占据内容区，ODialog 是浮层弹窗 |
+| OResult | 自定义错误页 | OResult 有固定的图标+标题+描述+操作布局结构，自定义错误页布局不固定 |
 

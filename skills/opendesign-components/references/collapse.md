@@ -30,6 +30,20 @@ OCollapse 是折叠面板组件，用于将内容分组后折叠/展开显示，
 
 📱 **响应式行为**：在笔记本尺寸及以下（≤1200px），容器内边距缩小、标题和正文字号缩小、内容区域间距减少。在平板竖屏及以下（≤840px），容器内边距进一步缩小、圆角变小、标题区域内边距减少。
 
+🧩 **布局结构**：OCollapse 为纵向堆叠容器，内部包含多个 OCollapseItem。每个 Item 由标题行（header）和内容区域（body）纵向排列组成；标题行内部使用 flex row-reverse 布局，标题文字在左、展开图标在右（通过 space-between 实现）。各 Item 之间通过底部分割线分隔。
+```yaml
+# 简化结构摘要（完整版见 Part B）
+direction: column
+regions: [OCollapseItem, OCollapseItem, ...]
+item-direction: column
+item-regions: [header(row-reverse: title + icon), body]
+```
+
+🔍 **设计稿识别指南**：
+- **视觉特征指纹**：圆角容器内纵向排列多个可折叠面板项；每项由标题行（左文字+右箭头图标）和可展开的内容区域组成；各项之间有细分割线；展开项的标题变为主题色加粗、箭头旋转
+- **Token → Prop 映射**：背景色 `--o-color-fill2` 对应容器默认样式；标题色 `--o-color-primary1` 表示展开态；箭头图标 `--o-icon_size_control-m` 对应展开/收起指示器
+- **易混淆组件区分**：与 Accordion（手风琴）不是独立组件，而是 OCollapse 的 `accordion` 属性模式；与 Tabs 区分——Tabs 是横向标签切换内容，Collapse 是纵向标题折叠/展开内容
+
 ---
 
 ## Part B：代码调用参考
@@ -198,4 +212,81 @@ const handleUpdate = (val) => {
 | `--collapse-item-icon-color` | 展开图标颜色 | `var(--o-color-info1)` |
 | `--collapse-item-icon-size` | 展开图标大小 | `var(--o-icon_size_control-m)` |
 | `--collapse-item-gap` | 内容区域底部间距 | `var(--o-gap-5)` |
+
+### 组件布局结构
+
+```yaml
+component: OCollapse
+root: .o-collapse
+  direction: column  # 内部slot纵向排列OCollapseItem
+  background-color: var(--collapse-bg-color)  # var(--o-color-fill2)
+  padding: var(--collapse-padding)  # 8px 32px
+  border-radius: var(--collapse-radius)  # var(--o-radius_control-l)
+  children:
+    - component: OCollapseItem
+      root: .o-collapse-item
+        border-bottom: 1px solid var(--collapse-division-color)  # var(--o-color-control4)，最后一项透明
+        children:
+          - region: header
+            class: .o-collapse-item-header
+            display: flex
+            flex-direction: row-reverse  # 图标在DOM前、标题在后，视觉上标题左+图标右
+            justify-content: space-between
+            padding: var(--collapse-item-header-padding)  # 25px 0
+            cursor: pointer
+            children:
+              - region: icon
+                class: .o-collapse-item-icon
+                font-size: var(--collapse-item-icon-size)  # var(--o-icon_size_control-m)
+                color: var(--collapse-item-icon-color)  # var(--o-color-info1)
+                transform: rotate(90deg)  # 收起态，展开态rotate(-90deg)
+                transition: transform var(--o-duration-m2) var(--o-easing-standard)
+              - region: title
+                class: .o-collapse-item-title
+                font-size: var(--collapse-item-title-text-size)  # var(--o-font_size-h3)
+                line-height: var(--collapse-item-title-text-height)  # var(--o-line_height-h3)
+                color: var(--collapse-item-title-color)  # var(--o-color-info1)
+                overflow: hidden; text-overflow: ellipsis; white-space: nowrap
+          - region: body
+            class: .o-collapse-item-body
+            v-show: isExpanded  # 通过Transition动画控制展开/收起
+            font-size: var(--collapse-item-body-text-size)  # var(--o-font_size-text1)
+            line-height: var(--collapse-item-body-text-height)  # var(--o-line_height-text1)
+            margin-bottom: var(--collapse-item-gap)  # var(--o-gap-5)
+            transition: height var(--o-duration-m2) var(--o-easing-standard)
+
+  # 展开态样式(.o-collapse-item-expanded)
+  expanded-state:
+    title:
+      font-weight: 600
+      color: var(--collapse-item-title-color_expanded)  # var(--o-color-primary1)
+    icon:
+      transform: rotate(-90deg)
+```
+
+### 设计稿识别指南
+
+**视觉特征指纹**
+
+1. 圆角矩形容器（浅灰背景 `--o-color-fill2`），内部包含多个面板项，项之间有水平分割线（`--o-color-control4`）
+2. 每个面板项的标题行由左侧文字和右侧 V 形箭头图标组成（flex row-reverse + space-between 实现）
+3. 展开态的面板标题变为主题色（`--o-color-primary1`）、字重加粗（600），箭头图标旋转 180 度（从朝下变为朝上）；内容区域通过高度过渡动画展开
+
+**设计 Token → Prop 值映射表**
+
+| 设计稿 Token / 视觉特征 | 对应 Prop / 配置 | 说明 |
+|---|---|---|
+| 容器背景 `--o-color-fill2` | 默认样式，无需配置 | 组件默认外观 |
+| 展开标题色 `--o-color-primary1` | `modelValue` 包含该项 value | 展开态自动变色 |
+| 同时只展开一项 | `accordion` | 手风琴模式 |
+| 某些项初始展开 | `defaultValue` 或 `v-model` | 控制初始展开项 |
+| 自定义标题区域（含图标等） | `#title` 插槽 | 替换纯文字标题 |
+
+**易混淆组件区分表**
+
+| 组件 A | 组件 B | 区分标准 |
+|--------|--------|---------|
+| OCollapse | OTabs | Collapse 纵向折叠展开，标题在每项顶部；Tabs 横向标签页切换，标签在顶部/底部统一排列 |
+| OCollapse (accordion) | OCollapse (默认) | 手风琴模式同时只展开一项；默认模式可同时展开多项 |
+| OCollapse | ODetails (HTML原生) | OCollapse 提供统一容器管理多面板状态；原生 details 各自独立、无法联动 |
 

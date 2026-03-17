@@ -126,6 +126,28 @@ ODataTable 是数据驱动的表格组件，通过列配置和行数据自动渲
 
 筛选面板在手机/平板竖屏尺寸下使用底部弹窗（Dialog）代替桌面端弹出层（Popup）。iOS 端仅支持最左一列和最右一列各固定一列。
 
+🧩 **布局结构**：ODataTable 为纵向布局容器，根元素 `.o-data-table` 内部包含可选的表头分割线、左侧阴影指示器、OScroller 滚动容器（含 table 元素：colgroup + thead + tbody）、加载/空状态遮罩层、右侧阴影指示器和溢出气泡。table 内部 thead 固定在顶部（sticky），tbody 内通过 TableRow 递归渲染数据行和展开行。
+```yaml
+# 简化结构摘要（完整版见 Part B）
+direction: column
+regions:
+  - header-divider-h (条件: split-line模式)
+  - left-shadow (条件: 无左固定列时)
+  - OScroller (滚动容器)
+    - table
+      - colgroup (TableColGroup)
+      - thead (sticky, 含 tr > th 表头单元格)
+      - tbody (含 TableRow 递归)
+  - loading-wrap / tip-wrap (条件渲染)
+  - right-shadow (条件: 无右固定列时)
+  - OPopover (溢出气泡)
+```
+
+🔍 **设计稿识别指南**：
+- **视觉特征指纹**：带有填充色表头（蓝灰背景）或分割线表头的多列数据表格；表头可含筛选漏斗图标、排序箭头、描述气泡图标；行首可有复选框或展开箭头；固定列滚动时有侧边阴影
+- **Token → Prop 映射**：表头背景 `--o-color-control3-light` 对应 `headerStyle="fill"`；行底分割线对应默认 `border="row"`；全边框对应 `border="all"`；表头筛选图标对应列配置 `filter`；排序图标对应列配置 `sortKey`
+- **易混淆组件区分**：与 OTable 区分——OTable 是纯展示表格（手写 tr/td），ODataTable 是数据驱动表格（通过 columns+data 自动渲染）；与 OList 区分——List 是单列列表，DataTable 是多列表格
+
 ---
 
 ## Part B：代码调用参考
@@ -659,3 +681,222 @@ fetchData();
 |------|------------------------|--------|
 | 列筛选面板 | 底部弹窗 (ODialog) | 弹出层 (OPopup) |
 | 多列固定 (iOS) | 仅支持最左 1 列 + 最右 1 列 | 无限制 |
+
+### 组件布局结构
+
+```yaml
+component: ODataTable
+root: .o-data-table.o-table
+  direction: column (position: relative; overflow: hidden)
+  border-radius: var(--table-radius)  # var(--o-radius_control-m)
+  background-color: var(--table-bg-color)  # var(--o-color-control5)
+  CSS-class-modifiers:
+    - .o-table-{size}: medium | small
+    - .o-table-header-{headerStyle}: fill | split-line
+    - .o-table-stripe: 斑马纹
+    - .o-table-border-{border}: all | row | column | frame 等
+    - .is-overflow-left / .is-overflow-right / .is-overflow-top: 滚动溢出方向
+  style-bindings:
+    --table-header-height: headerTableHeight (动态计算)
+    --table-height: props.height
+    --table-max-height: props.maxHeight  # 默认 fit-content
+
+  children:
+    # 1. 分割线表头水平分割线（仅 split-line 模式）
+    - region: header-divider-h
+      class: .o-data-table-header-divider-h
+      condition: showHeader && headerStyle === 'split-line'
+      position: sticky; z-index: 3
+      top: calc(var(--table-header-height) * 1px)
+      height: 1px; background: linear-gradient
+
+    # 2. 左侧阴影指示器（无左固定列时使用）
+    - region: left-shadow
+      class: .o-data-table-left-shadow
+      condition: !hasLeftFixedColumn && !loading && data.length
+      z-index: 3; display: none (is-overflow-left时display: block)
+
+    # 3. 滚动容器
+    - region: scroller
+      component: OScroller
+      class: .o-table-scroller
+      wrap-class: .o-table-wrap
+        height: var(--table-height)
+        max-height: var(--table-max-height)
+        overflow: auto
+      children:
+        - region: table
+          element: table.o-table-inner-table
+          min-width: props.minTableWidth
+          children:
+            # 3a. 列宽定义
+            - region: colgroup
+              component: TableColGroup
+              element: colgroup
+              children:
+                - col (v-for column: 每列一个col元素, 设定min/maxWidth)
+
+            # 3b. 表头
+            - region: thead
+              element: thead.o-table-header
+              condition: props.showHeader
+              position: sticky; top: 0; z-index: 2
+              background-color: var(--table-head-bg)
+                # fill模式: var(--o-color-control3-light)
+                # split-line模式: var(--o-color-control5)
+              children:
+                - slot: header (替换整个thead)
+                - fallback: tr.o-table-header-row (v-for groupColumns)
+                  children:
+                    - th.o-table-header-cell (v-for column)
+                      padding: unset (通过内部.o-table-cell__inner控制)
+                      position: sticky (若column.fixed)
+                      children:
+                        - span.o-table-cell__inner
+                          display: flex; align-items: center
+                          padding: var(--table-head-cell-padding)  # 12px 16px
+                          首列额外padding-left: var(--table-edge-padding)  # 32px
+                          末列额外padding-right: var(--table-edge-padding)  # 32px
+                          children:
+                            - OCheckbox (条件: isFirstCol && selection, 全选框)
+                            - icon-placeholder (条件: isFirstCol && 有展开列)
+                            - span.o-table-cell__inner-content
+                              overflow: hidden; text-overflow: ellipsis
+                              children: slot th_{key} 或 column.label
+                            - TableColumnFilter (条件: column.filter)
+                            - TableColumnSorter (条件: column.sortKey)
+                            - OPopover (条件: column.description, 描述气泡)
+                        - div.o-table-column-resizer (条件: columnResizable)
+
+            # 3c. 表体
+            - region: tbody
+              element: tbody.o-table-body
+              children:
+                - component: TableRow (v-for data, 递归组件)
+                  element: tr.o-table-body-row
+                  children:
+                    - td.o-table-body-cell (v-for dataColumns)
+                      position: sticky (若column.fixed)
+                      children:
+                        - span.o-table-cell__inner
+                          display: flex; align-items: center
+                          padding: var(--table-cell-padding)  # 12px 16px
+                          children:
+                            - OCheckbox (条件: isFirstCol && selection, 行选框)
+                            - icon-placeholder * level (树形缩进)
+                            - IconChevronRightSmall (条件: 可展开, 展开箭头)
+                            - TableCellRenderer (formatter 或 slot td_{key})
+                  # 展开行（expand模式）
+                  - tr.o-table-row-expand (条件: expandBy==='expand' && isRowExpanded)
+                    - td[colspan=全列] > span.o-table-expand-cell__inner
+                      padding: var(--table-expand-cell-padding)  # 32px
+                  # 子行（children树形模式，递归TableRow）
+                  - TableRow (v-for row.children, level+1)
+
+                - div.empty-placeholder (条件: loading || data为空)
+
+    # 4. 加载遮罩层
+    - region: loading-wrap
+      class: .o-table-loading-wrap
+      condition: props.loading
+      position: absolute; top: calc(var(--table-header-height) * 1px)
+      background-color: var(--table-bg-color)
+      children: slot loading 或 IconLoading + loadingLabel
+
+    # 5. 空状态层
+    - region: tip-wrap
+      class: .o-table-tip-wrap
+      condition: !loading && !data.length
+      position: absolute; top: calc(var(--table-header-height) * 1px)
+      children: slot empty 或 emptyLabel
+
+    # 6. 右侧阴影指示器
+    - region: right-shadow
+      class: .o-data-table-right-shadow
+      condition: !hasRightFixedColumn && !loading && data.length
+
+    # 7. 溢出气泡
+    - region: popover
+      component: OPopover
+      condition: popoverVisible
+      position: top(表头) / bottom(表体)
+
+# 尺寸变体
+size-variants:
+  medium:
+    --table-text-size: var(--o-font_size-text1)
+    --table-text-height: var(--o-line_height-text1)
+    --table-head-cell-padding: 12px 16px
+    --table-cell-padding: 12px 16px
+    --table-edge-padding: 32px
+    --table-expand-cell-padding: 32px
+    --table-row-icon-size: var(--o-icon_size-m)
+    --table-row-icon-gap: 8px
+  small:
+    --table-text-size: var(--o-font_size-tip1)
+    --table-text-height: var(--o-line_height-tip1)
+    --table-head-cell-padding: 8px 16px
+    --table-cell-padding: 8px 16px
+    --table-edge-padding: 16px
+    --table-expand-cell-padding: 24px
+
+# 固定列机制
+fixed-columns:
+  mechanism: position: sticky
+  left-fixed: left值由列宽累加计算
+  right-fixed: right值由列宽累加计算
+  shadow:
+    last-left-fixed: 右侧伪元素阴影 linear-gradient(90deg)
+    first-right-fixed: 左侧伪元素阴影 linear-gradient(-90deg)
+    shadow-size: var(--table-fixed-col-shadow-size)  # 16px
+    gradient: var(--table-fixed-col-shadow-gradient)
+  overflow-trigger: .is-overflow-left / .is-overflow-right 显示对应阴影
+
+# 筛选面板布局
+filter-panel:
+  desktop: OPopup弹出层
+    width: var(--table-filter-popup-width)  # 192px
+    children: [搜索输入框, 选项列表(OOptionList), 分割线, 操作按钮区]
+  mobile: ODialog底部弹窗
+    children: [同上，样式适配移动端]
+```
+
+### 设计稿识别指南
+
+**视觉特征指纹**
+
+1. 矩形表格容器（圆角 `--o-radius_control-m`），包含水平方向的多列数据行；表头行有填充背景色（`--o-color-control3-light` 浅蓝灰）或仅有底部分割线（split-line 模式），表体行之间有行分割线
+2. 表头单元格可出现筛选漏斗图标（filter）、排序上下箭头图标（sortKey）、描述气泡图标（description）。行首列可出现复选框（selection 模式）或展开箭头（expand/树形模式）
+3. 固定列区域在横向滚动时不随内容移动，固定列与滚动区域交界处出现渐变阴影（16px 宽度）。斑马纹模式下奇偶行交替显示淡色背景
+
+**设计 Token → Prop 值映射表**
+
+| 设计稿 Token / 视觉特征 | 对应 Prop / 配置 | 说明 |
+|---|---|---|
+| 表头填充背景 `--o-color-control3-light` | `headerStyle="fill"` (默认) | 填充式表头 |
+| 表头仅底部线分隔 | `headerStyle="split-line"` | 分割线表头 |
+| 行底部细线 | `border="row"` (默认) | 仅行线边框 |
+| 完整网格线 | `border="all"` | 全边框 |
+| 奇偶行交替背景 | `stripe` | 斑马纹 |
+| 鼠标悬停行高亮 | `highlightCurrentRow` | 行悬停高亮 |
+| 行首复选框 | `selection` | 行选择模式 |
+| 行首展开箭头 + 展开区域 | `expandMethod` 或 `#expand` 插槽 | 行展开 |
+| 树形缩进 + 展开箭头 | `data` 含 `children` 字段 | 树形数据 |
+| 表头筛选漏斗图标 | 列配置 `filter` | 列筛选 |
+| 表头排序上下箭头 | 列配置 `sortKey` | 列排序 |
+| 表头描述气泡 `(i)` 图标 | 列配置 `description` | 表头描述 |
+| 某列背景色同表头 | 列配置 `asHeader: true` | 竖向表头列 |
+| 多级分组表头（上下分层） | 列配置 `children` 嵌套 | 嵌套表头 |
+| 拖拽调整列宽手柄 | `columnResizable` | 列宽拖拽 |
+| 单元格文字省略 + 悬停气泡 | 列配置 `showOverflowToolTip` | 溢出提示 |
+| 紧凑行高 | `size="small"` | 小尺寸模式 |
+
+**易混淆组件区分表**
+
+| 组件 A | 组件 B | 区分标准 |
+|--------|--------|---------|
+| ODataTable | OTable | DataTable 通过 `columns` + `data` 数据驱动自动渲染；OTable 需手写 `<tr><td>` 模板 |
+| ODataTable | OList | DataTable 是多列表格（含表头）；OList 是单列无表头的列表 |
+| ODataTable (树形) | OTree | DataTable 树形是表格行的层级嵌套，有多列数据；OTree 是纯树形控件，单列节点 |
+| ODataTable (headerStyle=fill) | ODataTable (headerStyle=split-line) | fill 模式表头有填充背景色；split-line 模式表头与表体同色，仅有底部分割线 |
+| ODataTable (selection) | ODataTable (expand) | selection 在行首显示复选框用于多选；expand 在行首显示箭头用于展开详情 |

@@ -118,6 +118,20 @@ OSelect 是下拉选择器组件，从预设选项列表中选择一个或多个
 
 📱 **响应式行为**：在笔记本尺寸及以下（≤1440px），large 尺寸高度缩至 36px、文字和图标缩小，medium 高度缩至 28px；在平板竖屏及以下（≤840px），large 恢复标准高度；移动端下选项面板从 Popup 变为 Dialog 底部弹出。
 
+🧩 **布局结构**：OSelect 由触发器（选择框）和选项面板两部分组成。选择框为水平布局——左侧输入显示区（单选为 input 只读，多选为标签列表 OScroller）+ 右侧后缀区（加载/清除/箭头图标 + suffix 插槽）。选项面板在桌面端为 OPopup 下拉弹出，移动端为 ODialog 底部弹出，面板内使用 OOptionList + OScroller 包裹选项列表。
+```yaml
+# 简化结构摘要（完整版见 Part B）
+direction: row
+regions: [input/tags(显示区), suffix(图标+后缀)]
+popup: OPopup(桌面) | ODialog(移动端)
+children: [OOption × N, OOptionGroup(可选)]
+```
+
+🔍 **设计稿识别指南**：
+- **视觉特征指纹**：矩形输入框 + 右侧下拉箭头图标，点击展开选项面板列表；多选时输入框内有标签（tag）列表
+- **Token → Prop 映射**：边框线框 → variant="outline"；实心填充背景 → variant="solid"；无边框纯文字 → variant="text"；高度 40px → size="large"；高度 32px → size="medium"；输入框内多个标签 → multiple=true；标签超出显示 "+N..." → maxTagCount；右侧有清除按钮 → clearable=true
+- **易混淆组件区分**：与 OInput 区分——OSelect 右侧有下拉箭头且不可手动输入文字，OInput 可自由输入；与 ORadioGroup 区分——OSelect 选项收纳在下拉面板中，ORadioGroup 所有选项同时平铺可见；与 OCascader 区分——OCascader 为多级联动选择，OSelect 为单层列表选择
+
 ---
 
 ## Part B：代码调用参考
@@ -276,4 +290,193 @@ const value = ref('');
 | large 图标 | 控件 m | 控件 s | 标准 |
 | medium 高度 | 28px | 28px | 标准 |
 | 选项面板 | Dialog 底部弹出 | Popup 下拉 | Popup 下拉 |
+
+### 组件布局结构
+
+**OSelect 选择器（触发器部分）**
+```yaml
+layout:
+  tag: div
+  direction: horizontal
+  align: center
+  class: o-select o-select-{color} o-select-{variant} o-select-{size}
+  border: 1px solid var(--select-bd-color)
+  border-radius: var(--select-radius)
+  height: var(--select-height)
+  bg-color: var(--select-bg-color)
+  regions:
+    - name: select-input (单选模式)
+      condition: !multiple || (multiple && valueList.length === 0)
+      flex: 1
+      children:
+        - tag: input[readonly]
+          placeholder: var(--select-placeholder)
+          font-size: var(--select-text-size)
+    - name: select-tags (多选模式)
+      condition: multiple && valueList.length > 0
+      flex: 1
+      component: OScroller
+      class: o-select-tags-scroller
+      children:
+        - name: select-tags-wrap
+          direction: horizontal
+          wrap: wrap
+          max-height: var(--select-multiple-max-height)
+          children:
+            - name: select-tag (× N)
+              bg-color: var(--select-tag-bg-color)
+              border-radius: var(--select-tag-radius)  # 24px
+              padding: var(--select-tag-padding)
+              children:
+                - text: optionLabels[value]
+                - name: tag-remove
+                  icon: IconClose
+            - name: fold-tag (超出 maxTagCount)
+              condition: showFoldTags && valueListFold.length > 0
+              component: OPopover
+              children:
+                - { type: slot, name: tag-fold, fallback: "+N..." }
+    - name: select-suffix
+      direction: horizontal
+      align: center
+      gap: var(--select-icon-gap)
+      children:
+        - name: select-loading
+          condition: loading
+          icon: IconLoading (rotating)
+        - name: select-clear
+          condition: clearable && !disabled && hasValue
+          icon: IconClose
+          click: clearClick
+        - name: select-arrow
+          icon-size: var(--select-icon-size)
+          children:
+            - { type: slot, name: arrow, fallback: IconChevronDown }
+        - name: suffix-slot
+          children:
+            - { type: slot, name: suffix }
+  variants:
+    large: { height: "控件 l (40px)", padding: "0 15px", icon-size: "控件 m", radius: "控件 l" }
+    medium: { height: "控件 m (32px)", padding: "0 15px", icon-size: "控件 xs", radius: "控件 s" }
+    small: { height: "控件 s (28px)", padding: "0 8px", icon-size: "控件 xs", radius: "控件 xs" }
+```
+
+**选项面板（桌面端 OPopup）**
+```yaml
+layout:
+  component: OPopup
+  position: var(--optionPosition)  # 默认 bl
+  width-mode: var(--optionWidthMode)  # 默认 min-width
+  children:
+    - name: SelectOption
+      component: OOptionList + OScroller
+      class: o-select-options o-select-options-{size}
+      children:
+        - name: option-list
+          children:
+            - { type: slot, name: default }  # OOption / OOptionGroup 子项
+        - name: select-actions
+          condition: $slots.action
+          children:
+            - { type: slot, name: action }
+```
+
+**选项面板（移动端 ODialog）**
+```yaml
+layout:
+  component: ODialog
+  size: small
+  position: bottom
+  children:
+    - header: optionTitle
+    - body: SelectOption (同桌面端)
+    - actions (多选模式): [取消按钮, 确认按钮]
+```
+
+**OOption 选项**
+```yaml
+layout:
+  tag: div
+  class: o-option
+  children:
+    - name: option-item
+      direction: horizontal
+      align: center
+      states:
+        active: 选中高亮
+        disabled: 灰色不可点击
+      children (单选):
+        - { type: slot, name: default, fallback: "{{ label }}" }
+      children (多选):
+        - component: OCheckbox
+        - { type: slot, name: default, fallback: "{{ label }}" }
+```
+
+**OOptionGroup 选项分组**
+```yaml
+layout:
+  tag: div
+  class: o-option-group
+  children:
+    - name: option-group-name
+      children:
+        - { type: slot, name: name, fallback: "{{ name }}" }
+    - name: option-group-items
+      children:
+        - { type: slot, name: default }  # OOption 子项
+```
+
+**≤1440px**
+```yaml
+# large: height 36px, text-size tip1, icon-size 控件 s
+# medium: height 28px
+```
+
+**≤840px**
+```yaml
+# large: height 恢复标准控件尺寸, icon-size 控件 m
+# 选项面板: ODialog 底部弹出替代 OPopup
+# 多选模式: checkbox 布局反转 (row-reverse)，选项间有底部分割线
+```
+
+### 设计稿识别指南
+
+**视觉特征指纹**
+
+1. 矩形输入框 + 右侧下拉箭头 + 点击展开选项列表 → 匹配 OSelect
+2. 输入框内有多个圆角标签（tag）+ 右侧箭头 → 匹配 OSelect（multiple 多选模式）
+3. 标签后有 "+N..." 折叠提示 → 匹配 OSelect（maxTagCount 限制）
+4. 无边框纯文字 + 下拉箭头 → 匹配 OSelect（variant="text"）
+5. 选项列表中有分组标题 → 使用 OOptionGroup
+
+**设计 Token → Prop 值映射表**
+
+| 设计稿属性 | 值 / 范围 | 对应 Prop | Prop 值 | 备注 |
+|-----------|----------|----------|---------|------|
+| 边框 | 有边框线 | variant | `'outline'` | 默认值 |
+| 背景 | 实心填充 | variant | `'solid'` | — |
+| 边框/背景 | 无边框无背景 | variant | `'text'` | — |
+| 高度 | 40px | size | `'large'` | — |
+| 高度 | 32px | size | `'medium'` | — |
+| 高度 | 28px | size | `'small'` | — |
+| 圆角 | 全圆角 | round | `'pill'` | — |
+| 选择模式 | 输入框内有标签 | multiple | `true` | — |
+| 标签 | 显示 "+N..." | maxTagCount | 对应数值 | — |
+| 右侧 | 有清除按钮 | clearable | `true` | — |
+| 面板宽度 | 与选择框等宽 | optionWidthMode | `'width'` | — |
+| 面板宽度 | 最小宽度等于选择框 | optionWidthMode | `'min-width'` | 默认值 |
+| 面板宽度 | 自适应内容 | optionWidthMode | `'auto'` | — |
+| 边框颜色 | 绿色系 | color | `'success'` | — |
+| 边框颜色 | 橙色系 | color | `'warning'` | — |
+| 边框颜色 | 红色系 | color | `'danger'` | 常用于表单校验错误 |
+
+**易混淆组件区分表**
+
+| 本组件 | 易混淆组件 | 关键区分依据 |
+|--------|-----------|-------------|
+| OSelect | OInput | OSelect 右侧有下拉箭头、不可手动输入文字；OInput 可自由输入且无下拉面板 |
+| OSelect | ORadioGroup | OSelect 选项收纳在下拉面板中节省空间；ORadioGroup 所有选项同时平铺可见 |
+| OSelect | OCascader | OCascader 为多级联动面板（分列滚动）；OSelect 为单层扁平列表 |
+| OSelect（multiple） | OCheckboxGroup | OSelect 多选以标签形式收纳在输入框内；OCheckboxGroup 勾选框平铺展示 |
+| OSelect（text） | ODropdown | OSelect text 变体有选中值回显；ODropdown 是菜单触发器不回显选中值 |
 

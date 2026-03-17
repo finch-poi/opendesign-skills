@@ -26,6 +26,18 @@ OIcon 是通用图标容器组件，用于展示 SVG 图标。它既可以作为
 
 图标按钮模式下具有完整的交互状态链：默认色 → 悬停色 → 激活/聚焦色 → 禁用色。这些颜色通过 CSS 变量控制，可在不同主题（openEuler、Ascend、Kunpeng）下自动适配。
 
+🧩 **布局结构**：图标组件是一个 inline-flex 容器，内部居中放置单个 SVG 图标（或 loading 旋转动画、或自定义插槽内容）。没有多区域布局，尺寸由 font-size 继承控制（默认 1em）。
+```yaml
+# 简化结构摘要（完整版见 Part B）
+direction: none  # 单一居中容器，无方向性布局
+regions: [default(图标内容)]
+```
+
+🔍 **设计稿识别指南**：
+- **视觉特征指纹**：单个 SVG 图标元素，无背景、无边框、无文字 → 匹配 OIcon；图标带有悬停变色效果且可点击 → 匹配 OIcon button 模式
+- **Token → Prop 映射**：图标颜色为 `--o-color-info1` 且有交互态 → button=true；图标带旋转动画 → loading=true；图标大小由外层 font-size 决定 → 通过 style 或 --icon-size 控制
+- **易混淆组件区分**：与 OButton（icon-only）区分——OButton 有明确的矩形容器边界、padding 和 hover 背景变化，OIcon 仅图标本身变色无容器背景；与内联 SVG 区分——OIcon 提供统一的 loading、button 交互能力
+
 ---
 
 ## Part B：代码调用参考
@@ -156,3 +168,55 @@ OIcon (.o-icon)
 | `--icon-btn-color-hover` | `var(--o-color-info2)` | 图标按钮悬停颜色 |
 | `--icon-btn-color-active` | `var(--o-color-info3)` | 图标按钮激活/聚焦颜色 |
 | `--icon-btn-color-disabled` | `var(--o-color-info4)` | 图标按钮禁用颜色 |
+
+### 组件布局结构
+
+**所有尺寸（无断点差异）**
+```yaml
+layout:
+  display: inline-flex
+  align: center
+  justify: center
+  font-size: var(--icon-size)  # 默认 1em，继承外层 font-size
+  regions:
+    - name: default
+      children:
+        - { type: slot, name: default }  # 优先插槽
+        - { type: component, name: IconLoading, condition: "loading=true 且无插槽" }  # 旋转动画
+        - { type: component, name: "icon prop", condition: "loading=false 且无插槽" }  # icon 属性指定的图标
+  variants:
+    button-mode:
+      color: var(--icon-btn-color)  # var(--o-color-info1)
+      cursor: pointer
+      hover: { color: var(--icon-btn-color-hover) }  # var(--o-color-info2)
+      active: { color: var(--icon-btn-color-active) }  # var(--o-color-info3)
+    disabled:
+      cursor: not-allowed
+      color: var(--icon-btn-color-disabled)  # var(--o-color-info4)
+```
+
+### 设计稿识别指南
+
+**视觉特征指纹**
+
+1. 单个 SVG 图标元素，无矩形容器背景、无边框 → 匹配 OIcon
+2. 图标有悬停变色效果（信息色系 info1→info2→info3）且光标变为 pointer → 匹配 OIcon button 模式
+3. 图标区域显示旋转动画 → 匹配 OIcon loading 状态
+
+**设计 Token → Prop 值映射表**
+
+| 设计稿属性 | 值 / 范围 | 对应 Prop | Prop 值 | 备注 |
+|-----------|----------|----------|---------|------|
+| 图标颜色 | `--o-color-info1` 且有交互态 | button | `true` | 图标按钮模式 |
+| 图标颜色 | 继承父级，无交互态 | button | `false`（默认） | 纯展示模式 |
+| 图标尺寸 | 由外层 font-size 决定 | — | — | 通过 style 或 --icon-size 控制 |
+| 旋转动画 | 可见旋转 | loading | `true` | 替换原图标 |
+| 灰色/不可点击 | `--o-color-info4` | disabled | `true` | 配合 button 使用 |
+
+**易混淆组件区分表**
+
+| 本组件 | 易混淆组件 | 关键区分依据 |
+|--------|-----------|-------------|
+| OIcon | OButton（icon-only） | OButton 有矩形容器、padding、hover 背景变化；OIcon 无容器背景，仅图标本身变色 |
+| OIcon（button） | OButton（icon-only） | OIcon button 无 padding 无背景，OButton 有固定宽高和背景色 |
+| OIcon | 内联 SVG | OIcon 提供 loading、button 交互能力，内联 SVG 无这些封装 |

@@ -74,6 +74,18 @@ OFigure 是图片展示组件，支持宽高比控制、加载状态、悬停放
 - 预览遮罩在平板及以下变为纯黑色
 - 预览关闭按钮在平板及以下移到左侧
 
+🧩 **布局结构**：外层 `.o-figure` 为 inline-flex 容器，支持圆角裁剪和溢出隐藏。有 ratio 时内部通过 `.o-figure-wrap` 的 padding-top 百分比撑开固定宽高比空间，img 绝对定位填充；无 ratio 时 img 直接流式布局。覆盖层 `.o-figure-main` 绝对定位覆盖全区域，内含默认插槽、视频海报遮罩和底部描述内容区。预览通过 OLayer 弹层实现。
+```yaml
+# 简化结构摘要（完整版见 Part B）
+display: inline-flex
+regions: [wrap(ratio占位+img/error), main(default+mask+content), preview-layer]
+```
+
+🔍 **设计稿识别指南**：
+- **视觉特征指纹**：单张图片展示容器，可带固定宽高比裁剪、底部渐变描述文字、居中播放按钮（视频海报）、悬停放大效果、点击全屏预览
+- **Token → Prop 映射**：图片有固定比例=ratio、底部有渐变文字=content/title 插槽、居中圆形播放按钮=videoPoster、悬停放大=hoverable、全屏遮罩预览=preview；播放按钮尺寸 64px→56px→48px→40px 随断点缩小
+- **易混淆组件区分**：与 OCard(cover) 区别——Figure 是纯图片展示容器无标题/正文语义分区，Card 有封面+标题+正文的完整卡片结构；与 img 标签区别——Figure 提供宽高比控制、懒加载、预览、悬停放大等增强功能
+
 ---
 
 ## Part B：代码调用参考
@@ -224,4 +236,173 @@ const figure = useTemplateRef('figure');
 
 - `preview` 和 `href` 不可同时使用（均接管点击事件）
 - `hoverable` 在 `href`/`preview`/`videoPoster` 存在时自动启用
+
+### 组件布局结构
+
+```yaml
+# 基础模式（无 ratio）
+root: .o-figure
+  display: inline-flex
+  align-items: center
+  overflow: hidden
+  tag: div | a (有 href 时)
+  style:
+    border-radius: --figure-radius (0)
+    transition: background-color --o-duration-m2
+  classes:
+    - .o-figure-hoverable: hoverable/href/preview/videoPoster
+    - .o-figure-previewable: preview (cursor: pointer)
+    - .o-figure-video-poster: videoPoster
+    - .o-figure-bg: background 模式
+    - .is-loading.is-colorful: 加载中彩色背景 (--figure-prest-color)
+    - .is-error: 加载失败 (background-color: --figure-error-bk = --o-color-control4)
+  children:
+    # 无 ratio 时直接渲染 img
+    - img.o-figure-img:
+        condition: imgSrc && !background && !ratio
+        width: 100%
+        height: 100%
+        object-fit: --figure-fit (cover)
+        object-position: --figure-position (center)
+        max-width: 100%
+        transition: opacity --o-duration-m2, transform --o-easing-standard 600ms
+    # 有 ratio 时通过 wrap 撑开高度
+    - .o-figure-wrap:
+        condition: ratio 或 isError
+        position: relative
+        width: 100%
+        padding-top: (1/ratio)*100% (--figure-padding-top)
+        children:
+          - .o-figure-error-wrap:
+              condition: isError
+              position: absolute, inset: 0
+              display: flex, align/justify: center
+              font-size: --figure-error-size (--o-icon_size_control-l)
+              color: --figure-error-color (--o-color-control4)
+              children:
+                - slot-error:
+                    fallback: IconImageError
+          - img.o-figure-img-ratio:
+              condition: !background && imgSrc && !isError
+              position: absolute, left/top: 0, width/height: 100%
+              object-fit: --figure-fit (cover)
+    # 覆盖层（视频海报/插槽内容/描述区）
+    - .o-figure-main:
+        condition: videoPoster || slots.content || slots.title || slots.default
+        position: absolute, inset: 0
+        transition: background-color --o-easing-standard-in --o-duration-m1
+        children:
+          - slot-default  # 自由覆盖内容
+          - .o-figure-mask:
+              condition: videoPoster
+              background: rgba(black, 0.2)
+              display: flex, align/justify: center
+              position: absolute, inset: 0
+              children:
+                - slot-play-icon:
+                    fallback:
+                      - .o-figure-play-icon:
+                          width/height: --figure-play-icon-size (64px)
+                          font-size: calc(size/64*24)
+                          border-radius: 50%
+                          color: --o-color-white
+                          background: rgba(white, 0.2)
+                          border: 1px solid rgba(white, 0.6)
+                          backdrop-filter: blur(1px)
+          - .o-figure-content:
+              condition: slots.content || slots.title
+              position: absolute, bottom: 0, left: 0, width: 100%
+              padding: 16px 24px
+              color: --o-color-white
+              background: linear-gradient(180deg, rgba(black,0) 0%, rgba(black,0.6) 100%)
+              font-size: --o-font_size-tip1
+              children:
+                - slot-content:
+                    fallback:
+                      - .o-figure-title:
+                          font-size: --o-font_size-h3
+                          children: slot-title
+    # 预览弹层
+    - OLayer.o-figure-preview-layer:
+        condition: preview || lazyPreview
+        v-model:visible: previewVisible
+        mask-close: previewCloseTypes.includes('mask')
+        button-close: previewCloseTypes.includes('button')
+        children:
+          - .o-figure-preview-wrapper:
+              position: relative
+              children:
+                - slot-preview:
+                    props: { image: imgSrc }
+                    fallback:
+                      - .o-figure-preview-img > img:
+                          max-width: 100vw, max-height: 100vh
+                      - slot-preview-extra
+
+# background 模式
+root: .o-figure.o-figure-bg
+  background-size: --figure-fit (cover)
+  background-position: --figure-position (center)
+  background-repeat: no-repeat
+  # 无 ratio 时 .o-figure-main 变为 position: relative（由内容撑高）
+
+# hoverable 交互
+.o-figure-hoverable:
+  cursor: pointer
+  hover: img transform: scale(1.05)
+  active: img transform: scale(1.02), .o-figure-main background: rgba(black, 0.1)
+
+# 响应式断点
+breakpoints:
+  "<=1440px (laptop)":
+    figure-play-icon-size: 56px
+  "<=1200px (pad)":
+    figure-play-icon-size: 48px
+    .o-figure-title: font-size --o-font_size-text1
+    .o-figure-content: padding 12px 16px
+    .o-figure-preview-img img: max-width 100vw
+    .o-figure-preview-layer: --layer-mask --o-color-black
+    .o-figure-preview-close: left 16px, right auto
+  "<=600px (phone)":
+    figure-play-icon-size: 40px
+    .o-figure-title: font-size --o-font_size-tip1
+    .o-figure-content: padding 4px 8px
+```
+
+### 设计稿识别指南
+
+**视觉特征指纹**
+
+1. 单张图片展示容器，无标题/正文等语义分区，图片本身是主体内容
+2. 可带固定宽高比（通过 padding-top 百分比实现），图片裁剪填充（object-fit: cover）
+3. 视频海报模式：图片上叠加半透明黑色遮罩 + 居中圆形播放按钮（白色描边+模糊背景）
+4. 底部描述区：沿底部的渐变黑色遮罩条上显示白色文字（标题 h3 + 正文 tip1）
+5. 悬停态图片放大 scale(1.05)，按下态缩回 scale(1.02) 并叠加浅黑遮罩
+6. 预览态：全屏遮罩层内居中展示原始大图，可带关闭按钮
+
+**设计 Token → Prop 值映射表**
+
+| 设计特征 | Token / 视觉值 | Prop | Prop 值 |
+|---------|---------------|------|--------|
+| 图片有固定比例 | padding-top 百分比 | `ratio` | 宽/高数值（如 16/9=1.78） |
+| 图片裁剪方式 cover | object-fit: cover | `fit` | `"cover"` |
+| 图片完整显示 | object-fit: contain | `fit` | `"contain"` |
+| CSS 背景图渲染 | background-image | `background` | `true` |
+| 悬停放大效果 | transform: scale(1.05) | `hoverable` | `true` |
+| 点击全屏预览 | OLayer 遮罩弹层 | `preview` | `true` |
+| 居中播放按钮 | 圆形按钮 64px | `videoPoster` | `true` |
+| 底部渐变文字条 | linear-gradient 遮罩 | — | content/title 插槽 |
+| 加载前彩色背景 | 随机色 background-color | `colorful` | `true` |
+| 整图可点击跳转 | `<a>` 标签 | `href` | 链接 URL |
+| 播放按钮 56px | laptop 断点 | — | 自动响应式 |
+| 播放按钮 48px | pad 断点 | — | 自动响应式 |
+| 播放按钮 40px | phone 断点 | — | 自动响应式 |
+
+**易混淆组件区分表**
+
+| 对比组件 | 相似点 | 区分方法 |
+|---------|-------|---------|
+| OCard (cover) | 都可展示图片 | Figure 是纯图片容器，无标题/正文/底部等语义分区和插槽；Card 有封面+标题+正文+底部的完整卡片结构 |
+| img 标签 | 都渲染图片 | Figure 提供宽高比控制、懒加载、彩色占位、悬停放大、全屏预览、视频海报等增强功能 |
+| OCarousel | 都展示图片内容 | Figure 是单张图片容器；Carousel 是多张图片的轮播切换组件 |
 

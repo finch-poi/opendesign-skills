@@ -40,6 +40,21 @@ ORadio 是单选框组件，让用户从多个选项中选择一个。包含 ORa
 
 📱 **响应式行为**：在笔记本尺寸及以下（≤1440px），单选框文字缩小。
 
+🧩 **布局结构**：单个 ORadio 为 label 元素，内部横向排列——左侧圆形选中指示器区 + 右侧文字标签。ORadioGroup 为 div 容器，根据 direction 属性水平（flex-direction: row）或垂直（flex-direction: column）排列内部的 ORadio 子项。
+```yaml
+# 简化结构摘要（完整版见 Part B）
+direction: row (单个 radio 内部)
+regions: [radio-input-wrap(圆形指示器), radio-label(文字标签)]
+# ORadioGroup
+direction: row | column (由 direction prop 决定)
+regions: [ORadio, ORadio, ...]
+```
+
+🔍 **设计稿识别指南**：
+- **视觉特征指纹**：小圆形指示器 + 右侧文字标签；选中时圆形填充主题色并显示内部白色圆点；多个选项互斥只能选一个
+- **Token → Prop 映射**：圆形指示器填充主题色 → 选中状态；灰色不可点击 → disabled=true；多个单选框水平排列 → direction="h"；垂直排列 → direction="v"
+- **易混淆组件区分**：与 OCheckbox（多选框）区分——ORadio 为圆形可单选互斥，OCheckbox 为方形可多选；与 OSelect（选择器）区分——ORadio 所有选项同时可见，OSelect 选项收纳在下拉面板中
+
 ---
 
 ## Part B：代码调用参考
@@ -179,4 +194,86 @@ const value = ref('a');
 | 维度 | ≤1440px | >1440px |
 |------|---------|---------|
 | 文字 | tip1 | 标准 |
+
+### 组件布局结构
+
+**ORadio 单个单选框**
+```yaml
+layout:
+  tag: label
+  direction: horizontal
+  align: center
+  regions:
+    - name: radio-wrap
+      direction: horizontal
+      align: center
+      children:
+        - name: radio-input-wrap
+          description: 圆形选中指示器容器
+          size: var(--radio-input-wrap-size)  # 控件 s
+          children:
+            - name: radio-input
+              description: 圆形指示器
+              size: var(--radio-input-size)  # 控件 xs
+              border: 1px solid var(--radio-input-bd-color)
+              border-radius: 50%
+              bg-color: var(--radio-input-bg-color)
+              checked:
+                bg-color: var(--radio-input-bg-color-checked)
+                inner-dot: var(--radio-input-icon-size) 白色圆点
+        - name: radio-label
+          description: 文字标签
+          gap: var(--radio-label-gap)  # 8px
+          font-size: var(--radio-text-size)  # text1
+          line-height: var(--radio-text-height)
+          children:
+            - { type: slot, name: default }
+  states:
+    checked: radio-input 填充主题色 + 白色内圆点
+    disabled: 整体灰色，不可点击
+  custom-slot: { name: radio, replaces: 整个 radio-input-wrap + radio-label }
+```
+
+**ORadioGroup 单选框组**
+```yaml
+layout:
+  tag: div
+  direction: horizontal | vertical  # 由 direction prop 决定
+  class: o-radio-group-h | o-radio-group-v
+  children:
+    - { type: slot, name: default }  # ORadio 子项
+```
+
+**≤1440px**
+```yaml
+# 文字缩小
+# --radio-text-size: tip1
+# --radio-text-height: tip1
+```
+
+### 设计稿识别指南
+
+**视觉特征指纹**
+
+1. 小圆形空心指示器 + 右侧文字标签 → 匹配 ORadio（未选中）
+2. 圆形填充主题色 + 中心白色圆点 + 右侧文字标签 → 匹配 ORadio（选中）
+3. 多个单选框水平/垂直排列、互斥选择 → 匹配 ORadioGroup
+
+**设计 Token → Prop 值映射表**
+
+| 设计稿属性 | 值 / 范围 | 对应 Prop | Prop 值 | 备注 |
+|-----------|----------|----------|---------|------|
+| 指示器状态 | 填充主题色 + 白色圆点 | modelValue | 等于该项 value | 选中态 |
+| 指示器状态 | 空心灰色边框 | modelValue | 不等于该项 value | 未选中态 |
+| 整体颜色 | 灰色不可交互 | disabled | `true` | — |
+| 排列方向 | 水平排列 | direction | `'h'` | 默认值 |
+| 排列方向 | 垂直排列 | direction | `'v'` | — |
+
+**易混淆组件区分表**
+
+| 本组件 | 易混淆组件 | 关键区分依据 |
+|--------|-----------|-------------|
+| ORadio | OCheckbox | ORadio 圆形指示器、互斥单选；OCheckbox 方形带勾号、可多选 |
+| ORadioGroup | OSelect | ORadioGroup 所有选项同时可见平铺展示；OSelect 选项隐藏在下拉面板中 |
+| ORadio（自定义插槽） | OToggle | OToggle 是独立分段切换器；ORadio #radio 插槽自定义后也可呈现卡片式但语义仍为单选 |
 

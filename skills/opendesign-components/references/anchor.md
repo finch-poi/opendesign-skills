@@ -42,6 +42,22 @@ OAnchor 是一个页面内导航组件，让用户快速跳转到页面指定区
 
 📱 **响应式行为**：在笔记本尺寸及以下（≤1200px），锚点项文字变小、间距缩小；水平模式下项间距从 32px 缩至 24px。在平板竖屏及以下（≤840px），水平模式项间距进一步缩至 16px。
 
+🧩 **布局结构**：垂直模式下，根容器水平排列，左侧是一条竖线（含滑动指示器），右侧是锚点项列表区。每个锚点项内部水平排列：左侧是连接线与圆点装饰，右侧是标题文字。子项通过缩进体现层级。水平模式下，根容器为单行水平排列，项之间有 32px 间距，溢出时左右出现渐隐遮罩可横向滚动。
+```yaml
+# 简化结构摘要（完整版见 Part B）
+# 垂直模式
+direction: horizontal
+regions: [anchor-line(指示器竖线), anchor-items(锚点项列表)]
+# 水平模式
+direction: horizontal  # 单行横排
+regions: [anchor-items(锚点项列表，可横向滚动)]
+```
+
+🔍 **设计稿识别指南**：
+- **视觉特征指纹**：左侧有竖线+圆点装饰、右侧为多行文字链接的列表结构 → 匹配 OAnchor（垂直模式）；单行横排的文字标签页、底部无指示器下划线 → 匹配 OAnchor（水平模式）
+- **Token → Prop 映射**：文字大小对应 size（medium 用 text1 字号，small 用 tip1 字号，menu 用 tip1 字号带悬停背景）；项间距 32px/24px/16px 对应水平模式在不同断点
+- **易混淆组件区分**：与 OTab 区分——OTab 有底部指示器下划线且切换面板内容，OAnchor 无面板、仅做页内锚点跳转；与 OMenu 区分——OMenu 是导航菜单有子菜单弹出，OAnchor 仅做页内定位
+
 ---
 
 ## Part B：代码调用参考
@@ -205,4 +221,107 @@ OAnchor default
 | `--anchor-z-index` | 水平模式 z-index | `initial` |
 | `--anchor-offset-top` | 水平模式吸顶偏移 | `0` |
 | `--anchor-item-max-row` | 标题最大行数（超出省略） | `2`（水平模式为 `1`） |
+
+### 组件布局结构
+
+**垂直模式（layout="v"）— 桌面端 >1200px**
+```yaml
+layout:
+  direction: horizontal
+  regions:
+    - name: anchor-line
+      direction: vertical
+      children:
+        - { type: component, name: anchor-indicator }  # 滑动高亮条，绝对定位
+      width: 1px  # --anchor-line-width
+    - name: anchor-items
+      direction: vertical
+      gap: 0
+      children:
+        - type: group  # 每个 OAnchorItem
+          direction: horizontal
+          children:
+            - type: group  # anchor-item-lines
+              direction: vertical
+              children:
+                - { type: component, name: anchor-item-top-line }
+                - { type: component, name: anchor-item-circle }  # 8px 圆点
+                - { type: component, name: anchor-item-bottom-line }
+            - { type: slot, name: title }  # 标题文字，padding 8px，font-size text1
+          children_nested:  # 子级 OAnchorItem（缩进 12px）
+            - { type: slot, name: default }
+```
+
+**垂直模式 — ≤1200px**
+```yaml
+# 与桌面端结构一致，字号和间距变化：
+# --anchor-item-link-text-size: tip1 (原 text1)
+# --anchor-item-sub-link-text-size: tip2 (原 tip1)
+# --anchor-item-link-padding-v: 5px (原 8px)
+```
+
+**水平模式（layout="h"）— 桌面端 >1200px**
+```yaml
+layout:
+  direction: horizontal
+  padding: [0, 0]
+  background: var(--o-color-fill2)
+  regions:
+    - name: anchor-items
+      direction: horizontal
+      gap: 32px  # --anchor-item-gap
+      overflow-x: auto  # 溢出时可横向滚动
+      children:
+        - type: group  # 每个 OAnchorItem（无圆点装饰）
+          children:
+            - { type: slot, name: title }  # padding-v 12px，单行，font-size text1
+  overlays:
+    - name: overflow-mask-left
+      trigger: 内容左溢出时显示
+      position: left
+    - name: overflow-mask-right
+      trigger: 内容右溢出时显示
+      position: right
+```
+
+**水平模式 — ≤1200px**
+```yaml
+# gap: 24px (原 32px)
+# --anchor-item-link-padding-v: 9px (原 12px)
+```
+
+**水平模式 — ≤840px**
+```yaml
+# gap: 16px (原 24px)
+```
+
+### 设计稿识别指南
+
+**视觉特征指纹**
+
+1. 左侧有 1px 竖线 + 8px 圆点装饰，右侧为多行可点击文字链接，子项有缩进 → 匹配 OAnchor（垂直模式）
+2. 单行水平排列的文字标签，底部无下划线指示器，有背景色填充容器 → 匹配 OAnchor（水平模式）
+3. 多级缩进的侧边文字列表，无展开/折叠箭头 → 匹配 OAnchor（嵌套垂直模式）
+
+**设计 Token → Prop 值映射表**
+
+| 设计稿属性 | 值 / 范围 | 对应 Prop | Prop 值 | 备注 |
+|-----------|----------|----------|---------|------|
+| 文字大小 | text1 (14px) | size | `'medium'` | 垂直模式默认 |
+| 文字大小 | tip1 (12px) | size | `'small'` | 紧凑尺寸 |
+| 文字大小 | tip1 + 悬停背景 | size | `'menu'` | 菜单混合模式 |
+| 排列方向 | 垂直列表 | layout | `'v'` | — |
+| 排列方向 | 水平单行 | layout | `'h'` | — |
+| 项间距 | 32px | layout | `'h'`（>1200px） | 默认样式 |
+| 激活色 | `--o-color-primary1` | — | — | 默认样式，非 prop 控制 |
+| 指示器宽度 | 2px | — | — | 默认样式，非 prop 控制 |
+| 圆点大小 | 8px | — | — | 默认样式，非 prop 控制 |
+
+**易混淆组件区分表**
+
+| 本组件 | 易混淆组件 | 关键区分依据 |
+|--------|-----------|-------------|
+| OAnchor（水平） | OTab | OTab 底部有指示器下划线且切换面板内容；OAnchor 无面板，仅页内锚点跳转 |
+| OAnchor（垂直） | OMenu | OMenu 有子菜单弹出/展开箭头，支持多级导航路由；OAnchor 仅做页内定位，通过圆点+竖线装饰 |
+| OAnchor（垂直） | OStep | OStep 有步骤编号/图标、有完成/进行中/等待状态；OAnchor 仅高亮当前位置 |
 

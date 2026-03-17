@@ -36,7 +36,19 @@ OTag 是标签组件，用于标记和分类信息。支持六种颜色、两种
 
 **close**（事件）：关闭按钮点击后触发（beforeClose 允许后）。
 
-📱 **响应式行为**：本组件无响应式差异。
+📱 **响应式行为**：在笔记本尺寸及以下（≤1440px），large 标签高度缩至 20px、内边距减小；在平板竖屏及以下（≤840px），medium 标签高度缩至 xs、内容缩放 0.83。
+
+🧩 **布局结构**：标签内部水平排列，从左到右依次为：图标区（可选）、文字标签区、关闭按钮区（closable 时显示）。图标与文字间距 2–4px（随尺寸变化）。标签高度由 size 决定（large 28px / medium 20px / small 16px），水平内边距 5–11px。
+```yaml
+# 简化结构摘要（完整版见 Part B）
+direction: horizontal
+regions: [icon(前缀图标), label(文字内容), close(关闭按钮)]
+```
+
+🔍 **设计稿识别指南**：
+- **视觉特征指纹**：小尺寸圆角矩形色块，内含短文本，可能带图标和关闭 × 号 → 匹配 OTag；实心填充或线框描边的小标记 → 匹配 OTag
+- **Token → Prop 映射**：实心填充背景 → variant="solid"；仅边框透明背景 → variant="outline"；蓝色系 → color="primary"；绿色系 → color="success"；橙色系 → color="warning"；红色系 → color="danger"；灰色系 → color="normal"；高度 28px → size="large"，20px → size="medium"，16px → size="small"；半圆角 → round="pill"；带 × 关闭图标 → closable
+- **易混淆组件区分**：与 OButton 区分——OTag 是静态标签展示用于分类标记，OButton 是交互操作触发器；与 OBadge 区分——OBadge 是附着在其他元素上的角标，OTag 是独立的标签元素；与 OToggle 区分——OToggle 有选中/未选中状态切换交互，OTag 无选中态
 
 ---
 
@@ -149,5 +161,93 @@ const visible = ref(true);
 
 ### 响应式行为表
 
-本组件无响应式差异。
+| 维度 | ≤840px | 841–1440px | >1440px |
+|------|--------|-----------|---------|
+| large 高度 | — | 20px | 28px |
+| large 内边距 | — | 0 7px | 0 11px |
+| medium 高度 | xs(16px) | — | 20px |
+| medium 缩放 | 0.833 | — | 标准 |
+
+### 组件布局结构
+
+**桌面端 >1440px**
+```yaml
+layout:
+  tag: span.o-tag
+  direction: horizontal
+  align: center
+  border-radius: var(--o-radius_control-xs)
+  regions:
+    - name: icon
+      element: span.o-tag-icon
+      condition: 有 icon 插槽时
+      children:
+        - { type: slot, name: icon }
+      gap: 2–4px  # --tag-icon-gap, 随 size 变化
+    - name: label
+      element: span.o-tag-label
+      children:
+        - { type: slot, name: default }  # 标签文字
+    - name: close
+      element: span.o-tag-close
+      condition: closable=true
+      children:
+        - IconClose  # 关闭图标
+  variants:
+    large: { height: 28px, padding: "0 11px", font-size: tip2, icon-size: xs, icon-gap: 4px }
+    medium: { height: 20px, padding: "0 7px", font-size: tip2, icon-size: xs, icon-gap: 4px }
+    small: { height: 16px, padding: "0 5px", font-size: tip2, icon-size: xs, icon-gap: 2px }
+    pill: { border-radius: "var(--o-control_size-l)" }
+  color-schemes:
+    normal-solid: { color: info1, bg: control2-light, border: control2-light }
+    normal-outline: { color: info1, bg: transparent, border: control1 }
+    primary-solid: { color: white, bg: primary1, border: primary1 }
+    primary-outline: { color: primary1, bg: transparent, border: primary1 }
+    # success/warning/danger 同理，solid 白字彩色底，outline 彩色字透明底
+```
+
+**≤1440px**
+```yaml
+# large: height 20px, padding "0 7px"
+```
+
+**≤840px**
+```yaml
+# medium: height xs(16px), 内容缩放 scale(0.833)
+```
+
+### 设计稿识别指南
+
+**视觉特征指纹**
+
+1. 小尺寸圆角矩形色块 + 内含短文本（1–4 个字） → 匹配 OTag
+2. 标签内有 × 关闭图标 → 匹配 OTag（closable 模式）
+3. 半圆角胶囊形小色块 + 文字 → 匹配 OTag（round="pill"）
+
+**设计 Token → Prop 值映射表**
+
+| 设计稿属性 | 值 / 范围 | 对应 Prop | Prop 值 | 备注 |
+|-----------|----------|----------|---------|------|
+| 背景色 | 实心填充 | variant | `'solid'` | 默认 |
+| 背景色 | 透明，仅边框 | variant | `'outline'` | — |
+| fill 颜色 | `--o-color-primary1` 蓝色系 | color | `'primary'` | — |
+| fill 颜色 | `--o-color-success1` 绿色系 | color | `'success'` | — |
+| fill 颜色 | `--o-color-warning1` 橙色系 | color | `'warning'` | — |
+| fill 颜色 | `--o-color-danger1` 红色系 | color | `'danger'` | — |
+| fill 颜色 | `--o-color-info1` 灰色系 | color | `'normal'` | 默认 |
+| fill 颜色 | `--o-color-info1`（info 蓝色） | color | `'info'` | — |
+| height | 28px | size | `'large'` | 默认 |
+| height | 20px | size | `'medium'` | — |
+| height | 16px | size | `'small'` | — |
+| border-radius | 全圆角（≥高度值） | round | `'pill'` | — |
+| 关闭图标 | 有 × 按钮 | closable | `true` | — |
+
+**易混淆组件区分表**
+
+| 本组件 | 易混淆组件 | 关键区分依据 |
+|--------|-----------|-------------|
+| OTag | OButton | OTag 是静态标签展示用于分类，OButton 是可点击的操作触发器 |
+| OTag | OBadge | OBadge 附着在其他元素右上角作为角标，OTag 是独立的标签元素 |
+| OTag | OToggle | OToggle 有选中/未选中交互状态切换，OTag 无选中状态（仅展示或可关闭） |
+| OTag（closable） | OTag（非 closable） | 有 × 图标表示可移除，需设置 closable |
 

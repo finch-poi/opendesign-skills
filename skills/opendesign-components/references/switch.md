@@ -46,6 +46,18 @@ OSwitch 是开关组件，用于两种状态之间的切换。支持自定义选
 
 📱 **响应式行为**：本组件无响应式差异。
 
+🧩 **布局结构**：开关为水平排列容器，内部包含滑块轨道（wrap）和可选文字标签。轨道内有一个圆形滑块（handler），滑块内可显示图标（active/inactive 插槽）或加载动画。开启时滑块滑向右侧，轨道背景变为品牌色；关闭时滑块在左侧，轨道背景为灰色。文字标签（on/off 插槽）显示在轨道右侧。
+```yaml
+# 简化结构摘要（完整版见 Part B）
+direction: horizontal
+regions: [wrap(handler(icon) + label(on/off文字))]
+```
+
+🔍 **设计稿识别指南**：
+- **视觉特征指纹**：圆角矩形轨道 + 内嵌圆形滑块 + 两种状态切换（左/右位置） → 匹配 OSwitch；轨道右侧有 ON/OFF 文字 → 有 on/off 插槽；滑块内有太阳/月亮等图标 → 有 active/inactive 插槽
+- **Token → Prop 映射**：轨道高度 32px（control_size-s）→ size="medium"（默认）；轨道高度 24px（control_size-xs）→ size="small"；全圆角 → round="pill"；蓝色轨道背景 → 开启状态（checked）；灰色轨道背景 → 关闭状态（unchecked）；滑块内有旋转图标 → loading=true
+- **易混淆组件区分**：与 OCheckbox 区分——OCheckbox 是方形勾选框+文字标签，OSwitch 是圆角滑动轨道+圆形滑块；与 ORadio 区分——ORadio 是圆形单选按钮组，OSwitch 是单个开关切换器
+
 ---
 
 ## Part B：代码调用参考
@@ -177,4 +189,98 @@ const beforeChange = (val) => {
 ### 响应式行为表
 
 本组件无响应式差异。
+
+### 组件布局结构
+
+**桌面端（无响应式变化）**
+```yaml
+layout:
+  direction: horizontal
+  class: o-switch o-switch-{size}
+  min-width: 40px  # medium; small 为 28px
+  height: var(--o-control_size-s)  # medium 32px; small 24px
+  border-radius: var(--o-control_size-s)  # pill 模式为 control_size-l
+  cursor: pointer
+  regions:
+    - name: wrap
+      class: o-switch-wrap
+      direction: horizontal
+      align: center
+      children:
+        - name: handler
+          class: o-switch-handler
+          width: var(--o-control_size-xs)  # medium; small 为 control_size-2xs - 4px
+          height: 同 width
+          border-radius: 50%
+          background: var(--o-color-white)
+          offset: 4px  # --switch-handler-offset
+          transition: 左右滑动
+          children:
+            - name: loading-icon
+              condition: loading=true
+              class: o-switch-icon-loading o-rotating
+              type: IconLoading
+            - name: icon-wrap
+              condition: "(active/inactive 插槽存在) && loading=false"
+              class: o-switch-icon-wrap
+              children:
+                - { type: slot, name: active, condition: "checked" }
+                - { type: slot, name: inactive, condition: "!checked" }
+        - name: label
+          class: o-switch-label
+          condition: "on/off 插槽存在"
+          padding-left: 6px  # medium; small 为 4px
+          children:
+            - { type: slot, name: "on", condition: "checked" }
+            - { type: slot, name: "off", condition: "!checked" }
+  states:
+    unchecked:
+      background: var(--o-color-control1-light)
+      handler-position: left
+    checked:
+      background: var(--o-color-primary1)
+      handler-position: right
+    disabled:
+      cursor: not-allowed
+      handler-bg: "rgba(white, 0.6)"
+    loading:
+      cursor: not-allowed
+      handler-icon: rotating spinner
+  custom-icon-mode:
+    description: "当有 active/inactive 插槽时，滑块背景变为 primary1，checked 时轨道背景不变"
+    handler-bg: var(--o-color-primary1)
+    handler-color: var(--o-color-info1-inverse)
+```
+
+### 设计稿识别指南
+
+**视觉特征指纹**
+
+1. 圆角矩形轨道（宽约 40px，高约 32px）+ 内嵌白色圆形滑块 → 匹配 OSwitch
+2. 滑块在左侧 + 灰色轨道 → 关闭状态
+3. 滑块在右侧 + 蓝色/品牌色轨道 → 开启状态
+4. 滑块内有旋转图标 → loading=true
+5. 轨道右侧有文字（ON/OFF 等） → 使用 on/off 插槽
+
+**设计 Token → Prop 值映射表**
+
+| 设计稿属性 | 值 / 范围 | 对应 Prop | Prop 值 | 备注 |
+|-----------|----------|----------|---------|------|
+| 轨道高度 | 32px（control_size-s） | size | `'medium'` | 默认 |
+| 轨道高度 | 24px（control_size-xs） | size | `'small'` | — |
+| 轨道宽度 | ≥40px | size | `'medium'` | 默认 |
+| 轨道宽度 | ≥28px | size | `'small'` | — |
+| 圆角 | 全圆角（半圆） | round | `'pill'` | — |
+| 轨道背景色 | `--o-color-primary1` 蓝色 | — | — | checked 状态 |
+| 轨道背景色 | `--o-color-control1-light` 灰色 | — | — | unchecked 状态 |
+| 滑块内图标 | 旋转加载 | loading | `true` | — |
+| 整体灰色半透明 | — | disabled | `true` | — |
+
+**易混淆组件区分表**
+
+| 本组件 | 易混淆组件 | 关键区分依据 |
+|--------|-----------|-------------|
+| OSwitch | OCheckbox | OCheckbox 是方形勾选框+右侧文字标签，OSwitch 是圆角矩形轨道+滑动圆形滑块 |
+| OSwitch | ORadio | ORadio 是圆形单选按钮组（多选一），OSwitch 是单个二态切换器 |
+| OSwitch | OButton（toggle） | OButton 是矩形按钮点击交互，OSwitch 有滑动轨道和圆形滑块的特征视觉 |
 

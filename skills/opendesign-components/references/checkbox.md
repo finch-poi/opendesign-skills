@@ -52,6 +52,21 @@ OCheckboxGroup 是多选框组容器，为内部所有 OCheckbox 提供统一的
 
 📱 **响应式行为**：在笔记本尺寸及以下（≤1200px），多选框文字和行高缩小。
 
+🧩 **布局结构**：单个 OCheckbox 为 label 元素，内部横向排列——左侧方形勾选框图标区 + 右侧文字标签。OCheckboxGroup 为 div 容器，根据 direction 属性水平（flex-direction: row）或垂直（flex-direction: column）排列内部的 OCheckbox 子项。
+```yaml
+# 简化结构摘要（完整版见 Part B）
+direction: row (单个 checkbox 内部)
+regions: [checkbox-input-wrap(勾选框图标), checkbox-label(文字标签)]
+# OCheckboxGroup
+direction: row | column (由 direction prop 决定)
+regions: [OCheckbox, OCheckbox, ...]
+```
+
+🔍 **设计稿识别指南**：
+- **视觉特征指纹**：小方形勾选框（带圆角）+ 右侧文字标签；选中时方框填充主题色并显示勾号（✓）；半选时方框内显示一条横线而非勾号
+- **Token → Prop 映射**：方框填充主题色 → 选中状态；方框内横线 → indeterminate=true；方框灰色不可点击 → disabled=true；多个勾选框水平排列 → direction="h"；垂直排列 → direction="v"
+- **易混淆组件区分**：与 ORadio（单选框）区分——OCheckbox 为方形勾选框可多选，ORadio 为圆形可单选；与 OSwitch（开关）区分——OCheckbox 是方形带勾号，OSwitch 是椭圆滑块
+
 ---
 
 ## Part B：代码调用参考
@@ -228,4 +243,86 @@ const handleChangeAll = () => {
 |------|---------|---------|
 | 文字大小 | 缩小（tip1） | 标准 |
 | 行高 | 缩小（tip1） | 标准 |
+
+### 组件布局结构
+
+```yaml
+# OCheckbox 布局结构
+root: label.o-checkbox
+  direction: row (隐式，由 .o-checkbox-wrap 内部 inline 排列)
+  children:
+    - .o-checkbox-wrap:
+        role: 勾选框整体容器
+        children:
+          - input[type=checkbox]: 隐藏的原生 checkbox（用于无障碍）
+          - slot[checkbox] || 默认内容:
+              children:
+                - .o-checkbox-input-wrap:
+                    role: 勾选框图标容器
+                    size: var(--checkbox-input-wrap-size)  # var(--o-control_size-s)
+                    children:
+                      - .o-checkbox-input:
+                          size: var(--checkbox-input-size)  # var(--o-control_size-xs)
+                          border-radius: var(--checkbox-radius)  # var(--o-radius_control-xs)
+                          bg: var(--checkbox-input-bg-color)  # var(--o-color-control5-light)
+                          bg-checked: var(--checkbox-input-bg-color-checked)  # var(--o-color-primary1)
+                          border: var(--checkbox-input-bd-color)  # var(--o-color-control1)
+                          border-checked: var(--checkbox-input-bd-color-checked)  # var(--o-color-primary1)
+                          children:
+                            - span.o-checkbox-input-icon-indeterminate (半选横线) | IconChecked (勾号)
+                - .o-checkbox-label:
+                    role: 文字标签
+                    gap-left: var(--checkbox-label-gap)  # 8px
+                    children:
+                      - slot[default]
+                    tokens:
+                      font-size: var(--checkbox-text-size)  # var(--o-font_size-text1) → var(--o-font_size-tip1)
+                      line-height: var(--checkbox-text-height)  # var(--o-line_height-text1) → var(--o-line_height-tip1)
+                      color: var(--checkbox-color)  # var(--o-color-info1)
+                      color-disabled: var(--checkbox-color-disabled)  # var(--o-color-info4)
+
+# OCheckboxGroup 布局结构
+root: div.o-checkbox-group
+  direction: row (.o-checkbox-group-h) | column (.o-checkbox-group-v)
+  gap: var(--checkbox-group-gap)  # 24px (水平) | 16px (垂直)
+  children:
+    - slot[default] → OCheckbox × N
+
+# 响应式断点 Token 值
+breakpoints:
+  ">1200px":
+    --checkbox-text-size: var(--o-font_size-text1)
+    --checkbox-text-height: var(--o-line_height-text1)
+  "≤1200px":
+    --checkbox-text-size: var(--o-font_size-tip1)
+    --checkbox-text-height: var(--o-line_height-tip1)
+```
+
+### 设计稿识别指南
+
+**视觉特征指纹**
+1. 小方形勾选框（带圆角 `--o-radius_control-xs`），未选中时白色/浅色背景 + 灰色边框；选中时填充主题色（`--o-color-primary1`）并显示白色勾号图标
+2. 勾选框右侧紧跟文字标签，间距 8px
+3. 半选状态（indeterminate）时，方框填充主题色但内部显示一条白色横线而非勾号
+
+**设计 Token → Prop 值映射表**
+
+| 设计稿属性 | 值/范围 | 对应Prop | Prop值 | 备注 |
+|-----------|---------|---------|--------|------|
+| 方框填充主题色+勾号 | 选中态 | modelValue | 包含该 value | — |
+| 方框白色+灰色边框 | 未选中态 | modelValue | 不含该 value | — |
+| 方框主题色+横线 | 半选态 | indeterminate | `true` | 通常用于全选控件 |
+| 方框灰色+不可点击 | 禁用态 | disabled | `true` | — |
+| 多个勾选框水平排列 | 间距 24px | direction | `'h'` | OCheckboxGroup 默认 |
+| 多个勾选框垂直排列 | 间距 16px | direction | `'v'` | OCheckboxGroup |
+| 文字标签字号 text1 | 标准字号 | — | — | >1200px 默认 |
+| 文字标签字号 tip1 | 缩小字号 | — | — | ≤1200px 响应式 |
+
+**易混淆组件区分表**
+
+| 本组件 | 易混淆组件 | 关键区分依据 |
+|--------|-----------|------------|
+| OCheckbox | ORadio（单选框） | OCheckbox 为方形可多选，ORadio 为圆形只能单选 |
+| OCheckbox | OSwitch（开关） | OCheckbox 是方形带勾号，OSwitch 是椭圆形滑块切换 |
+| OCheckbox | OTag（标签）可选模式 | OCheckbox 有明显的方形勾选框图标，OTag 为文字标签带背景色 |
 
