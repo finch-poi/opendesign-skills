@@ -8,7 +8,7 @@
 
 ## 品牌色板（Brand Palette）
 
-openEuler 是唯一拥有完整 brand 色阶的主题（1-10）。
+openEuler 拥有完整 brand 色阶（1-10）。Mindspore、openGauss、openUBMC 也拥有完整色阶，而 Ascend 和 Kunpeng 仅定义 brand-6。
 
 | Token | light 值 | dark 值 |
 |-------|---------|--------|

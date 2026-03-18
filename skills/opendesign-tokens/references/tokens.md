@@ -503,3 +503,284 @@
 | `--o-easing-standard-in` | `cubic-bezier(0, 0, 0, 1)` | 用于组件 |
 | `--o-easing-standard-out` | `cubic-bezier(0.3, 0, 1, 1)` | 用于组件 |
 
+## Gap Tokens (间距)
+
+### gap
+
+| Token 名称 | 值 | 说明 |
+|-----------|-----|------|
+| `--o-gap-1` | `4px` | 间距1 |
+| `--o-gap-2` | `8px` | 间距2 |
+| `--o-gap-3` | `12px` | 间距3 |
+| `--o-gap-4` | `16px` | 间距4 |
+| `--o-gap-5` | `24px` | 间距5 |
+| `--o-gap-6` | `32px` | 间距6 |
+| `--o-gap-7` | `40px` | 间距7 |
+| `--o-gap-8` | `48px` | 间距8 |
+| `--o-gap-9` | `64px` | 间距9 |
+| `--o-gap-10` | `72px` | 间距10 |
+
+## Font Weight Tokens
+
+### font_weight
+
+| Token 名称 | 值 | 说明 |
+|-----------|-----|------|
+| `--o-font_weight-regular` | `400` | 常规字重 |
+| `--o-font_weight-bold` | `600` | 粗体字重 |
+
+## Font Family Tokens
+
+### font_family
+
+| Token 名称 | 值 | 说明 |
+|-----------|-----|------|
+| `--o-font_family` | `HarmonyOS, Inter, -apple-system, BlinkMacSystemFont, 'PingFang SC','Microsoft YaHei',Arial,sans-serif` | 默认字体族（HarmonyOS Sans SC） |
+| `--o-font_family-code` | `SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono',monospace` | 等宽代码字体族 |
+
+## Shadow Tokens
+
+### shadow
+
+| Token 名称 | 值（默认/openEuler light 模式） | 说明 |
+|-----------|-----|------|
+| `--o-shadow-1` | `0 3px 8px rgba(var(--o-grey-13), 0.08)` | 一级阴影（浮层） |
+| `--o-shadow-2` | `0 2px 24px rgba(var(--o-grey-13), 0.15)` | 二级阴影（弹出层） |
+| `--o-shadow-3` | `0 8px 40px rgba(var(--o-grey-13), 0.1)` | 三级阴影（模态层） |
+
+> 阴影的基础色在各主题/模式下有差异：light 模式使用 `grey-13`，dark 模式使用 `grey-1`（黑色）。
+
+## Main Color Tokens（品牌主色）
+
+### main
+
+| Token 名称 | 说明 |
+|-----------|------|
+| `--o-color-main1` | 品牌主色（各主题不同） |
+| `--o-color-main2` | 品牌渐变色（`linear-gradient`） |
+| `--o-color-main2-start` | 渐变起点色 |
+| `--o-color-main2-end` | 渐变终点色 |
+| `--o-color-main2-angle` | 渐变角度（默认 `90deg`） |
+
+> main 系列 token 的值因主题不同而有显著差异，详见各主题的 skill 文件。
+
+## Auxiliary Color Tokens（辅助色）
+
+### auxiliary
+
+| Token 名称 | 默认引用 | 说明 |
+|-----------|---------|------|
+| `--o-color-auxiliary1` | `deepblue-6` | 辅助色1（深蓝） |
+| `--o-color-auxiliary2` | `purple-6` | 辅助色2（紫色） |
+| `--o-color-auxiliary3` | `pink-6` | 辅助色3（粉色） |
+| `--o-color-auxiliary4` | `rosyred-6` | 辅助色4（玫红） |
+| `--o-color-auxiliary5` | `blue-6` | 辅助色5（蓝色） |
+| `--o-color-auxiliary6` | `cyan-6` | 辅助色6（青色） |
+| `--o-color-auxiliary7` | `yellow-6` | 辅助色7（黄色） |
+| `--o-color-auxiliary8` | `lime-6` | 辅助色8（青柠） |
+
+## Responsive Tokens（响应式变量）
+
+> 版本 0.0.10 新增。引入任意主题 CSS 后自动生效，无需额外导入。变量前缀为 `--o-r-`（`r` = responsive）。
+
+响应式变量会根据视口宽度在不同断点自动切换取值，共 4 个断点：
+
+| 断点名称 | 视口范围 | 说明 |
+|---------|---------|------|
+| Phone/Pad 竖屏 | ≤840px | 基础值（`:root` 默认） |
+| Pad 横屏 | 841–1200px | `@media (min-width: 841px) and (max-width: 1200px)` |
+| Laptop | 1201–1680px | `@media (min-width: 1201px) and (max-width: 1680px)` |
+| Desktop | >1680px | `@media (min-width: 1681px)` |
+
+### 响应式字号（font_size）
+
+| Token 名称 | Phone/Pad竖屏 | Pad横屏 | Laptop | Desktop | 说明 |
+|-----------|------|----------|--------|---------|------|
+| `--o-r-font_size-display1` | 22px | 40px | 48px | 56px | 一级数据展示 |
+| `--o-r-font_size-display2` | 20px | 32px | 40px | 48px | 二级数据展示 |
+| `--o-r-font_size-display3` | 18px | 24px | 32px | 40px | 三级数据展示 |
+| `--o-r-font_size-h1` | 18px | 20px | 20px | 32px | 一级标题 |
+| `--o-r-font_size-h2` | 16px | 18px | 20px | 24px | 二级标题 |
+| `--o-r-font_size-h3` | 16px | 16px | 18px | 22px | 三级标题 |
+| `--o-r-font_size-h4` | 16px | 16px | 18px | 20px | 四级标题 |
+| `--o-r-font_size-text2` | 14px | 14px | 16px | 18px | 大号正文 |
+| `--o-r-font_size-text1` | 14px | 14px | 14px | 16px | 常规正文 |
+| `--o-r-font_size-tip1` | 12px | 12px | 14px | 14px | 提示文本1 |
+| `--o-r-font_size-tip2` | 10px | 12px | 12px | 12px | 提示文本2 |
+
+### 响应式行高（line_height）
+
+| Token 名称 | Phone/Pad竖屏 | Pad横屏 | Laptop | Desktop | 说明 |
+|-----------|------|----------|--------|---------|------|
+| `--o-r-line_height-display1` | 30px | 56px | 64px | 80px | 一级数据展示 |
+| `--o-r-line_height-display2` | 28px | 44px | 56px | 64px | 二级数据展示 |
+| `--o-r-line_height-display3` | 26px | 32px | 44px | 56px | 三级数据展示 |
+| `--o-r-line_height-h1` | 26px | 28px | 28px | 44px | 一级标题 |
+| `--o-r-line_height-h2` | 24px | 26px | 28px | 32px | 二级标题 |
+| `--o-r-line_height-h3` | 24px | 24px | 26px | 30px | 三级标题 |
+| `--o-r-line_height-h4` | 24px | 24px | 26px | 28px | 四级标题 |
+| `--o-r-line_height-text2` | 22px | 22px | 24px | 26px | 大号正文 |
+| `--o-r-line_height-text1` | 22px | 22px | 22px | 24px | 常规正文 |
+| `--o-r-line_height-tip1` | 18px | 18px | 22px | 22px | 提示文本1 |
+| `--o-r-line_height-tip2` | 16px | 18px | 18px | 18px | 提示文本2 |
+
+### 响应式间距（gap）
+
+| Token 名称 | Phone/Pad竖屏 | Pad横屏 | Laptop | Desktop | 说明 |
+|-----------|------|----------|--------|---------|------|
+| `--o-r-gap-10` | 32px | 40px | 56px | 72px | 间距10 |
+| `--o-r-gap-9` | 24px | 32px | 48px | 64px | 间距9 |
+| `--o-r-gap-8` | 16px | 24px | 40px | 48px | 间距8 |
+| `--o-r-gap-7` | 12px | 16px | 24px | 40px | 间距7 |
+| `--o-r-gap-6` | 12px | 16px | 24px | 32px | 间距6 |
+| `--o-r-gap-5` | 12px | 12px | 16px | 24px | 间距5 |
+| `--o-r-gap-4` | 8px | 8px | 12px | 16px | 间距4 |
+| `--o-r-gap-3` | 8px | 8px | 8px | 12px | 间距3 |
+| `--o-r-gap-2` | 8px | 8px | 8px | 8px | 间距2 |
+| `--o-r-gap-1` | 4px | 4px | 4px | 4px | 间距1 |
+
+### 使用示例
+
+```css
+.title {
+  font-size: var(--o-r-font_size-h1);
+  line-height: var(--o-r-line_height-h1);
+}
+
+.section {
+  padding: var(--o-r-gap-6) var(--o-r-gap-4);
+}
+```
+
+## Grid System Tokens（栅格系统）
+
+> 版本 0.0.10 新增。与响应式 Token 一同生效，无需额外导入。变量前缀为 `--o-r-grid-`。
+
+栅格系统共 6 个响应断点，最大 24 列：
+
+| 断点 | 视口范围 | 布局总宽 | 列数 | 留白 | 水槽 |
+|------|---------|---------|------|------|------|
+| 超大屏 | >1920px | 1920px（固定） | 24 | 64px | 32px |
+| 桌面 | 1441–1920px | 100vw | 24 | 64px | 32px |
+| 小桌面 | 1201–1440px | 100vw | 24 | 40px | 24px |
+| 平板横屏 | 841–1200px | 100vw | 12 | 32px | 16px |
+| 平板竖屏 | 601–840px | 100vw | 8 | 32px | 16px |
+| 手机 | ≤600px | 100vw | 4 | 24px | 12px |
+
+### 栅格基础变量
+
+| Token 名称 | 说明 |
+|-----------|------|
+| `--o-r-grid-padding` | 栅格容器左右留白 |
+| `--o-r-grid-layout-width` | 当前断点下的布局总宽 |
+| `--o-r-grid-column-gutter` | 水槽（列间距）宽度 |
+| `--o-r-grid-column-total` | 当前断点下的总列数 |
+| `--o-r-grid-column-width` | 单列宽度（自动计算） |
+| `--o-r-grid-full` | 全栅格宽度（= 布局总宽 - 左右留白） |
+
+### 栅格列宽快捷变量
+
+| Token 名称 | 说明 |
+|-----------|------|
+| `--o-r-grid-1` ~ `--o-r-grid-24` | 占据 N 列的总宽度（包含中间的水槽） |
+
+> 计算公式：`--o-r-grid-N = column-width * N + column-gutter * (N - 1)`
+
+### 栅格容器类
+
+```css
+.o-r-grid-container {
+  display: flex;
+  width: 100vw;
+  max-width: 1920px;
+  margin: 0 auto;
+  padding-left: var(--o-r-grid-padding);
+  padding-right: var(--o-r-grid-padding);
+}
+```
+
+### 使用示例
+
+```vue
+<template>
+  <div class="o-r-grid-container">
+    <aside class="sidebar">侧边栏</aside>
+    <main class="content">主内容</main>
+  </div>
+</template>
+
+<style scoped>
+.sidebar {
+  width: var(--o-r-grid-6);         /* 占据 6 列 */
+  margin-right: var(--o-r-grid-column-gutter);
+}
+.content {
+  width: var(--o-r-grid-18);        /* 占据 18 列 */
+}
+</style>
+```
+
+---
+
+## Palette 命名说明
+
+> 主题 Token 包（`@opensig/opendesign-token`）中的调色板变量使用 `grey`（灰色板）和 `brand`（品牌色板）命名，而组件库内部的基础样式（`_styles/`）使用 `mixedgray` 和 `kleinblue` 命名。两者是独立的 CSS 变量系统：
+>
+> | Token 包变量 | 组件库基础变量 | 说明 |
+> |------------|--------------|------|
+> | `--o-grey-*` | `--o-mixedgray-*` | 灰色板（1-14 级） |
+> | `--o-brand-*` | `--o-kleinblue-*` | 品牌色板（1-10 级，各主题不同） |
+>
+> 引入主题 CSS 后，组件库通过 CSS 变量级联自动关联到正确的主题色值。业务代码应优先使用语义化 Token（如 `--o-color-primary1`），而非直接引用调色板变量。
+
+## 扩展调色板 Palette（v0.0.10 新增）
+
+以下 Palette 在 v0.0.10 中新增，供辅助色和图表配色使用。所有主题共用同一套 light 值（dark 模式下色阶反转）。
+
+### deepblue
+
+| Token 名称 | light 值 |
+|-----------|---------|
+| `--o-deepblue-1` | `232, 240, 255` |
+| `--o-deepblue-2` | `194, 213, 254` |
+| `--o-deepblue-3` | `157, 184, 253` |
+| `--o-deepblue-4` | `120, 153, 252` |
+| `--o-deepblue-5` | `83, 119, 251` |
+| `--o-deepblue-6` | `46, 83, 250` |
+| `--o-deepblue-7` | `29, 55, 207` |
+| `--o-deepblue-8` | `15, 32, 163` |
+| `--o-deepblue-9` | `6, 15, 120` |
+| `--o-deepblue-10` | `0, 4, 47` |
+
+### rosyred
+
+| Token 名称 | light 值 |
+|-----------|---------|
+| `--o-rosyred-1` | `255, 232, 240` |
+| `--o-rosyred-2` | `249, 185, 209` |
+| `--o-rosyred-3` | `243, 141, 182` |
+| `--o-rosyred-4` | `238, 98, 158` |
+| `--o-rosyred-5` | `232, 57, 139` |
+| `--o-rosyred-6` | `226, 18, 122` |
+| `--o-rosyred-7` | `189, 11, 106` |
+| `--o-rosyred-8` | `151, 6, 88` |
+| `--o-rosyred-9` | `114, 2, 69` |
+| `--o-rosyred-10` | `77, 0, 48` |
+
+> 原有的 blue/cyan/yellow/lime/green/red/orange/purple/pink 色阶保持不变，不再重复列出。
+
+## 全主题对比速查
+
+| 特征 | openEuler (e) | Ascend (a) | Kunpeng (k) | Mindspore (m) | openGauss (g) | openUBMC (u) |
+|------|--------------|-----------|------------|--------------|--------------|-------------|
+| 品牌色 | Klein Blue `#002FA7` | Red `#C7000B` | Red `#C7000B` | Vivid Blue `#3366FF` | Purple `#7D32EA` | Azure Blue `#0071F3` |
+| 品牌色阶 | 完整 10 级 | 仅 brand-6 | 仅 brand-6 | 完整 10 级 | 完整 10 级 | 完整 10 级 |
+| Primary 来源 | 品牌色 | 深灰 | 深灰 | 品牌色 | 品牌色 | 品牌色 |
+| 链接色来源 | 品牌色 | DeepBlue | DeepBlue | 品牌色 | 品牌色 | 品牌色 |
+| 控件悬浮色 | 品牌色 | 灰色 | 灰色 | 品牌色 | 品牌色 | 品牌色 |
+| 渐变 | 无（纯色） | 蓝紫极光 | 橙红暖色 | 青蓝渐变 | 无（纯色） | 无（纯色） |
+| 圆角风格 | 扁平(4/0px) | 圆润(4-24px) | 扁平(4/0px) | 圆润(4-24px) | 圆润(4-24px) | 圆润(4-24px) |
+| 灰色色调 | 中性灰 | 暖灰 | 中性灰 | 暖灰 | 中性灰 | 中性灰 |
+| Shadow 基色 | grey-14 | grey-14 | grey-14 | grey-13 | grey-13 | grey-13 |
+| brand-6 dark=light? | 否 | 是 | 是 | 否 | 否 | 是 |
+

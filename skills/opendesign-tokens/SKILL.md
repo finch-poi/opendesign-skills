@@ -1,13 +1,13 @@
 ---
 name: opendesign-tokens
-description: OpenDesign 设计 Token 指南。当需要使用 @opensig/opendesign-token 包中的 CSS 变量时使用此 skill。包含三套主题（openeuler/ascend/kunpeng）的完整 token 体系，支持颜色、间距、圆角、字体、阴影、动画等所有设计令牌。使用场景：(1) 查找颜色值对应的语义 token，(2) 获取间距/圆角/字体的 token 名称，(3) 了解三套主题的差异，(4) 代码中使用 CSS 变量替代硬编码值
+description: OpenDesign 设计 Token 指南。当需要使用 @opensig/opendesign-token 包中的 CSS 变量时使用此 skill。包含六套主题（openEuler/Ascend/Kunpeng/Mindspore/openGauss/openUBMC）的完整 token 体系，支持颜色、间距、圆角、字体、阴影、响应式排版、栅格系统等所有设计令牌。使用场景：(1) 查找颜色值对应的语义 token，(2) 获取间距/圆角/字体的 token 名称，(3) 了解六套主题的差异，(4) 代码中使用 CSS 变量替代硬编码值，(5) 使用响应式 token 实现多断点适配
 ---
 
 # OpenDesign 设计 Token 指南
 
 `@opensig/opendesign-token` 是 OpenDesign 组件库的设计令牌包，所有 token 使用 `--o-` 前缀。
 
-组件库有三套独立主题（openEuler / Ascend / Kunpeng），**每个社区项目在初始化时选定一套，不在三套主题之间运行时切换**。选定主题后，只需在浅色/深色模式之间切换。
+组件库有六套独立主题（openEuler / Ascend / Kunpeng / Mindspore / openGauss / openUBMC），**每个社区项目在初始化时选定一套，不在六套主题之间运行时切换**。选定主题后，只需在浅色/深色模式之间切换。
 
 ---
 
@@ -64,9 +64,60 @@ document.documentElement.setAttribute('data-o-theme', 'k.dark')  // 深色
 
 ---
 
+### Mindspore 主题（`m`）
+
+```typescript
+// main.ts 引入
+import '@opensig/opendesign-token/themes/m.token.css'
+```
+
+运行时切换 light/dark：
+```javascript
+document.documentElement.setAttribute('data-o-theme', 'm.light') // 浅色
+document.documentElement.setAttribute('data-o-theme', 'm.dark')  // 深色
+```
+
+品牌色：**Vivid Blue（鲜蓝）**，控件悬浮时使用品牌蓝浅色调。
+
+---
+
+### openGauss 主题（`g`）
+
+```typescript
+// main.ts 引入
+import '@opensig/opendesign-token/themes/g.token.css'
+```
+
+运行时切换 light/dark：
+```javascript
+document.documentElement.setAttribute('data-o-theme', 'g.light') // 浅色
+document.documentElement.setAttribute('data-o-theme', 'g.dark')  // 深色
+```
+
+品牌色：**Purple（紫色）**，控件悬浮时使用品牌紫浅色调。
+
+---
+
+### openUBMC 主题（`u`）
+
+```typescript
+// main.ts 引入
+import '@opensig/opendesign-token/themes/u.token.css'
+```
+
+运行时切换 light/dark：
+```javascript
+document.documentElement.setAttribute('data-o-theme', 'u.light') // 浅色
+document.documentElement.setAttribute('data-o-theme', 'u.dark')  // 深色
+```
+
+品牌色：**Azure Blue（天蓝）**，控件悬浮时使用品牌蓝浅色调。
+
+---
+
 ## Token 体系架构
 
-三套主题的 **token 名称完全相同**，只有颜色值（品牌色等）不同。
+六套主题的 **token 名称完全相同**，只有颜色值（品牌色、圆角等）不同。
 
 ```
 基础 Token（调色板）        →  语义 Token（颜色意义）         →  组件级 Token
@@ -208,7 +259,9 @@ background-color: var(--o-color-white);
 
 ---
 
-## 2. 间距 Token（Gap）
+## 2. 间距 Token（Gap）— 静态值
+
+> **页面级间距推荐使用响应式 token `--o-r-gap-*`**（见第 10 节），以下静态 token 适用于不随视口变化的固定间距场景。
 
 间距 token 适用于 `gap`、`padding`、`margin` 等属性。
 
@@ -250,7 +303,9 @@ background-color: var(--o-color-white);
 
 ---
 
-## 4. 字体 Token（Font）
+## 4. 字体 Token（Font）— 静态值
+
+> **页面级文字推荐使用响应式 token `--o-r-font_size-*` / `--o-r-line_height-*`**（见第 10 节），以下静态 token 适用于不随视口变化的固定字号场景。
 
 ### 字体大小（Font Size）
 
@@ -286,9 +341,16 @@ background-color: var(--o-color-white);
 
 **字体和行高应配套使用：**
 ```css
+/* 响应式（推荐，自动适配多端） */
 .title {
-  font-size: var(--o-font_size-h3);
-  line-height: var(--o-line_height-h3);
+  font-size: var(--o-r-font_size-h3);
+  line-height: var(--o-r-line_height-h3);
+}
+
+/* 静态（仅在需要固定值时使用） */
+.fixed-label {
+  font-size: var(--o-font_size-tip1);
+  line-height: var(--o-line_height-tip1);
 }
 ```
 
@@ -405,7 +467,99 @@ transition: all var(--o-duration-m1) var(--o-easing-standard);
 
 ---
 
+## 10. 响应式 Token（Responsive）
+
+> **优先使用响应式 Token**。对于字号、行高、间距，响应式变量（`--o-r-*`）会根据视口自动缩放，是纠正硬编码值的首选。静态 Token（`--o-font_size-*`、`--o-gap-*`）仅在需要固定不变的场景下使用。
+
+响应式变量前缀为 `--o-r-`，引入主题 CSS 后自动生效，无需额外导入。共 4 个断点：
+
+| 断点 | 视口范围 | 典型设备 |
+|------|---------|---------|
+| Phone | ≤840px | 手机、平板竖屏 |
+| Pad | 841–1200px | 平板横屏 |
+| Laptop | 1201–1680px | 笔记本 |
+| Desktop | >1680px | 桌面大屏 |
+
+### 响应式字号 + 行高
+
+| 语义 | Token 名称 | Phone | Pad | Laptop | Desktop |
+|------|-----------|-------|-----|--------|---------|
+| 一级数据展示 | `--o-r-font_size-display1` / `line_height` | 22/30 | 40/56 | 48/64 | 56/80 |
+| 二级数据展示 | `--o-r-font_size-display2` / `line_height` | 20/28 | 32/44 | 40/56 | 48/64 |
+| 三级数据展示 | `--o-r-font_size-display3` / `line_height` | 18/26 | 24/32 | 32/44 | 40/56 |
+| 一级标题 | `--o-r-font_size-h1` / `line_height` | 18/26 | 20/28 | 20/28 | 32/44 |
+| 二级标题 | `--o-r-font_size-h2` / `line_height` | 16/24 | 18/26 | 20/28 | 24/32 |
+| 三级标题 | `--o-r-font_size-h3` / `line_height` | 16/24 | 16/24 | 18/26 | 22/30 |
+| 四级标题 | `--o-r-font_size-h4` / `line_height` | 16/24 | 16/24 | 18/26 | 20/28 |
+| 大号正文 | `--o-r-font_size-text2` / `line_height` | 14/22 | 14/22 | 16/24 | 18/26 |
+| 常规正文 | `--o-r-font_size-text1` / `line_height` | 14/22 | 14/22 | 14/22 | 16/24 |
+| 提示文本1 | `--o-r-font_size-tip1` / `line_height` | 12/18 | 12/18 | 14/22 | 14/22 |
+| 提示文本2 | `--o-r-font_size-tip2` / `line_height` | 10/16 | 12/18 | 12/18 | 12/18 |
+
+> 单位均为 px。Token 名称中 `font_size` 和 `line_height` 共享后缀（如 `--o-r-font_size-h1` 配 `--o-r-line_height-h1`）。
+
+### 响应式间距
+
+| Token 名称 | Phone | Pad | Laptop | Desktop |
+|-----------|-------|-----|--------|---------|
+| `--o-r-gap-10` | 32px | 40px | 56px | 72px |
+| `--o-r-gap-9` | 24px | 32px | 48px | 64px |
+| `--o-r-gap-8` | 16px | 24px | 40px | 48px |
+| `--o-r-gap-7` | 12px | 16px | 24px | 40px |
+| `--o-r-gap-6` | 12px | 16px | 24px | 32px |
+| `--o-r-gap-5` | 12px | 12px | 16px | 24px |
+| `--o-r-gap-4` | 8px | 8px | 12px | 16px |
+| `--o-r-gap-3` | 8px | 8px | 8px | 12px |
+| `--o-r-gap-2` | 8px | 8px | 8px | 8px |
+| `--o-r-gap-1` | 4px | 4px | 4px | 4px |
+
+> **对照关系**：`--o-r-gap-N` 的 Desktop 值 = `--o-gap-N` 的静态值。响应式变量在小屏上自动压缩间距。
+
+### 响应式 vs 静态 Token 选择
+
+| 场景 | 推荐 | 原因 |
+|------|------|------|
+| 页面标题、正文、区块间距 | `--o-r-*`（响应式） | 随视口自动适配，无需写 media query |
+| 组件内部固定尺寸（如图标旁 4px 间距） | `--o-gap-*`（静态） | 尺寸不应随视口变化 |
+| 设计稿硬编码的字号/间距纠正 | `--o-r-*`（响应式） | **首选**，确保多端一致 |
+
+---
+
+## 11. 栅格系统 Token（Grid）
+
+24 列响应式栅格，共 6 个断点。引入主题 CSS 后自动生效。
+
+| 断点 | 视口范围 | 列数 | 留白 | 水槽 |
+|------|---------|------|------|------|
+| 超大屏 | >1920px | 24 | 64px | 32px |
+| 桌面 | 1441–1920px | 24 | 64px | 32px |
+| 小桌面 | 1201–1440px | 24 | 40px | 24px |
+| 平板横屏 | 841–1200px | 12 | 32px | 16px |
+| 平板竖屏 | 601–840px | 8 | 32px | 16px |
+| 手机 | ≤600px | 4 | 24px | 12px |
+
+**关键变量**：`--o-r-grid-1` ~ `--o-r-grid-24`（N 列宽度），`--o-r-grid-column-gutter`（水槽宽度）。
+
+**栅格容器**：直接使用 `.o-r-grid-container` 类即可（`display:flex; max-width:1920px; margin:0 auto; padding:var(--o-r-grid-padding)`）。
+
+```css
+.sidebar { width: var(--o-r-grid-6); margin-right: var(--o-r-grid-column-gutter); }
+.content { width: var(--o-r-grid-18); }
+```
+
+---
+
 ## 最佳实践
+
+### OpenDesign 组件样式原则
+
+使用 `@opensig/opendesign` 组件库中的组件时，**组件应作为一个整体使用，不应修改组件内部样式**（除非有明确的特殊需求并经过确认）。组件的视觉表现由 Token 体系统一控制：
+- 通过切换主题（`data-o-theme`）改变组件的品牌色和圆角风格
+- 通过组件暴露的 props 控制尺寸、颜色变体等
+- **不要**通过 CSS 覆盖组件内部的 class 样式（如 `.o-btn__text`）
+- **不要**通过 `::v-deep` / `:deep()` 穿透修改组件内部结构
+
+Token 变量主要用于**自定义业务区域**的样式（如页面布局、自定义卡片、业务容器等），而非覆盖组件内部。
 
 ### ✅ 推荐做法
 
@@ -414,24 +568,28 @@ transition: all var(--o-duration-m1) var(--o-easing-standard);
   background-color: var(--o-color-fill2);        /* 卡片背景 */
   border: 1px solid var(--o-color-control1);     /* 边框 */
   border-radius: var(--o-radius-m);              /* 圆角 */
-  padding: var(--o-gap-4);                       /* 内边距 */
+  padding: var(--o-r-gap-4);                     /* 内边距（响应式） */
   box-shadow: var(--o-shadow-1);                 /* 阴影 */
 }
 
 .title {
-  font-size: var(--o-font_size-h3);
-  line-height: var(--o-line_height-h3);
+  font-size: var(--o-r-font_size-h3);            /* 响应式字号 */
+  line-height: var(--o-r-line_height-h3);        /* 响应式行高 */
   color: var(--o-color-info1);                   /* 标题文字 */
 }
 
 .body-text {
-  font-size: var(--o-font_size-text1);
-  line-height: var(--o-line_height-text1);
+  font-size: var(--o-r-font_size-text1);         /* 响应式字号 */
+  line-height: var(--o-r-line_height-text1);     /* 响应式行高 */
   color: var(--o-color-info2);                   /* 正文 */
 }
 
+.section-gap {
+  padding: var(--o-r-gap-6) var(--o-r-gap-4);   /* 响应式间距 */
+}
+
 .caption {
-  font-size: var(--o-font_size-tip1);
+  font-size: var(--o-r-font_size-tip1);
   color: var(--o-color-info3);                   /* 辅助信息 */
 }
 
@@ -457,11 +615,23 @@ transition: all var(--o-duration-m1) var(--o-easing-standard);
   border: 1px solid rgb(var(--o-grey-5));       /* ❌ 应使用 var(--o-color-control1) */
 }
 
-/* 不要硬编码值 */
+/* 不要硬编码字号/间距——应使用响应式 token */
+.title {
+  font-size: 22px;                              /* ❌ 应使用 var(--o-r-font_size-h3) */
+  line-height: 30px;                            /* ❌ 应使用 var(--o-r-line_height-h3) */
+}
 .card {
-  padding: 16px;                                /* ❌ 应使用 var(--o-gap-4) */
+  padding: 16px;                                /* ❌ 应使用 var(--o-r-gap-4) */
   border-radius: 12px;                          /* ❌ 应使用 var(--o-radius-m) */
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);  /* ❌ 应使用 var(--o-shadow-1) */
+}
+.section {
+  gap: 32px;                                    /* ❌ 应使用 var(--o-r-gap-6) */
+}
+
+/* 不要用静态 token 代替响应式 token（除非确实需要固定值） */
+.page-title {
+  font-size: var(--o-font_size-h1);             /* ⚠️ 应使用 var(--o-r-font_size-h1)，自动适配多端 */
 }
 ```
 
@@ -499,14 +669,27 @@ transition: all var(--o-duration-m1) var(--o-easing-standard);
 
 ### 间距
 
-| 场景 | Token | 值 |
-|------|-------|----|
-| 图标与文字间距 | `--o-gap-1` | 4px |
-| 组件内部元素 | `--o-gap-2` | 8px |
-| 相关元素间 | `--o-gap-3` | 12px |
-| 默认内边距 | `--o-gap-4` | 16px |
-| 区块间距 | `--o-gap-5` | 24px |
-| 页面布局 | `--o-gap-6` | 32px |
+> 页面级间距优先使用响应式 token `--o-r-gap-*`，组件内部固定间距可用静态 `--o-gap-*`。
+
+| 场景 | Token（响应式优先） | Desktop 值 |
+|------|-------------------|-----------|
+| 图标与文字间距 | `--o-r-gap-1` / `--o-gap-1` | 4px |
+| 组件内部元素 | `--o-r-gap-2` / `--o-gap-2` | 8px |
+| 相关元素间 | `--o-r-gap-3` | 12px |
+| 默认内边距 | `--o-r-gap-4` | 16px |
+| 区块间距 | `--o-r-gap-5` | 24px |
+| 页面布局 | `--o-r-gap-6` | 32px |
+
+### 字号
+
+> 字号和行高优先使用响应式 token `--o-r-font_size-*` / `--o-r-line_height-*`。
+
+| 场景 | Token（响应式优先） | Desktop 值 |
+|------|-------------------|-----------|
+| 页面大标题 | `--o-r-font_size-h1` + `--o-r-line_height-h1` | 32/44px |
+| 区块标题 | `--o-r-font_size-h3` + `--o-r-line_height-h3` | 22/30px |
+| 正文 | `--o-r-font_size-text1` + `--o-r-line_height-text1` | 16/24px |
+| 辅助/提示 | `--o-r-font_size-tip1` + `--o-r-line_height-tip1` | 14/22px |
 
 ---
 
@@ -518,18 +701,19 @@ transition: all var(--o-duration-m1) var(--o-easing-standard);
 
 ```
 1. 确认截取色值时的模式（light / dark）
-2. 确认项目使用的主题（e / a / k）
+2. 确认项目使用的主题（e / a / k / m / g / u）
 3. 在下方通用表或对应主题 reference 中查找色值
 4. 将写死的值替换为 var(--o-xxx)
+5. 字号/行高/间距优先替换为响应式 token var(--o-r-xxx)
 ```
 
 > 注意：同一 token 在 light 和 dark 模式下对应不同色值，确保对应正确的模式。
 
 ---
 
-### 通用色值反查（三套主题相同）
+### 通用色值反查（六套主题相同）
 
-以下 token 的色值在三套主题中**完全相同**，可直接反查。
+以下 token 的色值在六套主题中**完全相同**，可直接反查。
 
 #### 功能色（Light 模式）
 
@@ -571,20 +755,42 @@ transition: all var(--o-duration-m1) var(--o-easing-standard);
 | `rgba(0,0,0,0.25)` | `--o-color-control1` | 默认边框 |
 | `rgba(0,0,0,0.1)` | `--o-color-control4` | 禁用边框 |
 
-#### 间距（三套主题完全相同）
+#### 间距（六套主题完全相同）
 
-| 值 | Token |
-|----|-------|
-| `4px` | `--o-gap-1` |
-| `8px` | `--o-gap-2` |
-| `12px` | `--o-gap-3` |
-| `16px` | `--o-gap-4` |
-| `24px` | `--o-gap-5` |
-| `32px` | `--o-gap-6` |
-| `40px` | `--o-gap-7` |
-| `48px` | `--o-gap-8` |
-| `64px` | `--o-gap-9` |
-| `72px` | `--o-gap-10` |
+> 硬编码间距应优先替换为响应式 token `--o-r-gap-*`。
+
+| 硬编码值 | 响应式 Token（推荐） | 静态 Token |
+|---------|-------------------|-----------|
+| `4px` | `--o-r-gap-1` | `--o-gap-1` |
+| `8px` | `--o-r-gap-2` | `--o-gap-2` |
+| `12px` | `--o-r-gap-3` | `--o-gap-3` |
+| `16px` | `--o-r-gap-4` | `--o-gap-4` |
+| `24px` | `--o-r-gap-5` | `--o-gap-5` |
+| `32px` | `--o-r-gap-6` | `--o-gap-6` |
+| `40px` | `--o-r-gap-7` | `--o-gap-7` |
+| `48px` | `--o-r-gap-8` | `--o-gap-8` |
+| `64px` | `--o-r-gap-9` | `--o-gap-9` |
+| `72px` | `--o-r-gap-10` | `--o-gap-10` |
+
+> 注意：上表硬编码值对应的是 Desktop 断点（>1680px）的响应式值。小屏下响应式 token 会自动缩小。
+
+#### 字号 / 行高（六套主题完全相同）
+
+> 硬编码字号应优先替换为响应式 token `--o-r-font_size-*` + `--o-r-line_height-*`。
+
+| 硬编码 font-size | 响应式 Token（推荐） | 静态 Token |
+|-----------------|-------------------|-----------|
+| `56px` | `--o-r-font_size-display1` | `--o-font_size-display1` |
+| `48px` | `--o-r-font_size-display2` | `--o-font_size-display2` |
+| `40px` | `--o-r-font_size-display3` | `--o-font_size-display3` |
+| `32px` | `--o-r-font_size-h1` | `--o-font_size-h1` |
+| `24px` | `--o-r-font_size-h2` | `--o-font_size-h2` |
+| `22px` | `--o-r-font_size-h3` | `--o-font_size-h3` |
+| `20px` | `--o-r-font_size-h4` | `--o-font_size-h4` |
+| `18px` | `--o-r-font_size-text2` | `--o-font_size-text2` |
+| `16px` | `--o-r-font_size-text1` | `--o-font_size-text1` |
+| `14px` | `--o-r-font_size-tip1` | `--o-font_size-tip1` |
+| `12px` | `--o-r-font_size-tip2` | `--o-font_size-tip2` |
 
 ---
 
@@ -595,3 +801,6 @@ transition: all var(--o-duration-m1) var(--o-easing-standard);
 - **openEuler (e)**：`references/tokens-openeuler.md` → 末尾「反查速查表」
 - **Ascend (a)**：`references/tokens-ascend.md` → 末尾「反查速查表」
 - **Kunpeng (k)**：`references/tokens-kunpeng.md` → 末尾「反查速查表」
+- **Mindspore (m)**：`references/tokens-mindspore.md` → 末尾「反查速查表」
+- **openGauss (g)**：`references/tokens-opengauss.md` → 末尾「反查速查表」
+- **openUBMC (u)**：`references/tokens-openubmc.md` → 末尾「反查速查表」

@@ -283,9 +283,12 @@ TOKEN_MAPPING = {
 
     # 值映射 (Value -> Token)
     "value_mapping": {
-        "0 2px 24px rgba(var(--o-mixedgray-9), 0.15)": "shadow-2",
-        "0 3px 8px rgba(var(--o-mixedgray-9), 0.08)": "shadow-1",
-        "0 8px 40px rgba(var(--o-mixedgray-9), 0.1)": "shadow-3",
+        "0 2px 24px rgba(var(--o-grey-13), 0.15)": "shadow-2",
+        "0 3px 8px rgba(var(--o-grey-13), 0.08)": "shadow-1",
+        "0 8px 40px rgba(var(--o-grey-13), 0.1)": "shadow-3",
+        "0 2px 24px rgba(var(--o-grey-14), 0.15)": "shadow-2",
+        "0 3px 8px rgba(var(--o-grey-14), 0.08)": "shadow-1",
+        "0 8px 40px rgba(var(--o-grey-14), 0.1)": "shadow-3",
         "1000ms": "duration-xl",
         "12px": ['gap-3', 'font_size-tip2', 'radius-m', 'radius_control-m'],  # 多个匹配
         "14px": ['control_size-2xs', 'font_size-tip1'],  # 多个匹配
