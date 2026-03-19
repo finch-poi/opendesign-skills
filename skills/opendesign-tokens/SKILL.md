@@ -259,215 +259,7 @@ background-color: var(--o-color-white);
 
 ---
 
-## 2. 间距 Token（Gap）— 静态值
-
-> **页面级间距推荐使用响应式 token `--o-r-gap-*`**（见第 10 节），以下静态 token 适用于不随视口变化的固定间距场景。
-
-间距 token 适用于 `gap`、`padding`、`margin` 等属性。
-
-| Token | 值 | 用途 |
-|-------|----|------|
-| `--o-gap-1` | `4px` | 最小间距（紧凑元素内部） |
-| `--o-gap-2` | `8px` | 小间距（组件内部元素） |
-| `--o-gap-3` | `12px` | 中小间距（相关元素之间） |
-| `--o-gap-4` | `16px` | **常规间距（默认，最常用）** |
-| `--o-gap-5` | `24px` | 中等间距（区块之间） |
-| `--o-gap-6` | `32px` | 大间距（页面级布局） |
-| `--o-gap-7` | `40px` | 较大间距 |
-| `--o-gap-8` | `48px` | 很大间距 |
-| `--o-gap-9` | `64px` | 超大间距 |
-| `--o-gap-10` | `72px` | 最大间距 |
-
----
-
-## 3. 圆角 Token（Radius）
-
-### 内容圆角（用于卡片、容器等）
-
-| Token | 值 | 用途 |
-|-------|----|------|
-| `--o-radius-xs` | `4px` | 超小圆角 |
-| `--o-radius-s` | `8px` | 小圆角 |
-| `--o-radius-m` | `12px` | 中等圆角 |
-| `--o-radius-l` | `16px` | 大圆角 |
-| `--o-radius-xl` | `24px` | 超大圆角（一般用于卡片） |
-
-### 控件圆角（用于按钮、输入框等组件）
-
-| Token | 值 | 用途 |
-|-------|----|------|
-| `--o-radius_control-xs` | `4px` | 超小控件圆角 |
-| `--o-radius_control-s` | `8px` | 小控件圆角 |
-| `--o-radius_control-m` | `12px` | 中等控件圆角 |
-| `--o-radius_control-l` | `16px` | 大控件圆角 |
-
----
-
-## 4. 字体 Token（Font）— 静态值
-
-> **页面级文字推荐使用响应式 token `--o-r-font_size-*` / `--o-r-line_height-*`**（见第 10 节），以下静态 token 适用于不随视口变化的固定字号场景。
-
-### 字体大小（Font Size）
-
-| Token | 值 | 用途 |
-|-------|----|------|
-| `--o-font_size-display1` | `56px` | 一级数据展示 |
-| `--o-font_size-display2` | `48px` | 二级数据展示 |
-| `--o-font_size-display3` | `40px` | 三级数据展示 |
-| `--o-font_size-h1` | `32px` | 一级标题 |
-| `--o-font_size-h2` | `24px` | 二级标题 |
-| `--o-font_size-h3` | `22px` | 三级标题 |
-| `--o-font_size-h4` | `20px` | 四级标题 |
-| `--o-font_size-text2` | `18px` | 大号正文 |
-| `--o-font_size-text1` | `16px` | **常规正文（最常用）** |
-| `--o-font_size-tip1` | `14px` | 提示文本（小字） |
-| `--o-font_size-tip2` | `12px` | 辅助提示文本（最小） |
-
-### 行高（Line Height）
-
-| Token | 值 | 配套字号 |
-|-------|----|---------|
-| `--o-line_height-display1` | `80px` | display1 |
-| `--o-line_height-display2` | `64px` | display2 |
-| `--o-line_height-display3` | `56px` | display3 |
-| `--o-line_height-h1` | `44px` | h1 |
-| `--o-line_height-h2` | `32px` | h2 |
-| `--o-line_height-h3` | `30px` | h3 |
-| `--o-line_height-h4` | `28px` | h4 |
-| `--o-line_height-text2` | `26px` | text2 |
-| `--o-line_height-text1` | `24px` | text1 |
-| `--o-line_height-tip1` | `22px` | tip1 |
-| `--o-line_height-tip2` | `18px` | tip2 |
-
-**字体和行高应配套使用：**
-```css
-/* 响应式（推荐，自动适配多端） */
-.title {
-  font-size: var(--o-r-font_size-h3);
-  line-height: var(--o-r-line_height-h3);
-}
-
-/* 静态（仅在需要固定值时使用） */
-.fixed-label {
-  font-size: var(--o-font_size-tip1);
-  line-height: var(--o-line_height-tip1);
-}
-```
-
----
-
-## 5. 阴影 Token（Shadow）
-
-| Token | 值 | 用途 |
-|-------|----|------|
-| `--o-shadow-1` | `0 3px 8px rgba(..., 0.08)` | 卡片、小弹窗、楼层阴影 |
-| `--o-shadow-2` | `0 2px 24px rgba(..., 0.15)` | 卡片悬浮阴影 |
-| `--o-shadow-3` | `0 8px 40px rgba(..., 0.1)` | 大弹窗、抽屉阴影 |
-
----
-
-## 6. 动画 Token（Animation）
-
-### 持续时间（Duration）
-
-| Token | 值 | 用途 |
-|-------|----|------|
-| `--o-duration-s` | `200ms` | 退出屏幕的动画 |
-| `--o-duration-m1` | `250ms` | standard-in 曲线进入动画 |
-| `--o-duration-m2` | `300ms` | standard 曲线开始/结束动画 |
-| `--o-duration-m3` | `400ms` | emphasized-in 曲线进入动画 |
-| `--o-duration-l` | `500ms` | emphasized 曲线开始/结束动画 |
-| `--o-duration-xl` | `1000ms` | 轮播切换动画 |
-
-### 缓动曲线（Easing）
-
-| Token | 值 | 用途 |
-|-------|----|------|
-| `--o-easing-linear` | `cubic-bezier(0, 0, 1, 1)` | 线性 |
-| `--o-easing-standard` | `cubic-bezier(0.2, 0, 0, 1)` | 标准（组件动画，**推荐**） |
-| `--o-easing-standard-in` | `cubic-bezier(0, 0, 0, 1)` | 标准进入 |
-| `--o-easing-standard-out` | `cubic-bezier(0.3, 0, 1, 1)` | 标准退出 |
-| `--o-easing-emphasized` | `cubic-bezier(0.2, 0, 0, 1)` | 强调（大卡片/场景切换） |
-| `--o-easing-emphasized-in` | `cubic-bezier(0.3, 0, 0.8, 0.15)` | 强调进入 |
-| `--o-easing-emphasized-out` | `cubic-bezier(0.05, 0.7, 0.1, 1)` | 强调退出 |
-
-```css
-/* 推荐的动画写法 */
-transition: all var(--o-duration-m1) var(--o-easing-standard);
-```
-
----
-
-## 7. 组件尺寸 Token（Control Size）
-
-| Token | 值 | 用途 |
-|-------|----|------|
-| `--o-control_size-2xs` | `14px` | 超超小控件 |
-| `--o-control_size-xs` | `16px` | 超小控件 |
-| `--o-control_size-s` | `24px` | 小控件 |
-| `--o-control_size-m` | `32px` | 中等控件 |
-| `--o-control_size-l` | `40px` | 大控件 |
-| `--o-control_size-xl` | `48px` | 超大控件 |
-| `--o-control_size-2xl` | `56px` | 超超大控件 |
-
----
-
-## 8. 图标尺寸 Token（Icon Size）
-
-### 独立图标
-
-| Token | 值 |
-|-------|----|
-| `--o-icon_size-xs` | `16px` |
-| `--o-icon_size-s` | `20px` |
-| `--o-icon_size-m` | `24px` |
-| `--o-icon_size-l` | `32px` |
-| `--o-icon_size-xl` | `40px` |
-| `--o-icon_size-2xl` | `48px` |
-| `--o-icon_size-3xl` | `56px` |
-| `--o-icon_size-4xl` | `64px` |
-
-### 控件内图标（组件使用）
-
-| Token | 值 |
-|-------|----|
-| `--o-icon_size_control-xs` | `16px` |
-| `--o-icon_size_control-s` | `20px` |
-| `--o-icon_size_control-m` | `24px` |
-| `--o-icon_size_control-l` | `32px` |
-| `--o-icon_size_control-xl` | `40px` |
-
----
-
-## 9. 调色板 Token（参考，不推荐直接使用）
-
-调色板 token 是原始颜色值，为语义 token 提供基础，**不应在业务代码中直接使用**。
-
-每个色系均有 10 个色阶（1=最浅，10=最深），light/dark 模式下颜色相反。
-
-| 色系 | Token 前缀 | 主色代表 | 用途 |
-|------|-----------|---------|------|
-| 品牌蓝 | `--o-kleinblue-*` | `#002FA7` | 主色/链接色 |
-| 绿色 | `--o-green-*` | `#0BB151` | 成功色 |
-| 橘红色 | `--o-orange-*` | `#FA7305` | 告警色 |
-| 红色 | `--o-red-*` | `#E60012` | 危险色 |
-| 黄色 | `--o-yellow-*` | `#F0BC06` | 辅助色 |
-| 琥珀色 | `--o-amber-*` | `#E78900` | 辅助色 |
-| 黄绿色 | `--o-lime-*` | `#A7C900` | 辅助色 |
-| 浅绿色 | `--o-light-green-*` | `#70B31B` | 辅助色 |
-| 蓝绿色 | `--o-teal-*` | `#00B385` | 辅助色 |
-| 青色 | `--o-cyan-*` | `#00A7B3` | 辅助色 |
-| 浅蓝色 | `--o-light-blue-*` | `#009CE5` | 辅助色 |
-| 蓝色 | `--o-blue-*` | `#1075E8` | 辅助色 |
-| 紫罗兰 | `--o-violet-*` | `#5E12CB` | 辅助色 |
-| 紫色 | `--o-purple-*` | `#8702B3` | 辅助色 |
-| 粉红色 | `--o-pink-*` | `#E00070` | 辅助色 |
-| 白色 | `--o-white` | `#FFFFFF` | 基础 |
-| 黑色 | `--o-black` | `#000000` | 基础 |
-
----
-
-## 10. 响应式 Token（Responsive）
+## 2. 响应式 Token（Responsive）— 页面级首选
 
 > **优先使用响应式 Token**。对于字号、行高、间距，响应式变量（`--o-r-*`）会根据视口自动缩放，是纠正硬编码值的首选。静态 Token（`--o-font_size-*`、`--o-gap-*`）仅在需要固定不变的场景下使用。
 
@@ -525,7 +317,9 @@ transition: all var(--o-duration-m1) var(--o-easing-standard);
 
 ---
 
-## 11. 栅格系统 Token（Grid）
+## 3. 栅格系统 Token（Grid）— 页面级模块布局
+
+> **栅格系统用于页面级布局**，是控制页面各模块在水平方向（X 轴）上宽度与间距的核心配置形式。多栏布局、侧边栏 + 主内容区、模块间的水平分割均应优先使用栅格变量，而非手动写死宽度或 padding。
 
 24 列响应式栅格，共 6 个断点。引入主题 CSS 后自动生效。
 
@@ -546,6 +340,214 @@ transition: all var(--o-duration-m1) var(--o-easing-standard);
 .sidebar { width: var(--o-r-grid-6); margin-right: var(--o-r-grid-column-gutter); }
 .content { width: var(--o-r-grid-18); }
 ```
+
+---
+
+## 4. 间距 Token（Gap）— 静态值
+
+> **页面级间距推荐使用响应式 token `--o-r-gap-*`**（见第 2 节），以下静态 token 适用于不随视口变化的固定间距场景。
+
+间距 token 适用于 `gap`、`padding`、`margin` 等属性。
+
+| Token | 值 | 用途 |
+|-------|----|------|
+| `--o-gap-1` | `4px` | 最小间距（紧凑元素内部） |
+| `--o-gap-2` | `8px` | 小间距（组件内部元素） |
+| `--o-gap-3` | `12px` | 中小间距（相关元素之间） |
+| `--o-gap-4` | `16px` | **常规间距（默认，最常用）** |
+| `--o-gap-5` | `24px` | 中等间距（区块之间） |
+| `--o-gap-6` | `32px` | 大间距（页面级布局） |
+| `--o-gap-7` | `40px` | 较大间距 |
+| `--o-gap-8` | `48px` | 很大间距 |
+| `--o-gap-9` | `64px` | 超大间距 |
+| `--o-gap-10` | `72px` | 最大间距 |
+
+---
+
+## 5. 圆角 Token（Radius）
+
+### 内容圆角（用于卡片、容器等）
+
+| Token | 值 | 用途 |
+|-------|----|------|
+| `--o-radius-xs` | `4px` | 超小圆角 |
+| `--o-radius-s` | `8px` | 小圆角 |
+| `--o-radius-m` | `12px` | 中等圆角 |
+| `--o-radius-l` | `16px` | 大圆角 |
+| `--o-radius-xl` | `24px` | 超大圆角（一般用于卡片） |
+
+### 控件圆角（用于按钮、输入框等组件）
+
+| Token | 值 | 用途 |
+|-------|----|------|
+| `--o-radius_control-xs` | `4px` | 超小控件圆角 |
+| `--o-radius_control-s` | `8px` | 小控件圆角 |
+| `--o-radius_control-m` | `12px` | 中等控件圆角 |
+| `--o-radius_control-l` | `16px` | 大控件圆角 |
+
+---
+
+## 6. 字体 Token（Font）— 静态值
+
+> **页面级文字推荐使用响应式 token `--o-r-font_size-*` / `--o-r-line_height-*`**（见第 2 节），以下静态 token 适用于不随视口变化的固定字号场景。
+
+### 字体大小（Font Size）
+
+| Token | 值 | 用途 |
+|-------|----|------|
+| `--o-font_size-display1` | `56px` | 一级数据展示 |
+| `--o-font_size-display2` | `48px` | 二级数据展示 |
+| `--o-font_size-display3` | `40px` | 三级数据展示 |
+| `--o-font_size-h1` | `32px` | 一级标题 |
+| `--o-font_size-h2` | `24px` | 二级标题 |
+| `--o-font_size-h3` | `22px` | 三级标题 |
+| `--o-font_size-h4` | `20px` | 四级标题 |
+| `--o-font_size-text2` | `18px` | 大号正文 |
+| `--o-font_size-text1` | `16px` | **常规正文（最常用）** |
+| `--o-font_size-tip1` | `14px` | 提示文本（小字） |
+| `--o-font_size-tip2` | `12px` | 辅助提示文本（最小） |
+
+### 行高（Line Height）
+
+| Token | 值 | 配套字号 |
+|-------|----|---------|
+| `--o-line_height-display1` | `80px` | display1 |
+| `--o-line_height-display2` | `64px` | display2 |
+| `--o-line_height-display3` | `56px` | display3 |
+| `--o-line_height-h1` | `44px` | h1 |
+| `--o-line_height-h2` | `32px` | h2 |
+| `--o-line_height-h3` | `30px` | h3 |
+| `--o-line_height-h4` | `28px` | h4 |
+| `--o-line_height-text2` | `26px` | text2 |
+| `--o-line_height-text1` | `24px` | text1 |
+| `--o-line_height-tip1` | `22px` | tip1 |
+| `--o-line_height-tip2` | `18px` | tip2 |
+
+**字体和行高应配套使用：**
+```css
+/* 响应式（推荐，自动适配多端） */
+.title {
+  font-size: var(--o-r-font_size-h3);
+  line-height: var(--o-r-line_height-h3);
+}
+
+/* 静态（仅在需要固定值时使用） */
+.fixed-label {
+  font-size: var(--o-font_size-tip1);
+  line-height: var(--o-line_height-tip1);
+}
+```
+
+---
+
+## 7. 阴影 Token（Shadow）
+
+| Token | 值 | 用途 |
+|-------|----|------|
+| `--o-shadow-1` | `0 3px 8px rgba(..., 0.08)` | 卡片、小弹窗、楼层阴影 |
+| `--o-shadow-2` | `0 2px 24px rgba(..., 0.15)` | 卡片悬浮阴影 |
+| `--o-shadow-3` | `0 8px 40px rgba(..., 0.1)` | 大弹窗、抽屉阴影 |
+
+---
+
+## 8. 动画 Token（Animation）
+
+### 持续时间（Duration）
+
+| Token | 值 | 用途 |
+|-------|----|------|
+| `--o-duration-s` | `200ms` | 退出屏幕的动画 |
+| `--o-duration-m1` | `250ms` | standard-in 曲线进入动画 |
+| `--o-duration-m2` | `300ms` | standard 曲线开始/结束动画 |
+| `--o-duration-m3` | `400ms` | emphasized-in 曲线进入动画 |
+| `--o-duration-l` | `500ms` | emphasized 曲线开始/结束动画 |
+| `--o-duration-xl` | `1000ms` | 轮播切换动画 |
+
+### 缓动曲线（Easing）
+
+| Token | 值 | 用途 |
+|-------|----|------|
+| `--o-easing-linear` | `cubic-bezier(0, 0, 1, 1)` | 线性 |
+| `--o-easing-standard` | `cubic-bezier(0.2, 0, 0, 1)` | 标准（组件动画，**推荐**） |
+| `--o-easing-standard-in` | `cubic-bezier(0, 0, 0, 1)` | 标准进入 |
+| `--o-easing-standard-out` | `cubic-bezier(0.3, 0, 1, 1)` | 标准退出 |
+| `--o-easing-emphasized` | `cubic-bezier(0.2, 0, 0, 1)` | 强调（大卡片/场景切换） |
+| `--o-easing-emphasized-in` | `cubic-bezier(0.3, 0, 0.8, 0.15)` | 强调进入 |
+| `--o-easing-emphasized-out` | `cubic-bezier(0.05, 0.7, 0.1, 1)` | 强调退出 |
+
+```css
+/* 推荐的动画写法 */
+transition: all var(--o-duration-m1) var(--o-easing-standard);
+```
+
+---
+
+## 9. 组件尺寸 Token（Control Size）
+
+| Token | 值 | 用途 |
+|-------|----|------|
+| `--o-control_size-2xs` | `14px` | 超超小控件 |
+| `--o-control_size-xs` | `16px` | 超小控件 |
+| `--o-control_size-s` | `24px` | 小控件 |
+| `--o-control_size-m` | `32px` | 中等控件 |
+| `--o-control_size-l` | `40px` | 大控件 |
+| `--o-control_size-xl` | `48px` | 超大控件 |
+| `--o-control_size-2xl` | `56px` | 超超大控件 |
+
+---
+
+## 10. 图标尺寸 Token（Icon Size）
+
+### 独立图标
+
+| Token | 值 |
+|-------|----|
+| `--o-icon_size-xs` | `16px` |
+| `--o-icon_size-s` | `20px` |
+| `--o-icon_size-m` | `24px` |
+| `--o-icon_size-l` | `32px` |
+| `--o-icon_size-xl` | `40px` |
+| `--o-icon_size-2xl` | `48px` |
+| `--o-icon_size-3xl` | `56px` |
+| `--o-icon_size-4xl` | `64px` |
+
+### 控件内图标（组件使用）
+
+| Token | 值 |
+|-------|----|
+| `--o-icon_size_control-xs` | `16px` |
+| `--o-icon_size_control-s` | `20px` |
+| `--o-icon_size_control-m` | `24px` |
+| `--o-icon_size_control-l` | `32px` |
+| `--o-icon_size_control-xl` | `40px` |
+
+---
+
+## 11. 调色板 Token（参考，不推荐直接使用）
+
+调色板 token 是原始颜色值，为语义 token 提供基础，**不应在业务代码中直接使用**。
+
+每个色系均有 10 个色阶（1=最浅，10=最深），light/dark 模式下颜色相反。
+
+| 色系 | Token 前缀 | 主色代表 | 用途 |
+|------|-----------|---------|------|
+| 品牌蓝 | `--o-kleinblue-*` | `#002FA7` | 主色/链接色 |
+| 绿色 | `--o-green-*` | `#0BB151` | 成功色 |
+| 橘红色 | `--o-orange-*` | `#FA7305` | 告警色 |
+| 红色 | `--o-red-*` | `#E60012` | 危险色 |
+| 黄色 | `--o-yellow-*` | `#F0BC06` | 辅助色 |
+| 琥珀色 | `--o-amber-*` | `#E78900` | 辅助色 |
+| 黄绿色 | `--o-lime-*` | `#A7C900` | 辅助色 |
+| 浅绿色 | `--o-light-green-*` | `#70B31B` | 辅助色 |
+| 蓝绿色 | `--o-teal-*` | `#00B385` | 辅助色 |
+| 青色 | `--o-cyan-*` | `#00A7B3` | 辅助色 |
+| 浅蓝色 | `--o-light-blue-*` | `#009CE5` | 辅助色 |
+| 蓝色 | `--o-blue-*` | `#1075E8` | 辅助色 |
+| 紫罗兰 | `--o-violet-*` | `#5E12CB` | 辅助色 |
+| 紫色 | `--o-purple-*` | `#8702B3` | 辅助色 |
+| 粉红色 | `--o-pink-*` | `#E00070` | 辅助色 |
+| 白色 | `--o-white` | `#FFFFFF` | 基础 |
+| 黑色 | `--o-black` | `#000000` | 基础 |
 
 ---
 
