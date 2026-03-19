@@ -172,6 +172,238 @@ import { OButton, OInput, OCard } from '@opensig/opendesign';
 
 ---
 
+## Pixso MCP 设计稿识别指南
+
+> 通过 Pixso MCP 读取设计稿节点时，使用本节将图层数据映射到 OpenDesign 组件，再调用该组件的 `references/{name}.md` 获取完整 API。
+
+### 匹配流程
+
+```
+Pixso 图层信息（节点类型 / 图层名称 / 视觉属性 / 布局结构）
+  ↓
+① 检查图层/组件名称 → 「名称关键词表」
+  ↓ 未命中
+② 分析视觉结构特征 → 「视觉特征速查表」
+  ↓ 有多个候选
+③ 使用「歧义辨别规则」确定唯一组件
+  ↓
+④ 提取 Pixso 视觉属性 → 「属性映射表」转为 Props
+  ↓
+⑤ 调用 references/{name}.md 获取完整代码模板
+```
+
+---
+
+### ① 图层名称关键词识别
+
+Pixso 图层或组件实例名通常含有以下关键词，可直接映射：
+
+| 名称含有（不区分大小写） | 优先匹配组件 | Reference |
+|----------------------|------------|-----------|
+| button / btn / 按钮 | OButton | references/button.md |
+| input / 输入框 / text-field | OInput | references/input.md |
+| textarea / 文本域 / 多行输入 | OTextarea | references/textarea.md |
+| input-number / 数字输入 | OInputNumber | references/input-number.md |
+| ip-input / ip输入 | OIpInput | references/ip-input.md |
+| select / 下拉 / dropdown-select | OSelect | references/select.md |
+| cascader / 级联 | OCascader | references/cascader.md |
+| checkbox / 多选框 / 复选框 | OCheckbox | references/checkbox.md |
+| radio / 单选框 | ORadio | references/radio.md |
+| switch / 开关 | OSwitch | references/switch.md |
+| slider / 滑块 | OSlider | references/slider.md |
+| toggle / 选择块 | OToggle | references/toggle.md |
+| tag / 标签 | OTag | references/tag.md |
+| badge / 徽标 / 角标 | OBadge | references/badge.md |
+| progress / 进度条 / 进度环 | OProgress | references/progress.md |
+| rate / 评分 / 星级 | ORate | references/rate.md |
+| result / 结果页 | OResult | references/result.md |
+| skeleton / 骨架屏 / 占位 | OSkeleton | references/skeleton.md |
+| loading / 加载 | OLoading | references/loading.md |
+| message / 消息 / 提示条 | OMessage | references/message.md |
+| toast / 轻提示 / 浮动提示 | OToast | references/toast.md |
+| dialog / 弹窗 / modal | ODialog | references/dialog.md |
+| popover / 气泡 | OPopover | references/popover.md |
+| popup / 弹出层 | OPopup | references/popup.md |
+| dropdown / 下拉菜单 | ODropdown | references/dropdown.md |
+| layer / 浮层 | OLayer | references/layer.md |
+| card / 卡片 | OCard | references/card.md |
+| carousel / 幻灯片 / 轮播 | OCarousel | references/carousel.md |
+| collapse / 折叠 | OCollapse | references/collapse.md |
+| menu / 菜单 / sidebar-nav | OMenu | references/menu.md |
+| tab / 标签页 | OTab | references/tab.md |
+| step / 步骤条 | OStep | references/step.md |
+| breadcrumb / 面包屑 | OBreadcrumb | references/breadcrumb.md |
+| anchor / 锚点 | OAnchor | references/anchor.md |
+| pagination / 分页 | OPagination | references/pagination.md |
+| figure / 图片 / image | OFigure | references/figure.md |
+| icon / 图标 | OIcon | references/icon.md |
+| link / 链接 | OLink | references/link.md |
+| divider / 分割线 | ODivider | references/divider.md |
+| upload / 上传 | OUpload | references/upload.md |
+| scrollbar / scroller / 滚动 | OScrollbar | references/scrollbar.md |
+| virtual-list / 虚拟列表 | OVirtualList | references/virtual-list.md |
+| data-table / 表格 / table | ODataTable | references/data-table.md |
+| row / col / grid / 栅格 | OGrid/ORow/OCol | references/grid.md |
+| form / 表单 | OForm | references/form.md |
+
+---
+
+### ② 视觉结构特征速查
+
+名称无法匹配时，根据图层的**几何形状 + 内部内容 + 布局方向**判断：
+
+#### 交互控件
+
+| 视觉特征 | 组件 | Reference |
+|---------|------|-----------|
+| 圆角矩形 + 文本，有填充背景或描边，可点击触发操作 | OButton | references/button.md |
+| 横向矩形描边框 + 内部文本/占位符，可自由输入字符 | OInput | references/input.md |
+| 横向矩形描边框 + 内部文本 + **右侧固定 chevron 下箭头** | OSelect | references/select.md |
+| 多行可输入区域，有描边，支持垂直拉伸（或固定高度多行） | OTextarea | references/textarea.md |
+| 数字输入框 + **左右（或上下）加减控制按钮** | OInputNumber | references/input-number.md |
+| **四段**横向输入框，各段接受 0-255，段间有圆点 `.` 分隔 | OIpInput | references/ip-input.md |
+| 小**方形**框（或勾选图标）+ 右侧标签文本 | OCheckbox | references/checkbox.md |
+| 小**圆形**框（有内圆点状态）+ 右侧标签文本 | ORadio | references/radio.md |
+| 横向**胶囊形**轨道 + 圆形滑块（开/关两态，无数值） | OSwitch | references/switch.md |
+| 横向**长条**轨道 + 可拖动圆形滑块（有数值刻度） | OSlider | references/slider.md |
+| 矩形/胶囊形区域 + 文本，**可切换选中/未选中**两态 | OToggle | references/toggle.md |
+| 多层**逐级展开**的下拉面板（选择时触发下一级） | OCascader | references/cascader.md |
+
+#### 状态 / 反馈类
+
+| 视觉特征 | 组件 | Reference |
+|---------|------|-----------|
+| 小圆角矩形或胶囊 + **短文本**，**内嵌在内容流**中 | OTag | references/tag.md |
+| 悬浮在其他元素**右上角/角落**的小圆点或数字气泡 | OBadge | references/badge.md |
+| 横向**细线进度条**（有背景轨道，只读展示百分比） | OProgress(line) | references/progress.md |
+| **圆形进度环**（只读展示百分比） | OProgress(circle) | references/progress.md |
+| 一排 ★ 星形图标（部分填充或半填充） | ORate | references/rate.md |
+| 页面**居中大图标** + 粗标题 + 描述文字（成功/警告/错误状态页） | OResult | references/result.md |
+| 多个**灰色矩形占位块**，模拟文字/图片加载中 | OSkeleton | references/skeleton.md |
+| 旋转动画图标或全屏蒙层 + "加载中" 文字 | OLoading | references/loading.md |
+| 嵌入页面内容流的横向条形，含图标 + 文字（**不自动消失**） | OMessage | references/message.md |
+| **浮于页面上层**底部或顶部出现的短提示条，带消失动画 | OToast | references/toast.md |
+
+#### 导航 / 结构类
+
+| 视觉特征 | 组件 | Reference |
+|---------|------|-----------|
+| 横向 文本 > 文本 > 文本 链式结构（箭头/斜线分隔） | OBreadcrumb | references/breadcrumb.md |
+| 垂直侧边导航，层级**缩进**，有折叠子项和选中高亮 | OMenu | references/menu.md |
+| 顶部横向**标签行** + 下方**可切换内容区** | OTab | references/tab.md |
+| 横向数字/图标**序列 + 连接线**（流程步骤） | OStep | references/step.md |
+| 垂直排列的**锚点链接列表**，通常悬浮在页面侧边 | OAnchor | references/anchor.md |
+| 横向**数字页码按钮组**（含上下页、跳转输入） | OPagination | references/pagination.md |
+
+#### 容器 / 叠加层类
+
+| 视觉特征 | 组件 | Reference |
+|---------|------|-----------|
+| 圆角矩形卡片，内部有**封面图/图标 + 标题 + 描述 + 操作**结构 | OCard | references/card.md |
+| **居中弹窗 + 半透明全屏蒙层** + 标题栏 + 关闭按钮 | ODialog | references/dialog.md |
+| 附着触发元素的小弹框，**有指向箭头** | OPopover | references/popover.md |
+| 贴合触发元素展开的菜单面板，**无指向箭头** | ODropdown | references/dropdown.md |
+| 通用弹出层容器（自身无样式，定位在触发元素附近） | OPopup | references/popup.md |
+| 通用蒙层/全屏浮层容器（无固定内部结构） | OLayer | references/layer.md |
+| 可展开/收起的内容面板，**标题区可点击切换** | OCollapse | references/collapse.md |
+| 横向或垂直**弹性列**布局容器（flex 排列子元素） | OGrid/ORow/OCol | references/grid.md |
+| 表单容器，内部为**标签 + 控件**成对排列 | OForm | references/form.md |
+
+#### 媒体 / 其他
+
+| 视觉特征 | 组件 | Reference |
+|---------|------|-----------|
+| 图片容器（固定宽高比矩形，hover 可预览/放大） | OFigure | references/figure.md |
+| **多张图片/内容轮播**，有指示点和左右切换箭头 | OCarousel | references/carousel.md |
+| **虚线边框**区域 + 上传图标 + 提示文字 | OUpload | references/upload.md |
+| 长列表容器，有**自定义滚动条**样式 | OScrollbar/OScroller | references/scrollbar.md |
+| 多行多列**表格**（有表头，支持排序/筛选/多选） | ODataTable | references/data-table.md |
+| 纯**文字 + 下划线**，点击跳转，无背景无边框 | OLink | references/link.md |
+| 单个 SVG 图标元素 | OIcon | references/icon.md |
+| 水平或垂直**细线分割线** | ODivider | references/divider.md |
+| 超长列表，**可见区域之外的列表项不渲染** | OVirtualList | references/virtual-list.md |
+
+---
+
+### ③ 常见歧义辨别规则
+
+| 歧义场景 | 判断依据 |
+|---------|---------|
+| **OButton vs OLink** | Button 有背景色或描边矩形框；Link 是纯文字（可选下划线），无任何背景/边框 |
+| **OButton vs OTag** | Button 高度通常 ≥32px，触发主要操作；Tag 高度通常 ≤24px，标注状态或分类，不触发主操作 |
+| **OTag vs OBadge** | Tag 独立出现在文本流/列表中；Badge **叠加覆盖**在其他元素的角落（有绝对定位偏移） |
+| **OSelect vs OInput** | Select 右侧有**固定**的 chevron 下箭头，点击展开选项列表；Input 无箭头，可自由键入 |
+| **OSelect vs ODropdown** | Select 的触发器固定为输入框样式；Dropdown 的触发器可以是任意内容（按钮、图标等） |
+| **ODropdown vs OPopover** | Dropdown 内容是菜单选项列表，无指向箭头；Popover 内容自由，有指向触发元素的小三角箭头 |
+| **OMessage vs OToast** | Message 嵌入页面内容流（inline），**不自动消失**；Toast 浮于页面上层，有**自动消失**计时 |
+| **ODialog vs OLayer** | Dialog 有固定的标题栏 + 关闭按钮 + 底部操作区三段结构；Layer 是无预设结构的通用浮层 |
+| **OCollapse vs OTab** | Collapse 展开时内容在标题下方**纵向展开**，多项可同时展开；Tab 横向切换，**同时只显示一个面板** |
+| **OProgress vs OSlider** | Progress 只展示进度（**只读，无交互手柄**）；Slider 有可拖动的圆形滑块（**可交互**） |
+| **OSwitch vs OCheckbox** | Switch 是**胶囊形**开关，表达开/关整体状态；Checkbox 是**方形**，用于列表多选场景 |
+| **OCard vs 普通容器** | OCard 有封面图/图标、标题、内容区的**固定内部结构**；普通 div 容器无内部分区约定 |
+
+---
+
+### ④ Pixso 视觉属性 → Props 映射
+
+#### 颜色 / 主题 (`color` + `variant`)
+
+| Pixso 视觉表现 | prop | 值 |
+|--------------|------|----|
+| 使用品牌主色（蓝/紫等）**填充背景** | `color` + `variant` | `color="brand"` `variant="solid"` |
+| 使用品牌主色**描边**，内部透明 | `color` + `variant` | `color="brand"` `variant="outline"` |
+| 无填充无描边，**纯文字**品牌色 | `color` + `variant` | `color="brand"` `variant="text"` |
+| 灰色/中性色填充或描边 | `color` | `color="normal"` |
+| 绿色系 | `color` | `color="success"` |
+| 橙色/黄色系 | `color` | `color="warning"` |
+| 红色系 | `color` | `color="danger"` |
+| 蓝色系（非品牌色时） | `color` | `color="primary"` |
+
+#### 尺寸 (`size`)
+
+| Pixso 元素高度（参考值） | `size` 值 |
+|----------------------|----------|
+| ≈24px | `"small"` |
+| ≈32px | `"medium"`（默认，可不传） |
+| ≈40px | `"large"` |
+
+#### 圆角 (`round`)
+
+| Pixso 圆角特征 | `round` 值 |
+|--------------|-----------|
+| 圆角 = 高度的一半（完全圆角胶囊） | `round="pill"` |
+| 具体数值（如 8px、12px） | `round="8px"` / `round="12px"` |
+| 标准小圆角（4px 以内） | 通常为默认值，无需传 |
+
+#### 状态
+
+| Pixso 视觉表现 | prop |
+|--------------|------|
+| 降低透明度（opacity ≈ 0.4），不可交互 | `disabled` |
+| 含旋转动画图标 | `loading` |
+
+---
+
+### ⑤ 完整匹配示例
+
+**Pixso 图层信息**：圆角矩形（border-radius: 20px，高度: 40px），品牌蓝填充背景，白色文字"提交"，右侧有一个 SVG 图标图层。
+
+**匹配过程**：
+1. 图层名含 "button" → **OButton**
+2. 视觉特征：圆角矩形 + 文字 + 填充 → 确认 OButton
+3. 视觉属性映射：品牌蓝填充 → `color="brand" variant="solid"`；高度 40px → `size="large"`；圆角 20px = 高度一半 → `round="pill"`；右侧图标 → `#suffix` 插槽
+4. 调用 `references/button.md`
+
+**生成代码**：
+```vue
+<OButton color="brand" variant="solid" size="large" round="pill">
+  提交
+  <template #suffix><OIconXxx /></template>
+</OButton>
+```
+
+---
+
 ## OAnchor
 
 **`size`** 属性
