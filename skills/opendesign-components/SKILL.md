@@ -350,14 +350,16 @@ Pixso 图层或组件实例名通常含有以下关键词，可直接映射：
 
 | Pixso 视觉表现 | prop | 值 |
 |--------------|------|----|
-| 使用品牌主色（蓝/紫等）**填充背景** | `color` + `variant` | `color="brand"` `variant="solid"` |
-| 使用品牌主色**描边**，内部透明 | `color` + `variant` | `color="brand"` `variant="outline"` |
-| 无填充无描边，**纯文字**品牌色 | `color` + `variant` | `color="brand"` `variant="text"` |
+| 蓝色**实心填充背景**，白色文字 | `color` + `variant` | `color="primary"` `variant="solid"` |
+| 蓝色**描边**，内部透明，蓝色文字 | `color` + `variant` | `color="primary"` `variant="outline"` |
+| 无填充无描边，**纯文字**蓝色 | `color` + `variant` | `color="primary"` `variant="text"` |
+| **渐变**填充背景（品牌专属渐变色） | `color` + `variant` | `color="brand"` `variant="solid"` |
 | 灰色/中性色填充或描边 | `color` | `color="normal"` |
 | 绿色系 | `color` | `color="success"` |
 | 橙色/黄色系 | `color` | `color="warning"` |
 | 红色系 | `color` | `color="danger"` |
-| 蓝色系（非品牌色时） | `color` | `color="primary"` |
+
+> ⚠️ `color="brand"` **仅用于渐变 solid 按钮**（`--o-color-main2` 渐变背景），普通蓝色按钮（solid/outline/text）一律用 `color="primary"`。
 
 #### 尺寸 (`size`)
 
@@ -882,26 +884,45 @@ const linkConfig = {
 - `layout`：`h`（水平）、`v`（垂直）、`inline`（行内）
 - `labelAlign`：`top`/`center`/`bottom`
 - `labelJustify`：`left`/`center`/`right`
-- `labelWidth`：标签宽度
+- `labelWidth`：标签宽度（PC 水平布局推荐 `96px`）
 - `hasRequired`：显示必填星号
 
 **支持的表单项**：`OInput`、`OInputNumber`、`OTextarea`、`OSelect`、`OCheckboxGroup`、`ORadioGroup`、`OUpload`
 
+### 多列表单栅格布局规则
+
+> 多列表单中，每个 OFormItem 的宽度须对齐到栅格列（参见 opendesign-tokens skill 第 3 节「表单组件栅格规则」）。
+
+| 断点 | 每行项数 | 每项宽度 | layout | labelWidth |
+|------|---------|---------|--------|-----------|
+| >1200px（桌面/笔记本） | 4 项/行 | `var(--o-r-grid-6)` | `h` | `96px` |
+| 841–1200px（平板横屏） | 3 项/行 | `var(--o-r-grid-4)` | `h` | `96px` |
+| ≤840px（手机） | 1 项/行 | 全宽 | `v` | — |
+
+行间距：`32px`（>840px 水平布局）/ `12px`（≤840px 堆叠布局）；水平模式下 Hint 在输入框右侧留 24px。
+
 ### 示例代码
 
 ```vue
-<OForm layout="h" has-required>
-  <OFormItem label="用户名" required>
-    <OInput v-model="form.name" />
-  </OFormItem>
-  <OFormItem label="类型">
-    <OSelect v-model="form.type">
-      <OOption v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-    </OSelect>
-  </OFormItem>
-  <OFormItem label="描述">
-    <OTextarea v-model="form.desc" />
-  </OFormItem>
+<!-- 桌面端 4 列表单（每项 grid-6，水平标签） -->
+<OForm layout="h" label-width="96px" has-required>
+  <div style="display:flex; flex-wrap:wrap; gap:32px var(--o-r-grid-column-gutter);">
+    <OFormItem label="用户名" required style="width:var(--o-r-grid-6);">
+      <OInput v-model="form.name" />
+    </OFormItem>
+    <OFormItem label="类型" style="width:var(--o-r-grid-6);">
+      <OSelect v-model="form.type">
+        <OOption v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+      </OSelect>
+    </OFormItem>
+    <OFormItem label="描述" style="width:var(--o-r-grid-6);">
+      <OInput v-model="form.desc" />
+    </OFormItem>
+    <!-- 宽项（文本域）独占一行 -->
+    <OFormItem label="备注" style="width:100%;">
+      <OTextarea v-model="form.remark" />
+    </OFormItem>
+  </div>
 </OForm>
 ```
 
