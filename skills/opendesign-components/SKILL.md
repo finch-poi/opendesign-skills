@@ -121,6 +121,35 @@ import { OButton, OInput, OCard } from '@opensig/opendesign';
 </script>
 ```
 
+---
+
+## 全局编码原则
+
+> ⚠️ 以下原则适用于 **所有** OpenDesign 组件，不可违反。
+
+### 禁止使用 `:deep` 修改组件内部样式
+
+在 Vue scoped 样式（`<style scoped>`）中，**严禁**使用 `:deep()` 修改任何 OpenDesign 组件的内部 CSS，包括但不限于：
+- 组件内部 class（如 `.o-select-inner`、`.o-form-item`）
+- 组件内部 CSS 变量覆盖（放在 `:deep` 块中的情况）
+- 任何以 `:deep(.o-*)` 开头的规则
+
+**允许的替代方案：**
+1. **全局 CSS 文件**（如 `src/styles/xxx.css`）：针对组件渲染类（如 `.o-input`、`.o-select`）的全局设计系统规则，在 `main.ts` 中统一导入
+2. **CSS 变量覆盖**：在父元素上覆盖组件暴露的公开 CSS 变量（如 `--form-item-gap`），无需 `:deep`
+3. **组件 Props**：优先通过 props 控制外观（如 `color`、`size`、`variant`）
+
+```css
+/* ✅ 正确：全局 CSS 文件中设置渲染类 */
+.o-form .o-input { width: var(--o-r-grid-6); }
+
+/* ✅ 正确：在父元素覆盖组件暴露的 CSS 变量 */
+.my-form { --form-item-gap: 32px; }
+
+/* ❌ 错误：在 scoped 样式中使用 :deep */
+.my-form :deep(.o-form-item) { margin-bottom: 0; }
+```
+
 ## 组件索引
 
 - [OAnchor](#oanchor) — 锚点

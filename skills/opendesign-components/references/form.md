@@ -71,6 +71,14 @@ item: [label(symbol+text), main(control+message+extra)]
 🔍 **设计稿识别指南**：
 - **视觉特征指纹**：纵向排列的表单项列表，每项由左侧标签 + 右侧控件组成（水平模式），或上方标签 + 下方控件（垂直模式）；必填项标签前有红色星号；校验失败时控件下方显示红/黄色提示文字
 - **Token → Prop 映射**：标签在左控件在右=layout:h、标签在上控件在下=layout:v、多个表单项同行=layout:inline；标签前有红色星号=required+hasRequired；控件下方红色文字=rules 校验 danger、黄色文字=warning
+- **⚠️ 多列表单布局（--o-r-grid 栅格 token）**：设计稿中表单项并排显示时，使用 `OForm layout="h"`（保持单列堆叠，标签左置），宽度**不设在 OFormItem 上，而是设在输入控件（OInput、OSelect 等）上**，通过**全局 SCSS 文件**（推荐 `src/styles/form-controls.scss`）统一设置响应式列宽。禁止在 scoped 样式中使用 `:deep`（详见 SKILL.md 全局编码原则）。
+  - 实现原则：控件宽度（`.o-input`、`.o-select` 等渲染类）= 对应断点的 `--o-r-grid-*` token；OFormItem 不设宽度（在 layout="h" 下 OFormItem 为 block 全宽，控件宽度由全局 SCSS 决定）
+  - PC（>1200px）：控件 `width: var(--form-width-standard)`（= `--o-r-grid-6`）
+  - 平板横屏（841–1200px）：token 已内置响应式，自动收缩
+  - 平板竖屏及以下（≤840px）：控件 `width: 100%`
+  - OTextarea / OSlider 等宽控件：全局 SCSS 已设 `width: 100%`；layout="h" 下 OFormItem 无需额外设置
+  - 标签宽度标准值：`label-width="96px"`（PC 多列表单标准）
+  - **⚠️ 检查项目是否存在全局表单控件样式文件**（如 `src/styles/form-controls.scss`）：若不存在，应在项目中生成（模板见场景 5）；宿主项目默认使用 SCSS，需确认已安装 `sass` 依赖
 - **易混淆组件区分**：与普通 div 排列区别——Form 有 `<form>` 语义标签、内置校验系统和 submit 事件；与 OGrid 区别——Form 专用于表单项的标签-控件对齐布局，Grid 是通用多列栅格布局
 
 ---
@@ -236,6 +244,127 @@ const onSubmit = (results) => {
 </OFormItem>
 ```
 
+**场景 5：多列栅格表单（PC 4列 / 平板 3列 / 移动单列）**
+适用于：信息录入类 PC 表单，字段数 2–7 个的分组
+
+> ⚠️ **前置检查**：使用前，先确认项目中是否存在 `src/styles/form-controls.scss`（或同等全局表单样式文件）。若不存在，按下方模板创建并在 `main.ts` 中导入，之后每个表单无需重复写控件宽度。宿主项目默认使用 SCSS，须先确保已安装 `sass` 依赖（`pnpm add -D sass`）。
+
+**Step 1：创建全局表单控件样式（一次性，整个项目复用）**
+```scss
+// src/styles/form-controls.scss
+
+// ─── SCSS 配置变量 ───────────────────────────────────
+$bp-tablet: 1200px;
+$bp-mobile:  840px;
+
+// 控件单行高度映射表（绝对值，参照 OInput 标准）
+$_widget-heights: (
+  desktop: (l: 40px, m: 32px, s: 24px),
+  tablet:  (l: 36px, m: 28px, s: 24px), // 平板横屏：收缩
+  mobile:  (l: 40px, m: 32px, s: 24px), // 手机：恢复标准
+);
+
+@mixin _apply-widget-heights($bp) {
+  $h: map-get($_widget-heights, $bp);
+  --form-widget-height-l: #{map-get($h, l)};
+  --form-widget-height-m: #{map-get($h, m)};
+  --form-widget-height-s: #{map-get($h, s)};
+}
+
+// ─── CSS 自定义属性声明 ──────────────────────────────
+.o-form {
+  @include _apply-widget-heights(desktop);
+
+  // 控件宽度（--o-r-grid-* 已内置响应式，随断点自动缩放）
+  --form-width-standard: var(--o-r-grid-6);   // 标准：主输入框
+  --form-width-wide:     var(--o-r-grid-14);  // 较宽：长文本类输入
+
+  // 同 OFormItem 内多输入框间距（--o-r-gap-4 随断点收缩）
+  --form-inline-gap: var(--o-r-gap-4);
+
+  // 同 OFormItem 内多输入框最小宽度（2 等分标准宽度）
+  --form-width-min: calc((var(--form-width-standard) - var(--form-inline-gap)) / 2);
+
+  @media (max-width: $bp-tablet) { @include _apply-widget-heights(tablet); }
+  @media (max-width: $bp-mobile)  { @include _apply-widget-heights(mobile); }
+
+  // § 2  标准宽度控件
+  .o-input, .o-select, .o-input-number, .o-cascader, .o-ip-input {
+    width: var(--form-width-standard);
+    @media (max-width: $bp-mobile) { width: 100%; }
+  }
+  .o-textarea, .o-slider { width: 100%; }
+
+  // § 3  较宽控件：OFormItem 加 class="form-item-wide"
+  .form-item-wide {
+    .o-input, .o-select, .o-input-number {
+      width: var(--form-width-wide);
+      @media (max-width: $bp-mobile) { width: 100%; }
+    }
+  }
+
+  // § 4  同 OFormItem 内多输入框：控件 slot 内用 div.form-inline 包裹
+  .form-inline {
+    display: flex;
+    align-items: center;
+    gap: var(--form-inline-gap);
+
+    .o-input, .o-select, .o-input-number {
+      width: var(--form-width-min);
+      flex: 1 1 var(--form-width-min);
+      min-width: 0;
+    }
+
+    @media (max-width: $bp-mobile) {
+      flex-direction: column;
+      align-items: stretch;
+      .o-input, .o-select, .o-input-number { width: 100%; flex: none; }
+    }
+  }
+}
+```
+
+**Step 2：在 main.ts 导入（一次性）**
+```ts
+import './styles/form-controls.scss'
+```
+
+**Step 3：模板写法（无需再写 style="width:..."）**
+```vue
+<template>
+  <!-- layout="h"：OFormItem 垂直堆叠，标签左置；控件宽度由全局 CSS 自动处理 -->
+  <OForm has-required layout="h" label-width="96px" :model="formData">
+
+    <!-- 普通字段：无需任何 style，全局 CSS 设控件宽度为 --form-width-standard -->
+    <OFormItem label="字段一" required field="f1">
+      <OSelect v-model="formData.f1" placeholder="请选择" />
+    </OFormItem>
+    <OFormItem label="字段二" required field="f2">
+      <OInput v-model="formData.f2" placeholder="请输入" />
+    </OFormItem>
+
+    <!-- 较宽输入（地址、URL 等）：OFormItem 加 class="form-item-wide" -->
+    <OFormItem class="form-item-wide" label="详细地址" field="address">
+      <OInput v-model="formData.address" placeholder="请输入完整地址" />
+    </OFormItem>
+
+    <!-- 同行双输入（范围输入）：控件 slot 内用 div.form-inline 包裹 -->
+    <OFormItem label="日期范围" field="dateRange">
+      <div class="form-inline">
+        <OInput v-model="formData.startDate" placeholder="开始日期" />
+        <span>至</span>
+        <OInput v-model="formData.endDate" placeholder="结束日期" />
+      </div>
+    </OFormItem>
+
+    <!-- OTextarea：全局 CSS 已设 width:100%，OFormItem 在 layout="h" 下天然块级全宽 -->
+    <OFormItem label="描述" label-align="top" field="desc">
+      <OTextarea v-model="formData.desc" />
+    </OFormItem>
+  </OForm>
+</template>
+```
+
 ### 常见 prop 组合速查
 
 | 场景 | 推荐 prop 组合 | 说明 |
@@ -243,8 +372,9 @@ const onSubmit = (results) => {
 | 基础表单 | `model` + `has-required` + `layout="h"` | 最常见用法 |
 | 垂直布局 | `layout="v"` | 移动端友好 |
 | 行内表单 | `layout="inline"` | 搜索栏等 |
-| 右对齐标签 | `label-justify="right"` + `label-width="120px"` | 标签对齐 |
+| 右对齐标签 | `label-justify="right"` + `label-width="96px"` | 标签对齐（PC 多列标准） |
 | 带校验 | `field` + `rules` + `:model` | 自动校验 |
+| **多列栅格表单** | `layout="h"` + `label-width="96px"` + 全局 CSS 控制控件宽度 | 见场景 5（全局 CSS 设置，不用 :deep） |
 
 ### 响应式行为表
 
