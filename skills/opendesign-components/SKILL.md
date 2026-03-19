@@ -404,6 +404,62 @@ Pixso 图层或组件实例名通常含有以下关键词，可直接映射：
 
 ---
 
+### INSTANCE节点的样式盲区与补救方法
+
+#### 问题背景
+
+当 Pixso 节点的 `type` 为 `INSTANCE`（组件库实例）时，`getNodeDSL` **只返回该实例外层容器的覆盖属性（overrides）**，不展开组件内部的子节点。
+具体表现：
+- `pixDslNodes` 中该节点**无任何子节点**（查询 `parentGuid === instanceGuid` 结果为空）
+- 节点上的 `cornerRadius` / `fillPaints` 等属性属于**外层容器**，不代表内部元素（如按钮、图标）的真实样式
+- 内部元素（如胶囊按钮、图标）的样式由组件 master 定义，DSL 中**完全不可见**
+
+#### 识别方法
+
+在解析 DSL 时，如果发现以下情况，说明遇到了样式盲区：
+1. 节点 `type === "INSTANCE"`
+2. 在 `pixDslNodes` 中查不到任何以该节点 guid 为 `parentGuid` 的子节点
+3. DSL 中的 `cornerRadius` 与设计图视觉不符（例如 DSL 写 `4`，但设计图看起来是胶囊形）
+
+#### 补救方法
+
+**方法一（首选）：`getImage` 视觉确认**
+
+对该 INSTANCE 节点调用 `getImage(itemId)`，直接获取组件渲染图像，从图像中读取所有可见的视觉属性，再用「属性映射表」推断完整 Props。
+
+```
+mcp__pixso__getImage({ itemId: "节点的guid" })
+→ 返回图片，从图片中直接读取视觉信息
+```
+
+**⚠️ 使用 `getImage` 时必须同时确认以下所有维度，不可只看圆角：**
+
+| 需确认的维度 | 从图像中观察 | 对应 Prop |
+|------------|-----------|---------|
+| **圆角形状** | 直角 / 小圆角 / 胶囊形 | `round` |
+| **背景色** | 品牌色填充 / 透明+描边 / 无背景纯文字 | `variant`（solid / outline / text） |
+| **前景色** | 蓝色品牌色→`color="primary"` / 渐变品牌色→`color="brand"`（仅 solid） / 灰色→`color="normal"` | `color` |
+| **尺寸** | 目测高度：≈24px→small / ≈32px→medium / ≈40px→large | `size` |
+
+**方法二：在 Pixso 中进入组件内部选取子节点**
+
+在 Pixso 设计工具中双击进入该 INSTANCE 组件内部，选中目标子元素（如内部按钮），获取其 item-id 后再调用 `getNodeDSL`，即可拿到内部元素的真实样式数据。
+
+```
+getNodeDSL({ itemId: "内部子元素的guid" })
+→ 返回真实的 cornerRadius / fillPaints 等样式
+```
+
+#### 典型案例
+
+> **上传按钮（`上传 Upload/按钮`，type: INSTANCE）**
+> DSL 中 `cornerRadius: 4`（外层容器），`fillPaints: []`（无填充信息）。
+> `getImage` 图像显示：胶囊形、蓝色描边、蓝色文字"＋ 上传文件"，高度约 32px。
+> ✅ 正确做法：`<OButton color="primary" variant="outline" size="medium" round="pill">`
+> ❌ 错误做法：`<OButton color="brand" variant="outline" round="pill">`（`color="brand"` 仅用于渐变 solid 按钮，outline 场景下蓝色应用 `color="primary"`）
+
+---
+
 ## OAnchor
 
 **`size`** 属性
