@@ -48,6 +48,7 @@ regions: [icon(前缀图标), default(文字内容), suffix(后缀图标)]
 🔍 **设计稿识别指南**：
 - **视觉特征指纹**：单个矩形可点击区域，内含文字/图标或两者组合，有明确边框或填充背景 → 匹配 OButton；纯图标+无文字+圆角方形 → 匹配 OButton（icon-only 模式）
 - **Token → Prop 映射**：填充背景色 → variant="solid"；仅边框 → variant="outline"；无背景无边框 → variant="text"；蓝色系 → color="primary"；渐变背景 → color="brand" + variant="solid"；高度 40px → size="large"，32px → size="medium"，28px → size="small"；半圆角 → round="pill"
+- **⚠️ 设计稿"文字按钮"命名陷阱**：设计师在 Pixso/Figma 中标注为"文字按钮"的元素，**通常对应 OLink**（行内纯文字链接），而非 OButton variant="text"。两者关键差异：OButton text 变体仍有 padding、min-width 和 hover 背景色矩形区域；OLink 是行内元素，无矩形容器边界，hover 仅有文字颜色或下划线变化。辨别方法：若设计稿中该元素与正文文字等高、无可见点击边界 → 用 OLink；若有明确的矩形可点击区域但去掉了背景/边框 → 用 OButton text。
 - **易混淆组件区分**：与 OLink 区分——OLink 是行内文字链接无背景/边框，OButton 有明确的可点击容器边界；与 OTag 区分——OTag 是静态标签展示，OButton 是交互操作触发器
 
 ---
@@ -165,7 +166,7 @@ OButton
 |------|---------------|------|
 | 主操作 | `color="primary"` + `variant="solid"` | 实心品牌色 |
 | 辅助操作 | `color="primary"` + `variant="outline"` | 线框品牌色 |
-| 文字按钮 | `variant="text"` | 无背景无边框 |
+| 纯文字操作按钮 | `variant="text"` | 有 padding/hover 背景，与 OLink 不同；设计稿中的"文字按钮"标注请优先考虑 OLink |
 | 运营活动 | `round="pill"` + class `c-btn-activity` | 社区主题运营按钮 |
 | 图标按钮 | `:icon="OIconXxx"` 或 `#icon` | 不传 default 插槽 |
 | 危险操作 | `color="danger"` + `variant="solid"` | 红色警告 |
@@ -225,7 +226,7 @@ layout:
 **视觉特征指纹**
 
 1. 矩形可点击区域 + 内含文字/图标 + 有填充背景或描边边框 → 匹配 OButton（solid/outline 变体）
-2. 无背景无边框的可点击文字 + 有 hover 态变色 → 匹配 OButton（text 变体）
+2. 有 padding 的可点击区域、去掉背景/边框但保留矩形容器语义（hover 有背景色块）→ 匹配 OButton（text 变体）；若设计稿中该元素直接标注为"文字按钮"并与行内文字等高，则改用 OLink
 3. 圆角方形 + 仅含图标无文字 → 匹配 OButton（icon-only 模式）
 
 **设计 Token → Prop 值映射表**
