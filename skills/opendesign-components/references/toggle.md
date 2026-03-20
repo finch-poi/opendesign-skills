@@ -114,12 +114,22 @@ const selected = ref(false);
 </OCheckboxGroup>
 ```
 
-**场景 4：作为 Radio 自定义渲染**
-适用于：单选的按钮式选择
+**场景 4：作为 Radio 自定义渲染（单选按钮组）**
+适用于：单选的按钮式选择，设计稿中无 radio 圆圈指示器，只有 Toggle 样式按钮
+> ⚠️ 必须使用 ORadio 的 `#radio` 插槽（完全替换整个选中指示器+文字区域）。
+> 若放在 default slot 中，ORadio 的圆形指示器仍会渲染，需额外 CSS 隐藏。
 ```vue
 <ORadioGroup v-model="selected">
-  <ORadio value="monthly"><OToggle>月付</OToggle></ORadio>
-  <ORadio value="yearly"><OToggle>年付</OToggle></ORadio>
+  <ORadio value="monthly">
+    <template #radio="{ checked }">
+      <OToggle :checked="checked">月付</OToggle>
+    </template>
+  </ORadio>
+  <ORadio value="yearly">
+    <template #radio="{ checked }">
+      <OToggle :checked="checked">年付</OToggle>
+    </template>
+  </ORadio>
 </ORadioGroup>
 ```
 
@@ -137,7 +147,26 @@ const selected = ref(false);
 | 带图标 | `:icon` 或 `#icon` 插槽 | 图标+文字 |
 | 胶囊 | `round="pill"` | 圆角按钮 |
 | 多选组 | 作为 OCheckbox 子组件 | 自身 change 屏蔽 |
-| 单选组 | 作为 ORadio 子组件 | 自身 change 屏蔽 |
+| 单选组 | 作为 ORadio `#radio` 插槽 | 自身 change 屏蔽，radio 圆圈被替换 |
+
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--toggle-size` | `var(--o-control_size-m)`（桌面 36px） | 按钮高度 |
+| `--toggle-padding` | `0 15px` | 水平内边距 |
+| `--toggle-radius` | `var(--o-radius_control-s)` | 圆角（pill 时为 `var(--o-control_size-l)`） |
+| `--toggle-gap` | `4px` | 图标与文字间距 |
+| `--toggle-text-size` | `var(--o-font_size-text1)` | 文字字号 |
+| `--toggle-icon-size` | `var(--o-icon_size_control-m)` | 图标尺寸 |
+
+**使用示例**：
+```vue
+<!-- 将 Toggle 内边距从默认 0 15px 改为 0 8px -->
+<OToggle style="--toggle-padding: 0 8px">标签</OToggle>
+```
 
 ### 响应式行为表
 

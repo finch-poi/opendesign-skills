@@ -361,6 +361,32 @@ import './styles/form-controls.scss'
 | 带校验 | `field` + `rules` + `:model` | 自动校验 |
 | **多列栅格表单** | `layout="h"` + `label-width="96px"` | 控件宽度由 OForm 自动管理，无需额外设置 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--form-item-display` | `flex` | 表单项的 display 模式 |
+| `--form-item-gap` | `24px` | 表单项之间的间距（响应式断点会自动缩小） |
+| `--form-label-main-gap` | `32px` | 标签区与控件区之间的间距（水平模式，响应式断点会自动缩小） |
+| `--form-label-gap-top` | `4px` | 标签区域的顶部 margin |
+| `--form-msg-gap` | `4px 0 0 16px` | 校验消息的 padding |
+| `--form-item-main-box-width-standard` | `min(var(--o-r-grid-6), 100%)` | 标准输入框宽度（响应式） |
+| `--form-item-main-box-width-wide` | `min(var(--o-r-grid-14), 100%)` | 较宽输入框宽度（响应式） |
+| `--form-item-main-box-inline-gap` | `var(--o-r-gap-4)` | 同域多控件输入框间距 |
+| `--form-label-width` | `20%`（水平模式） | 标签宽度（由 labelWidth prop 覆盖） |
+| `--form-label-max-width` | `240px`（水平模式） | 标签最大宽度 |
+| `--form-label-justify` | — | 标签水平对齐（由 labelJustify prop 覆盖） |
+| `--form-item-align` | `flex-start`（水平模式） | 标签与控件的垂直对齐（由 labelAlign prop 覆盖） |
+| `--form-label-main-gap-v` | `8px`（垂直模式） | 垂直模式下标签与控件的间距 |
+
+**使用示例**：
+```vue
+<!-- 覆盖控件标准宽度（整个表单统一生效） -->
+<OForm style="--form-item-main-box-width-standard: 280px;" :model="formData" />
+```
+
 ### 响应式行为表
 
 | 维度 | ≤600px | 601–840px | 841–1200px | 1201–1440px | >1440px |

@@ -173,6 +173,29 @@ const loading = ref(true);
 | 自定义图标 | `:icon` + `icon-rotating` | 品牌图标 |
 | 无文字 | 仅 `v-model:visible` | 纯图标加载 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--loading-mask` | `var(--o-color-mask1)` | 遮罩层颜色 |
+| `--loading-icon-size` | `var(--o-icon_size_control-m)` | 加载图标尺寸（small 为 xs，medium 为 4xl，large 为 96px） |
+| `--loading-icon-color` | `var(--o-color-info2)` | 图标颜色（无遮罩时） |
+| `--loading-mask-icon-color` | `var(--o-color-info2-inverse)` | 图标颜色（有遮罩时，通常为白色） |
+| `--loading-color` | `var(--o-color-info2)` | 文字颜色（无遮罩时） |
+| `--loading-mask-color` | `var(--o-color-info2-inverse)` | 文字颜色（有遮罩时） |
+| `--loading-z-index` | `calc(var(--o-z-index-base) + 10)` | 层级 |
+| `--loading-label-font-size` | `var(--o-font_size-tip2)` | 加载文字字号 |
+| `--loading-label-line-height` | `var(--o-line_height-tip2)` | 加载文字行高 |
+| `--loading-label-icon-gap` | `8px` | 图标与文字之间的间距（small 为 4px，medium 为 12px，large 为 16px） |
+| `--loading-content-direction` | `column` | 图标与文字排列方向（small/mini 为 `row`） |
+
+**使用示例**:
+```vue
+<OLoading v-model:visible="loading" style="--loading-icon-color: var(--o-color-primary1)" />
+```
+
 ### 响应式行为表
 
 | 维度 | ≤840px | 841–1440px | >1440px |

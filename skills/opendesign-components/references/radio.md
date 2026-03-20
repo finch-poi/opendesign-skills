@@ -189,6 +189,35 @@ const value = ref('a');
 | 自定义外观 | `#radio` 插槽 | 完全自定义 |
 | 表单校验 | ORadioGroup 放在 OFormItem 内 | 自动校验 |
 
+### 可覆盖的 CSS 变量
+
+在调用处通过覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+**ORadioGroup 变量**
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--radio-group-gap` | 水平 `24px` / 垂直 `16px` | Radio 子项之间的间距 |
+
+**ORadio 变量**
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--radio-label-gap` | `8px` | 圆形指示器与文字标签的间距 |
+| `--radio-text-size` | `var(--o-font_size-text1)` | 文字字号 |
+| `--radio-input-wrap-size` | `var(--o-control_size-s)` | 圆形指示器容器尺寸 |
+
+**使用示例**：
+```vue
+<!-- 将 Radio 组间距从默认 24px 改为 8px -->
+<ORadioGroup v-model="value" style="--radio-group-gap: 8px">
+  <ORadio value="a">选项 A</ORadio>
+  <ORadio value="b">选项 B</ORadio>
+</ORadioGroup>
+```
+
+> ⚠️ **注意**：若同时在父元素上设置 `gap`（flex/grid），会与 `--radio-group-gap`（margin 实现）叠加，导致间距偏大。只需覆盖 `--radio-group-gap`，不要额外设置 `gap`。
+
 ### 响应式行为表
 
 | 维度 | ≤1440px | >1440px |

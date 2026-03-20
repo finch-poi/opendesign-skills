@@ -226,6 +226,37 @@ const stopLoading = () => {
 | 自动关闭 | `:duration="3000"` | 3 秒后关闭 |
 | 定位消息 | `useMessage(target)` + `position` + `targetAlign` | 目标元素附近 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--message-color` | `var(--o-color-info2)` | 消息文字颜色 |
+| `--message-text-size` | `var(--o-font_size-text1)` | 正文字号 |
+| `--message-text-height` | `var(--o-line_height-text1)` | 正文行高 |
+| `--message-bg-color` | `var(--o-color-fill2)` | 消息背景色 |
+| `--message-shadow` | `var(--o-shadow-2)` | 消息阴影（colorful 模式为 none） |
+| `--message-align` | `start` | 内容对齐方式 |
+| `--message-radius` | `var(--o-radius_control-s)` | 圆角 |
+| `--message-padding` | `8px 16px` | 内边距 |
+| `--message-icon-size` | `var(--o-icon_size_control-m)` | 状态图标尺寸 |
+| `--message-icon-gap` | `8px` | 图标与内容的间距 |
+| `--message-icon-gap-suffix` | `16px` | 内容与关闭按钮的间距 |
+| `--message-icon-close-color` | `var(--o-color-info2)` | 关闭按钮图标颜色 |
+| `--message-icon-close-color-hover` | `var(--o-color-info1)` | 关闭按钮悬停颜色 |
+| `--message-icon-close-color-active` | `var(--o-color-info1)` | 关闭按钮激活颜色 |
+| `--message-word-break` | `break-word` | 文字断行方式 |
+| `--message-text-align` | `center` | 文字水平对齐（有标题+正文时为 left） |
+| `--message-gap` | `16px` | 多条消息之间的间距 |
+| `--message-sidebar-width` | `4px`（colorful 模式） | 彩色侧边条宽度 |
+| `--message-list-offset` | `32px` | 消息列表距屏幕边缘的偏移 |
+
+**使用示例**:
+```vue
+<OMessage status="success" style="--message-radius: 8px; --message-padding: 12px 20px">操作成功</OMessage>
+```
+
 ### 响应式行为表
 
 | 维度 | ≤840px | 841–1200px | 1201–1440px | >1440px |

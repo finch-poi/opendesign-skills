@@ -171,6 +171,33 @@ const container = ref();
 | 仅纵向 | `:disabled-x="true"` | 隐藏横向 |
 | body 滚动条 | `target="body"` | 全页滚动 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--scrollbar-bg-color` | `transparent` | 滚动条整体背景色 |
+| `--scrollbar-track-bg-color` | `var(--o-color-control4)` | 轨道背景色 |
+| `--scrollbar-track-width` | `6px`（medium） | 轨道宽度 |
+| `--scrollbar-thumb-bg-color` | `var(--o-color-control1)` | 滑块默认颜色 |
+| `--scrollbar-thumb-bg-color-hover` | `var(--o-color-info3)` | 滑块悬停颜色 |
+| `--scrollbar-thumb-bg-color-active` | `var(--o-color-info2)` | 滑块拖拽中颜色 |
+| `--scrollbar-thumb-width` | `6px`（medium） | 滑块默认宽度 |
+| `--scrollbar-thumb-width-hover` | `10px`（medium） | 滑块悬停时宽度 |
+| `--scrollbar-thumb-radius` | `10px`（medium） | 滑块圆角 |
+| `--scrollbar-width` | `16px`（medium） | 滚动条轨道区域总宽度 |
+| `--scrollbar-thumb-min-size` | `10px` | 滑块最小尺寸 |
+| `--scrollbar-height` | `90%` | 垂直滑块默认高度比例 |
+| `--scrollbar-delay` | `16ms` | 滚动条响应延迟 |
+
+**使用示例**：
+```vue
+<OScroller style="height: 300px; --scrollbar-thumb-bg-color: var(--o-color-primary1);">
+  <div style="height: 1000px;">长内容</div>
+</OScroller>
+```
+
 ### CSS 变量
 
 | 变量名 | 说明 |

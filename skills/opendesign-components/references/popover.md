@@ -216,6 +216,33 @@ const targetRef = ref();
 | 无箭头 | `:anchor="false"` | 隐藏锚点 |
 | 自定义样式 | `wrap-class="xxx"` | CSS 变量覆盖 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--popup-bg-color` | `var(--o-color-fill2)` | 气泡背景色 |
+| `--popup-shadow` | `var(--o-shadow-1)` | 气泡阴影 |
+| `--popup-radius` | `var(--o-radius_control-s)` | 气泡圆角 |
+| `--popup-bd` | `1px solid var(--o-color-control4)` | 气泡边框 |
+| `--popup-padding` | `9px 16px` | 气泡内边距 |
+| `--popover-text-color` | `var(--o-color-info1)` | 气泡文字颜色 |
+| `--popover-text-size` | `var(--o-font_size-tip1)` | 气泡文字字号 |
+| `--popover-text-height` | `var(--o-line_height-tip1)` | 气泡文字行高 |
+
+**使用示例**:
+```vue
+<OPopover wrap-class="my-popover">
+  提示内容
+  <template #target><OButton>悬停</OButton></template>
+</OPopover>
+
+<style>
+.my-popover { --popup-padding: 12px 20px; --popup-radius: 8px; }
+</style>
+```
+
 ### CSS 变量
 
 | 变量名 | 说明 |

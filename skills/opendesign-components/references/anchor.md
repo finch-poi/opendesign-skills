@@ -205,6 +205,36 @@ OAnchor default
 | 精确跳转但宽松激活 | `:target-offset="10"` + `:bounds="100"` | 跳到顶部 10px，但滚到 110px 才激活 |
 | 不修改 URL hash | `:change-hash="false"` | 适合 SPA 自行管理路由 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+**通用变量**
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--anchor-item-min-width` | `144px` | 锚点项最小宽度（水平模式下为 `unset`） |
+| `--anchor-item-link-padding-h` | `8px` | 锚点项水平内边距（水平模式为 `0`） |
+| `--anchor-item-link-padding-v` | `8px` | 锚点项垂直内边距 |
+| `--anchor-item-link-text-size` | `var(--o-font_size-text1)` | 锚点项文字字号 |
+| `--anchor-line-width` | `1px` | 左侧竖线宽度 |
+| `--anchor-indicator-width` | `2px` | 选中指示器宽度 |
+
+**水平模式（layout="h"）特有变量**
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--anchor-item-gap` | `32px` | 锚点项之间的间距 |
+
+**使用示例**：
+```vue
+<!-- 减小水平模式的锚点间距 -->
+<OAnchor layout="h" style="--anchor-item-gap: 16px">
+  <OAnchorItem href="#a" title="章节1" />
+  <OAnchorItem href="#b" title="章节2" />
+</OAnchor>
+```
+
 ### 响应式行为表
 
 | 维度 | ≤840px | 841–1200px | 1201–1680px | >1680px |

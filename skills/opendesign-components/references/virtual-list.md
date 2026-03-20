@@ -170,6 +170,20 @@ const jumpTo = (index) => {
 | 初始位置 | `:default-start-index` | 从中间开始 |
 | 隐藏滚动条 | `:scrollbar="false"` | 无滚动条 |
 
+### 可覆盖的 CSS 变量
+
+OVirtualList 本身无可覆盖的 CSS 变量（`var.scss` 为空）。组件内部使用 `--content-height`、`--offsetY` 等变量由 JavaScript 动态计算并注入，不应手动覆盖。
+
+列表项的样式应直接在 `default` 插槽的内容元素上设置，容器高度通过外部 `style` 传入：
+
+```vue
+<OVirtualList :list="list" :item-size="48" style="height: 400px;">
+  <template #default="{ item }">
+    <div style="height: 48px; padding: 12px;">{{ item.name }}</div>
+  </template>
+</OVirtualList>
+```
+
 ### 响应式行为表
 
 本组件无响应式差异。

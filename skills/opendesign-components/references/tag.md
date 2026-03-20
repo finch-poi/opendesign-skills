@@ -159,11 +159,31 @@ const visible = ref(true);
 | 带确认 | `closable` + `:before-close` | 安全删除 |
 | 小号圆角 | `size="small"` + `round="pill"` | 紧凑胶囊 |
 
-### 响应式行为表
+### 可覆盖的 CSS 变量
 
-| 维度 | ≤840px | 841–1440px | >1440px |
-|------|--------|-----------|---------|
-| large 高度 | — | 20px | 28px |
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--tag-radius` | `var(--o-radius_control-xs)` | 标签圆角（pill 模式下为 control_size-l） |
+| `--tag-color` | `var(--o-color-info1)`（normal） | 标签文字颜色（随 color 变化） |
+| `--tag-bg-color` | `var(--o-color-control2-light)`（normal） | 标签背景色（随 color/variant 变化） |
+| `--tag-bd-color` | `var(--o-color-control2-light)`（normal） | 标签边框颜色（随 color/variant 变化） |
+| `--tag-icon-close-color` | `var(--o-color-info2)`（normal） | 关闭按钮图标颜色 |
+| `--tag-icon-close-color-hover` | `var(--o-color-info1)`（normal） | 关闭按钮 hover 颜色 |
+| `--tag-padding` | `0 11px`（large） | 标签水平内边距（随 size 变化） |
+| `--tag-text-size` | `var(--o-font_size-tip2)` | 标签文字字号 |
+| `--tag-text-height` | `var(--o-line_height-tip2)` | 标签文字行高 |
+| `--tag-height` | `var(--o-control_size-s)`（large，约 28px） | 标签高度（随 size 变化） |
+| `--tag-icon-size` | `var(--o-icon_size_control-xs)` | 前缀图标尺寸 |
+| `--tag-icon-gap` | `4px`（large/medium）/ `2px`（small） | 图标与文字间距 |
+
+**使用示例**:
+```vue
+<OTag style="--tag-bg-color: var(--o-color-primary4); --tag-color: var(--o-color-primary1)">自定义标签</OTag>
+```
+
+### 响应式行为表
 | large 内边距 | — | 0 7px | 0 11px |
 | medium 高度 | xs(16px) | — | 20px |
 | medium 缩放 | 0.833 | — | 标准 |

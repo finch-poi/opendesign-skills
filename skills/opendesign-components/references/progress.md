@@ -151,6 +151,29 @@ icon（使用后 default 失效）
 | 无文字 | `:show-label="false"` | 纯进度条 |
 | 指定轨道宽 | `:track-width="300"` | 固定宽度 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--progress-track-bg-color` | `var(--o-color-control4)` | 轨道背景色 |
+| `--progress-color` | `var(--o-color-info1)` | 文字颜色 |
+| `--progress-label-gap` | `8px` | 标签与轨道间距 |
+| `--progress-inner-label-color` | `var(--o-color-white)` | 内部文字颜色（labelInside 时） |
+| `--progress-inner-label-gap` | `8px` | 内部文字间距 |
+| `--progress-bar-bg-color` | 跟随 `color` prop | 进度条填充色（primary/success 时为 main2，warning/danger 时为对应色） |
+| `--progress-circle-bar-bg-color` | 跟随 `color` prop | 环形进度条填充色 |
+| `--progress-icon-color` | 跟随 `color` prop | 图标颜色 |
+| `--progress-text-size` | `var(--o-font_size-text1)`（medium） | 文字字号 |
+| `--progress-text-height` | `var(--o-line_height-text1)`（medium） | 文字行高 |
+| `--progress-icon-size` | `var(--o-icon_size_control-m)`（medium） | 图标尺寸 |
+
+**使用示例**：
+```vue
+<OProgress :percentage="60" style="--progress-track-bg-color: #eee; --progress-bar-bg-color: #7c3aed" />
+```
+
 ### 响应式行为表
 
 | 维度 | ≤1440px | >1440px |

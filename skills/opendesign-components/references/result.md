@@ -135,6 +135,32 @@ type ResultStatusT = 'info' | 'success' | 'warning' | 'danger';
 | 空数据 | `title` + `#image` + `#extra` | 无 status |
 | 自定义图标 | `#icon` + `title` | 替换默认图标 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--result-image-width` | `240px` | 顶部图片区域宽度 |
+| `--result-image-height` | `210px` | 顶部图片区域高度 |
+| `--result-image-gap` | `16px` | 图片与下方内容的间距 |
+| `--result-icon-size` | `var(--o-icon_size_control-xl)` | 状态图标尺寸 |
+| `--result-icon-gap` | `12px` | 图标与标题文字的间距 |
+| `--result-icon-color` | 跟随 `status` prop | 状态图标颜色 |
+| `--result-title-color` | `var(--o-color-info1)` | 标题文字颜色 |
+| `--result-title-text-size` | `var(--o-font_size-h3)` | 标题字号 |
+| `--result-title-text-height` | `var(--o-line_height-h3)` | 标题行高 |
+| `--result-desc-color` | `var(--o-color-info3)` | 描述文字颜色 |
+| `--result-desc-text-size` | `var(--o-font_size-text1)` | 描述字号 |
+| `--result-desc-text-height` | `var(--o-line_height-text1)` | 描述行高 |
+| `--result-desc-gap` | `12px` | 描述与标题的间距 |
+| `--result-extra-gap` | `24px` | 操作按钮区与描述的间距 |
+
+**使用示例**：
+```vue
+<OResult status="success" title="完成" style="--result-title-color: #7c3aed; --result-extra-gap: 32px" />
+```
+
 ### 响应式行为表
 
 | 维度 | ≤840px | 841–1440px | >1440px |

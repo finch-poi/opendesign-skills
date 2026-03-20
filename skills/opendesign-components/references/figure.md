@@ -221,6 +221,26 @@ const figure = useTemplateRef('figure');
 | 彩色占位 | `colorful` | 加载前随机彩色 |
 | 链接图片 | `href` + `hoverable` | 点击跳转 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--figure-padding-top` | `0px` | ratio 模式下 wrap 的 padding-top（由 ratio 计算自动覆盖，一般不手动设） |
+| `--figure-fit` | `cover` | 图片填充方式（等同 object-fit / background-size） |
+| `--figure-position` | `center` | 图片定位（等同 object-position / background-position） |
+| `--figure-radius` | `0` | 图片容器圆角 |
+| `--figure-error-bk` | `var(--o-color-control4)` | 加载失败时的背景色 |
+| `--figure-error-color` | `var(--o-color-control4)` | 加载失败时错误图标的颜色 |
+| `--figure-error-size` | `var(--o-icon_size_control-l)` | 加载失败时错误图标的大小 |
+| `--figure-play-icon-size` | `64px` | 视频海报播放图标的尺寸（响应式下自动缩小） |
+
+**使用示例**：
+```vue
+<OFigure src="/photo.jpg" :ratio="16/9" style="--figure-radius: 8px; --figure-fit: contain" />
+```
+
 ### 响应式行为表
 
 | 维度 | ≤600px (手机) | 601–1200px (平板) | >1200px (笔记本+) |

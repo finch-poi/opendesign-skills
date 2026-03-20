@@ -174,6 +174,25 @@ const pageSize = ref(12);
 | 自定义条数 | `:page-sizes="[10, 20, 50]"` | 自定义选项 |
 | 监听变化 | `@change` | 获取前后值对比 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--pagination-item-size` | `var(--o-control_size-m)` | 页码按钮尺寸（高度和宽度） |
+| `--pagination-arrow-size` | `var(--o-control_size-s)` | 上/下一页箭头按钮尺寸 |
+| `--pagination-item-gap` | `24px` | 各区块（总数、pagesize、pager、jumper）之间的间距 |
+| `--pagination-item-sm-gap` | `8px` | pagesize 与 jumper 内部控件的间距 |
+| `--pagination-item-size-gap` | `12px` | 页码数字按钮之间的间距 |
+| `--pagination-radius` | `var(--o-radius_control-s)` | 页码按钮圆角（pill 时为 `var(--pagination-item-size)`） |
+
+**使用示例**：
+```vue
+<!-- 紧凑分页：减小区块间距 -->
+<OPagination style="--pagination-item-gap: 12px" v-model:page="page" :total="100" />
+```
+
 ### 响应式行为表
 
 | 维度 | ≤1440px | >1440px |
@@ -258,7 +277,7 @@ layout:
 | 显示区域 | 有每页条数下拉 | layout | 包含 `'pagesize'` | — |
 | 显示区域 | 有"前往"输入框 | layout | 包含 `'jumper'` | — |
 | 整体样式 | 仅上下页+页码数 | simple | `true` | — |
-| 当前页高亮 | 蓝色实心背景 | — | — | 当前页自动高亮 |
+| 当前页高亮 | 蓝色实心背景 | — | — | 当前页自动高亮，DOM class 为 `active`（`.o-pagination-item.active`） |
 
 **易混淆组件区分表**
 

@@ -178,6 +178,37 @@ const beforeChange = (val) => {
 | 圆角 | `round="pill"` | 半圆按钮 |
 | 小号 | `size="small"` | 紧凑场景 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--switch-radius` | `var(--o-control_size-s)` | 开关轨道圆角半径（pill 模式下为 control_size-l） |
+| `--switch-color` | `var(--o-color-info4)` | 开关文字/图标颜色（选中后为 info1-inverse） |
+| `--switch-bg-color` | `var(--o-color-control1-light)` | 未选中状态背景色 |
+| `--switch-bg-color-hover` | `var(--o-color-control2-light)` | 未选中 hover 背景色 |
+| `--switch-bg-color-active` | `var(--o-color-control3-light)` | 未选中 active 背景色 |
+| `--switch-bg-color-disabled` | `var(--o-color-control4-light)` | 未选中禁用背景色 |
+| `--switch-bg-color-checked` | `var(--o-color-primary1)` | 选中状态背景色 |
+| `--switch-bg-color-checked-hover` | `var(--o-color-primary2)` | 选中 hover 背景色 |
+| `--switch-bg-color-checked-active` | `var(--o-color-primary3)` | 选中 active 背景色 |
+| `--switch-bg-color-checked-disabled` | `var(--o-color-primary4)` | 选中禁用背景色 |
+| `--switch-handler-bg-color` | `var(--o-color-white)` | 滑块背景色 |
+| `--switch-icon-loading-color` | `var(--o-color-primary1)` | 加载图标颜色 |
+| `--switch-min-width` | `40px`（medium）/ `28px`（small） | 开关最小宽度 |
+| `--switch-size` | `var(--o-control_size-s)`（medium） | 开关轨道高度 |
+| `--switch-text-size` | `var(--o-font_size-text1)`（medium） | 文字标签字号 |
+| `--switch-text-height` | `var(--o-line_height-text1)`（medium） | 文字标签行高 |
+| `--switch-handler-size` | `var(--o-control_size-xs)`（medium） | 滑块尺寸 |
+| `--switch-handler-offset` | `4px` | 滑块与轨道边缘距离 |
+| `--switch-label-padding` | `6px`（medium）/ `4px`（small） | 文字标签与轨道的间距 |
+
+**使用示例**:
+```vue
+<OSwitch style="--switch-bg-color-checked: var(--o-color-success1)" v-model="enabled" />
+```
+
 ### CSS 变量
 
 | 变量名 | 说明 |

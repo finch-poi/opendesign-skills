@@ -171,6 +171,25 @@ OButton
 | 图标按钮 | `:icon="OIconXxx"` 或 `#icon` | 不传 default 插槽 |
 | 危险操作 | `color="danger"` + `variant="solid"` | 红色警告 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值（medium size） | 说明 |
+|--------|----------------------|------|
+| `--btn-height` | `var(--o-control_size-m)`（32px） | 按钮高度 |
+| `--btn-padding` | `0 15px` | 水平内边距（s: `0 15px`，l: `0 23px`） |
+| `--btn-radius` | `var(--o-radius_control-s)` | 圆角（pill 时为 `var(--o-control_size-l)`） |
+| `--btn-gap` | `8px` | 图标与文字间距（s: `4px`） |
+| `--btn-min-width` | `80px` | 最小宽度（m），l 为 `96px` |
+| `--btn-icon-size` | `var(--o-icon_size-xs)` | 图标尺寸 |
+
+**使用示例**：
+```vue
+<!-- 自定义最小宽度 -->
+<OButton style="--btn-min-width: 120px" color="primary" variant="solid">提交</OButton>
+```
+
 ### 响应式行为表
 
 | 维度 | ≤840px | 841–1200px | >1200px |

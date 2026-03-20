@@ -179,6 +179,35 @@ const options = [
 | 快速浏览 | `expand-trigger="hover"` | 悬停展开子菜单 |
 | 触控友好 | 默认即可 | hover 自动降级为 click |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--cascader-height` | `auto` | 级联选择器整体高度 |
+| `--option-list-max-height` | `378px` | 选项列表最大高度 |
+| `--cascader-options-bd-color` | `var(--o-color-control1-light)` | 选项列之间的分隔线颜色 |
+| `--cascader-options-gap` | `8px` | 选项列表内部间距 |
+| `--cascader-option-color` | `var(--o-color-info2)` | 选项文字颜色 |
+| `--cascader-option-color-hover` | `var(--o-color-info2)` | 选项悬停文字颜色 |
+| `--cascader-option-color-selected` | `var(--o-color-primary1)` | 选项选中文字颜色 |
+| `--cascader-option-text-size` | `var(--o-font_size-text1)` | 选项文字大小（>1200px 默认值） |
+| `--cascader-option-text-height` | `var(--o-line_height-text1)` | 选项文字行高 |
+| `--cascader-option-padding` | `7px 12px` | 选项内边距（>1200px 默认值） |
+| `--cascader-option-radius` | `var(--o-radius_control-s)` | 选项圆角 |
+| `--cascader-option-bg-color` | `transparent` | 选项默认背景色 |
+| `--cascader-option-bg-color-hover` | `var(--o-color-control2-light)` | 选项悬停背景色 |
+| `--cascader-option-bg-color-selected` | `var(--o-color-control3-light)` | 选项选中背景色 |
+| `--cascader-option-icon-size` | `var(--o-icon_size-m)` | 展开箭头图标大小 |
+| `--cascader-option-gap` | `2px` | 选项内子元素间距 |
+| `--cascader-option-icon-gap` | `var(--o-gap-2)` | 选项图标与文字间距 |
+
+**使用示例**：
+```vue
+<OCascader v-model="val" :options="options" style="--option-list-max-height: 240px;" />
+```
+
 ### 响应式行为表
 
 | 维度 | ≤1200px | >1200px |

@@ -227,11 +227,24 @@ const content = ref('');
 | 可清空 | `clearable` | 清空按钮 |
 | 表单联动 | 与 OFormItem 配合 | 自动校验颜色 |
 
-### 响应式行为表
+### 可覆盖的 CSS 变量
 
-| 维度 | ≤840px | 841–1440px | >1440px |
-|------|--------|-----------|---------|
-| 最小高度 | — | 116px | 126px |
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--textarea-min-height` | `126px` | 文本域最小高度 |
+| `--textarea-min-width` | `var(--o-control_size-xl)` | 文本域最小宽度 |
+| `--textarea-padding-v` | `8px`（medium） | 垂直内边距（small 为 4px） |
+| `--textarea-padding-h` | `16px`（medium） | 水平内边距（small 为 8px） |
+| `--textarea-color` | — | 文字颜色（text variant 下由 color prop 控制） |
+
+**使用示例**:
+```vue
+<OTextarea style="--textarea-min-height: 200px" v-model="content" />
+```
+
+### 响应式行为表
 | 字号 | — | tip1 | 标准 |
 | large 水平内边距 | 12px | — | 16px |
 

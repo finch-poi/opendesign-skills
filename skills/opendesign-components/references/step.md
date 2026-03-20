@@ -254,20 +254,40 @@ const activeIndex = ref(0);
 | 带描述 | `title` + `description` | 标题 + 描述文字 |
 | 纯标题 | `title`（不传 description） | 仅显示标题 |
 
-### CSS 变量速查
+### 可覆盖的 CSS 变量
 
-以下 CSS 变量可通过 `.o-step` 或 `.o-step-item` 上的 style/class 覆盖：
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
 
-| 变量名 | 说明 | 默认值 |
-|--------|------|--------|
-| `--step-item-head-color` | 标识区文字/图标颜色 | 跟随状态 |
-| `--step-item-head-bg` | 标识区背景色 | 跟随状态 |
-| `--step-item-title-color` | 标题颜色 | 跟随状态 |
-| `--step-item-title-font-weight` | 标题字重 | normal（processing 为 600） |
-| `--step-item-desc-color` | 描述文字颜色 | `var(--o-color-info3)` |
-| `--step-item-line-bg` | 连接线颜色 | 跟随状态 |
-| `--step-item-head-width` | 标识圆形尺寸 | `var(--o-icon_size_control-l)` |
-| `--step-item-gap` | 垂直模式步骤间距 | 8px |
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--step-item-head-size` | `var(--o-font_size-h4)` | 标识区序号字号 |
+| `--step-item-head-height` | `var(--o-line_height-h4)` | 标识区序号行高 |
+| `--step-item-title-size` | `var(--o-font_size-text1)` | 标题字号 |
+| `--step-item-title-height` | `var(--o-line_height-text1)` | 标题行高 |
+| `--step-item-title-font-weight` | `normal` | 标题字重（processing 状态下为 600） |
+| `--step-item-desc-size` | `var(--o-font_size-tip2)` | 描述字号 |
+| `--step-item-desc-height` | `var(--o-line_height-tip2)` | 描述行高 |
+| `--step-item-head-width` | `var(--o-icon_size_control-l)` | 标识圆形宽高尺寸 |
+| `--step-item-icon-size` | `var(--o-icon_size-m)` | 状态图标尺寸 |
+| `--step-item-gap` | `8px` | 步骤间距 |
+| `--step-item-main-gap` | `8px` | 主体区域内容间距（垂直模式下为 0） |
+| `--step-item-desc-gap` | `4px` | 描述与标题的间距 |
+| `--step-item-line-gap` | `8px` | 连接线与标识的间距 |
+| `--step-item-line-height` | `1px` | 连接线粗细 |
+| `--step-item-align` | `center` | 水平模式对齐方式（垂直模式下为 left） |
+| `--step-item-head-bg` | `var(--o-color-success1)` | 标识圆形背景色（跟随状态变化） |
+| `--step-item-head-color` | `var(--o-color-white)` | 标识区文字/图标颜色 |
+| `--step-item-title-color` | `var(--o-color-info2)` | 标题颜色（跟随状态变化） |
+| `--step-item-desc-color` | `var(--o-color-info3)` | 描述文字颜色 |
+| `--step-item-line-bg` | `var(--o-color-control4)` | 连接线颜色（跟随状态变化） |
+| `--step-item-main-padding` | `0 12px` | 主体区域内边距（垂直模式下为 0） |
+
+**使用示例**:
+```vue
+<OStep style="--step-item-title-font-weight: 600">
+  <OStepItem :step-index="0" title="自定义步骤" status="finished" />
+</OStep>
+```
 
 ### 响应式行为表
 

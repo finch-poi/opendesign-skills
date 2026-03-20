@@ -155,19 +155,26 @@ OIcon (.o-icon)
 | 媒体与文件 | `OIconEye`、`OIconEyeOff`、`OIconFile`、`OIconImageError`、`OIconVideoPlay`、`OIconLink` |
 | 其他 | `OIconStar`、`OIconSkill`、`OIconTime`、`OIconCalendar`、`OIconEllipsis`、`OIconMinus`、`OIconSun`、`OIconMoon`、`OIconNoData`、`OIconAscend`、`OIconKunpeng` |
 
-### 响应式行为表
+### 可覆盖的 CSS 变量
 
-无。OIcon 组件不包含响应式断点逻辑，图标大小由外层 font-size 决定。
-
-### CSS 变量参考
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
 
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
-| `--icon-size` | `1em` | 图标容器尺寸 |
+| `--icon-size` | `1em` | 图标容器尺寸（默认继承外层 font-size） |
 | `--icon-btn-color` | `var(--o-color-info1)` | 图标按钮默认颜色 |
 | `--icon-btn-color-hover` | `var(--o-color-info2)` | 图标按钮悬停颜色 |
 | `--icon-btn-color-active` | `var(--o-color-info3)` | 图标按钮激活/聚焦颜色 |
 | `--icon-btn-color-disabled` | `var(--o-color-info4)` | 图标按钮禁用颜色 |
+
+**使用示例**：
+```vue
+<OIcon :icon="OIconAdd" button style="--icon-size: 24px; --icon-btn-color: var(--o-color-brand1)" />
+```
+
+### 响应式行为表
+
+无。OIcon 组件不包含响应式断点逻辑，图标大小由外层 font-size 决定。
 
 ### 组件布局结构
 

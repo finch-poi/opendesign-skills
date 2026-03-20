@@ -256,6 +256,40 @@ const selected = ref('item1');
 | 紧凑菜单 | `size="small"` | 小号文字和间距 |
 | 禁用项 | OMenuItem `disabled` | 禁止点击 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--menu-width` | `240px` | 菜单整体宽度 |
+| `--menu-bg-color` | `transparent` | 菜单背景色 |
+| `--menu-indicator-width` | `1px` | 指示线宽度 |
+| `--menu-indicator-bg-color` | `var(--o-color-control4)` | 指示线颜色 |
+| `--menu-color` | `var(--o-color-info2)` | 菜单项默认文字颜色 |
+| `--menu-color-disabled` | `var(--o-color-info4)` | 禁用项文字颜色 |
+| `--menu-color-selected` | `var(--o-color-primary1)` | 选中项文字颜色 |
+| `--menu-bg-color-hover` | `var(--o-color-control2-light)` | 悬停时背景色 |
+| `--menu-bg-color-selected` | `var(--o-color-control3-light)` | 选中时背景色 |
+| `--menu-icon-color` | `currentColor` | 图标颜色 |
+| `--menu-icon-color-selected` | `currentColor` | 选中图标颜色 |
+| `--menu-item-padding-v` | `8px`（medium） | 菜单项垂直内边距 |
+| `--menu-padding-h` | `8px`（medium） | 菜单项水平内边距 |
+| `--menu-radius` | `var(--o-radius_control-xs)` | 菜单项圆角 |
+| `--menu-text-size` | `var(--o-font_size-tip1)` | 菜单项文字大小 |
+| `--menu-text-height` | `var(--o-line_height-tip1)` | 菜单项文字行高 |
+| `--menu-icon-size` | `var(--o-icon_size_control-m)` | 图标尺寸（small 为 `control-xs`） |
+| `--menu-icon-gap` | `8px`（medium） | 图标与文字间距（small 为 `4px`） |
+| `--menu-arrow-size` | `var(--o-icon_size_control-m)` | 折叠箭头尺寸 |
+| `--menu-popover-width` | `240px` | 弹出式子菜单宽度 |
+
+**使用示例**:
+```vue
+<OMenu v-model="selected" style="--menu-width: 280px; --menu-color-selected: var(--o-color-success1)">
+  ...
+</OMenu>
+```
+
 ### 响应式行为表
 
 | 维度 | ≤840px | 841–1440px | >1440px |

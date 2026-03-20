@@ -147,6 +147,27 @@ content（徽标内容，使用后 value/max 失效）
 | 小红点提示 | `color="danger"` + `dot` | 仅提示，不显示数量 |
 | 独立使用 | 无 default 插槽 | 行内展示 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--badge-text-size` | `var(--o-font_size-tip2)` | 徽标文字大小 |
+| `--badge-text-height` | `var(--o-line_height-tip2)` | 徽标文字行高 |
+| `--badge-radius` | `var(--o-control_size-l)` | 徽标圆角（默认全圆角） |
+| `--badge-padding` | `2px` | 徽标内边距 |
+| `--badge-min-width` | `12px` | 徽标最小宽度 |
+| `--badge-dot-size` | `6px` | 小红点尺寸（dot 模式） |
+| `--badge-height` | `12px` | 徽标高度 |
+| `--badge-color` | `var(--o-color-white)` | 徽标文字颜色（由 color prop 决定） |
+| `--badge-bg-color` | `var(--o-color-primary1)` | 徽标背景色（由 color prop 决定） |
+
+**使用示例**：
+```vue
+<OBadge :value="9" style="--badge-height: 16px; --badge-min-width: 16px;" />
+```
+
 ### 响应式行为表
 
 本组件无显著响应式差异。

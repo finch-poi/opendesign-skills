@@ -178,6 +178,21 @@ const ip = ref('');
 | 小尺寸 | `size="small"` | 紧凑布局 |
 | 实心样式 | `variant="solid"` | 实心背景风格 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--ip-separator-size` | `4px` | 分段间圆点分隔符的尺寸 |
+| `--ip-separator-gap` | `8px` | 分段间圆点分隔符与分段输入框的间距 |
+| `--ip-separator-bg-color` | `var(--o-color-info1)` | 分段间圆点分隔符的背景色 |
+
+**使用示例**：
+```vue
+<OIpInput v-model="ip" style="--ip-separator-size: 6px; --ip-separator-bg-color: var(--o-color-brand1)" />
+```
+
 ### 响应式行为表
 
 | 维度 | <=840px | 841-1200px | >1200px |

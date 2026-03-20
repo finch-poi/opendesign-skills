@@ -242,6 +242,30 @@ card（使用后内部全部失效）
 | 固定尺寸 | `noResponsive` | 不随屏幕缩放 |
 | 文字省略 | `:title-row="2"` + `:title-max-row="2"` | 行数和最大行数一致 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--card-radius` | `var(--o-radius_control-l)` | 卡片整体圆角 |
+| `--card-cover-radius` | `var(--o-radius_control-s)` | 封面图圆角 |
+| `--card-main-padding-v` | `24px` | 内容区上下内边距 |
+| `--card-main-padding-h` | `32px`（无封面）/ `24px`（有封面） | 内容区左右内边距 |
+| `--card-content-gap` | `12px` | 标题与描述之间的间距 |
+| `--card-header-text-size` | `var(--o-font_size-h3)` | 标题字号 |
+| `--card-content-text-size` | `var(--o-font_size-text1)` | 描述文字字号 |
+| `--card-footer-gap` | `24px` | footer 内元素间距 |
+| `--card-icon-gap` | `16px` | 图标与内容的间距 |
+| `--card-h-cover-width` | `45%` | 横向布局时封面宽度占比 |
+| `--card-h-cover-max-width` | `320px` | 横向布局时封面最大宽度 |
+
+**使用示例**：
+```vue
+<!-- 紧凑模式：减小内边距 -->
+<OCard style="--card-main-padding-v: 12px; --card-main-padding-h: 16px" :title="title" :detail="detail" />
+```
+
 ### 响应式行为表
 
 | 维度 | ≤840px | 841–1200px | 1201–1680px | >1680px |

@@ -224,6 +224,18 @@ const value = ref('');
 | 错误状态 | `color="danger"` | 红色边框 |
 | 搜索框 | `#prefix` + `clearable` | 带搜索图标 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值（medium size） | 说明 |
+|--------|----------------------|------|
+| `--_box-height` | `var(--o-control_size-m)` | 输入框高度 |
+| `--_box-padding` | `0 15px` | 水平内边距（s: `0 7px`，l: `0 15px`） |
+| `--input-icon-size` | `var(--o-icon_size-m)` | 前缀/后缀图标尺寸 |
+
+> **注意**：`width` 不由组件变量控制，直接在调用处设置 `style="width: 120px"` 或用 CSS class 设置即可。
+
 ### 响应式行为表
 
 | 维度 | ≤600px | 601–840px | 841–1200px | >1200px |

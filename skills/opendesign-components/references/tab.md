@@ -265,6 +265,40 @@ const onDelete = (val) => {
 | 延迟渲染 | `lazy` | 首次激活才渲染 |
 | 自定义导航 | OTabPane `#nav` 插槽 | 图标+文字 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--tab-nav-btn-icon-size` | `var(--o-icon_size_control-xs)` | 导航按钮图标尺寸 |
+| `--tab-nav-btn-size` | `24px` | 导航按钮尺寸 |
+| `--tab-nav-color` | `var(--o-color-info2)` | 页签文字颜色 |
+| `--tab-nav-color-disabled` | `var(--o-color-info4)` | 禁用页签文字颜色 |
+| `--tab-nav-radius` | `2px` | 页签圆角 |
+| `--tab-icon-color` | `var(--o-color-info2)` | 页签图标颜色 |
+| `--tab-icon-color-hover` | `var(--o-color-primary1)` | 页签图标 hover 颜色 |
+| `--tab-icon-color-disabled` | `var(--o-color-info4)` | 页签图标禁用颜色 |
+| `--tab-nav-divider` | `1px solid var(--o-color-control1)` | 导航栏底部分隔线 |
+| `--tab-nav-anchor-color` | `var(--o-color-primary1)` | text 模式底部指示线颜色 |
+| `--tab-nav-anchor-height` | `2px` | text 模式底部指示线高度 |
+| `--tab-nav-close-size` | `var(--o-icon_size_control-xs)` | 关闭按钮图标尺寸 |
+| `--tab-nav-icon-size` | `var(--o-icon_size_control-m)`（medium） | 页签图标尺寸 |
+| `--tab-nav-icon-gap` | `8px` | 图标与文字间距 |
+| `--tab-nav-ellipsis-padding-x` | `16px` | 更多按钮水平内边距 |
+| `--tab-nav-ellipsis-shadow-width` | `8px` | 更多按钮遮罩宽度 |
+| `--tab-nav-text-size` | `var(--o-font_size-text2)`（medium） | 页签文字字号 |
+| `--tab-nav-text-height` | `var(--o-line_height-text2)`（medium） | 页签文字行高 |
+| `--tab-nav-gap` | `32px`（medium） | 页签间距 |
+| `--tab-nav-padding` | `0 0 16px`（medium） | 页签内边距 |
+
+**使用示例**:
+```vue
+<OTab style="--tab-nav-anchor-color: var(--o-color-success1)" v-model="active">
+  <OTabPane value="tab1" label="标签一">内容</OTabPane>
+</OTab>
+```
+
 ### 响应式行为表
 
 | 维度 | ≤840px | 841–1440px | >1440px |

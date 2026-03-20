@@ -155,6 +155,30 @@ OBreadcrumb default
 | 新窗口打开 | `href` + `target="_blank"` | 外部链接 |
 | 当前页面（末尾项） | 不设 href/to | 渲染为纯文本 span |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--breadcrumb-color` | `var(--o-color-info3)` | 普通面包屑项文字颜色 |
+| `--breadcrumb-color-hover` | `var(--o-color-primary2)` | 鼠标悬停时文字颜色 |
+| `--breadcrumb-color-active` | `var(--o-color-primary3)` | 鼠标按下时文字颜色 |
+| `--breadcrumb-color-selected` | `var(--o-color-primary1)` | 当前选中项文字颜色 |
+| `--breadcrumb-text-size` | `var(--o-font_size-tip1)` | 面包屑文字大小 |
+| `--breadcrumb-text-height` | `var(--o-line_height-tip1)` | 面包屑文字行高 |
+| `--breadcrumb-gap` | `4px` | 分隔符与文字之间的间距 |
+| `--breadcrumb-separator-size` | `var(--o-icon_size_control-m)` | 分隔符图标大小 |
+| `--breadcrumb-label-max-width` | `140px` | 面包屑项最大宽度（超出省略） |
+
+**使用示例**：
+```vue
+<OBreadcrumb style="--breadcrumb-label-max-width: 200px; --breadcrumb-color: var(--o-color-info2)">
+  <OBreadcrumbItem href="/">首页</OBreadcrumbItem>
+  <OBreadcrumbItem>当前页面</OBreadcrumbItem>
+</OBreadcrumb>
+```
+
 ### 响应式行为表
 
 | 维度 | ≤1200px | >1200px |

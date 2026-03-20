@@ -181,6 +181,29 @@ const handleClick = () => {
 | 悬停效果 | `hover-bg` + `:hover-underline="false"` | 背景高亮代替下划线 |
 | 异步操作 | `:loading` + `@click` | 点击后显示加载 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--link-gap` | `4px` | 前缀图标、文字、后缀图标之间的间距 |
+| `--link-icon-size` | `1.14em` | 图标尺寸（medium/small 为 `var(--o-icon_size_control-xs)`，large 为 `var(--o-icon_size_control-s)`） |
+| `--link-icon-align` | `-0.05em` | 图标垂直对齐偏移（medium/small 为 `-0.08em`，large 为 `-0.1em`） |
+| `--link-color` | `var(--o-color-link1)`（normal） | 链接文字颜色（随 color prop 变化） |
+| `--link-color-hover` | `var(--o-color-link2)`（normal） | 悬停时文字颜色 |
+| `--link-color-active` | `var(--o-color-link3)`（normal） | 激活时文字颜色 |
+| `--link-color-disabled` | `var(--o-color-info4)`（normal） | 禁用时文字颜色 |
+| `--link-bg-color-hover` | `var(--o-color-control1-light)`（normal） | 悬停时背景色（hoverBg=true 时生效） |
+| `--link-bg-color-active` | `var(--o-color-control2-light)`（normal） | 激活时背景色 |
+| `--link-text-size` | — | 文字大小（medium/small 为 `var(--o-font_size-tip1)`） |
+| `--link-text-height` | — | 文字行高（medium/small 为 `var(--o-line_height-tip1)`） |
+
+**使用示例**:
+```vue
+<OLink color="primary" style="--link-gap: 8px; --link-icon-size: 1.5em">查看详情</OLink>
+```
+
 ### 响应式行为表
 
 | 维度 | ≤1440px | >1440px |

@@ -167,6 +167,23 @@ const visible = ref(false);
 | 局部浮层 | `:wrapper="null"` | 父容器内弹出 |
 | 阻止关闭 | `before-hide` | 拦截关闭 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--layer-position` | `absolute`（body 挂载时为 `fixed`） | 浮层定位方式 |
+| `--layer-mask` | `var(--o-color-mask1)` | 遮罩层颜色 |
+| `--layer-align` | `center` | 内容垂直对齐（align-items） |
+| `--layer-justify` | `center` | 内容水平对齐（justify-content） |
+| `--layer-origin` | `center` | 缩放动画变换原点（transitionOrign="css" 时生效） |
+
+**使用示例**:
+```vue
+<OLayer v-model:visible="visible" transition-orign="css" style="--layer-origin: top center" />
+```
+
 ### 响应式行为表
 
 本组件无响应式差异。上层组件（如 ODialog）通过 CSS 变量实现响应式。

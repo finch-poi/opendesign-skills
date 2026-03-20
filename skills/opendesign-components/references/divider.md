@@ -111,6 +111,24 @@ import { ODivider } from '@opensig/opendesign';
 | 虚线/点线 | `variant="dashed"` / `variant="dotted"` | 样式变体 |
 | 强调分割 | `darker` | 深色线 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--o-divider-color` | `var(--o-color-info1)` | 标签文字颜色 |
+| `--o-divider-text-size` | `var(--o-font_size-text1)` | 标签文字字号 |
+| `--o-divider-text-height` | `var(--o-line_height-text1)` | 标签文字行高 |
+| `--o-divider-label-gap` | `0 12px` | 标签左右外边距（水平分割线） / 垂直分割线左右外边距 |
+| `--o-divider-bd-color` | `var(--o-color-control4)` | 分割线颜色（deeper 时为 `var(--o-color-control1)`） |
+| `--o-divider-gap` | `12px` | 水平分割线上下外边距 / 垂直分割线左右外边距 |
+
+**使用示例**：
+```vue
+<ODivider style="--o-divider-bd-color: var(--o-color-primary1); --o-divider-gap: 24px" />
+```
+
 ### 响应式行为表
 
 | 维度 | ≤840px | 841–1200px | >1200px |

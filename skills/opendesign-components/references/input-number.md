@@ -288,6 +288,27 @@ const format = (val) => (Number.isNaN(Number(val)) ? '' : `$${val}`);
 | 不允许空值 | `:clear-value="0"` | 清空时回退为指定数值 |
 | 宽度自适应 | `auto-width` | 输入框宽度跟随内容 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--input-number-btn-color` | `var(--o-color-info3)` | 加减按钮默认图标颜色 |
+| `--input-number-btn-color-hover` | `var(--o-color-info1)` | 加减按钮悬停图标颜色 |
+| `--input-number-btn-color-active` | `var(--o-color-info1)` | 加减按钮激活图标颜色 |
+| `--input-number-btn-color-disabled` | `var(--o-color-info4)` | 加减按钮禁用图标颜色 |
+| `--input-number-btn-bg-color` | `transparent` | 加减按钮默认背景色 |
+| `--input-number-btn-bg-color-hover` | `var(--o-color-control1-light)` | 加减按钮悬停背景色 |
+| `--input-number-btn-bg-color-active` | `var(--o-color-control2-light)` | 加减按钮激活背景色 |
+| `--input-number-btn-bg-color-disabled` | `var(--o-color-control4-light)` | 加减按钮禁用背景色 |
+| `--input-number-btn-pill-fix` | `2px` | pill 圆角模式下按钮区域的内边距修正值 |
+
+**使用示例**：
+```vue
+<OInputNumber v-model="count" style="--input-number-btn-color: var(--o-color-brand1)" />
+```
+
 ### 响应式行为表
 
 无独立的响应式断点逻辑。OInputNumber 的尺寸及响应式行为继承自底层 OInput 组件。不同 size 对应不同默认宽度（small: 90px, medium: 120px, large: 160px），该宽度在 autoWidth 模式下不生效。

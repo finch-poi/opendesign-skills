@@ -675,6 +675,31 @@ fetchData();
 | 单元格合并 | `:span-method` | 合并行列 |
 | 空值占位 | `default-empty-cell-text="N/A"` | 自定义空值文案 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--table-filter-trigger-gap` | `4px` | 筛选触发图标与表头文字的间距 |
+| `--table-filter-trigger-size` | `16px` | 筛选触发图标大小 |
+| `--table-head-bg` | `var(--o-color-control3-light)` | 表头背景色（fill 模式） |
+| `--table-head-border-bottom` | `var(--table-border-width) solid var(--table-head-bg)` | 表头底部边框（fill 模式） |
+| `--popup-bg-color` | `var(--o-color-control5-light)` | 列筛选弹出面板背景色 |
+| `--popup-radius` | `var(--o-radius-xs)` | 列筛选弹出面板圆角 |
+| `--popup-shadow` | `var(--o-shadow-2)` | 列筛选弹出面板阴影 |
+| `--table-filter-popup-width` | `192px` | 列筛选弹出面板宽度 |
+| `--table-filter-option-list-max-height-default` | `256px` | 列筛选选项列表最大高度 |
+
+**使用示例**：
+```vue
+<ODataTable
+  :columns="columns"
+  :data="data"
+  style="--table-filter-popup-width: 240px; --table-filter-option-list-max-height-default: 320px"
+/>
+```
+
 ### 响应式行为表
 
 | 维度 | 手机/平板竖屏 (<=pad_v) | 桌面端 |

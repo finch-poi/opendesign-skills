@@ -186,6 +186,34 @@ const handleUpdate = (val) => {
 | 默认展开 | `:default-value="[1]"` | 非受控模式默认展开 |
 | 自定义标题 | `#title` 插槽 | 替换标题文字 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--collapse-radius` | `var(--o-radius_control-l)` | 容器圆角 |
+| `--collapse-bg-color` | `var(--o-color-fill2)` | 容器背景色 |
+| `--collapse-padding` | `8px 32px` | 容器内边距 |
+| `--collapse-division-color` | `var(--o-color-control4)` | 面板项分割线颜色 |
+| `--collapse-item-header-padding` | `25px 0px` | 标题区域内边距 |
+| `--collapse-item-title-color` | `var(--o-color-info1)` | 标题文字颜色（收起态） |
+| `--collapse-item-title-color_expanded` | `var(--o-color-primary1)` | 标题文字颜色（展开态） |
+| `--collapse-item-title-text-size` | `var(--o-font_size-h3)` | 标题字号 |
+| `--collapse-item-title-text-height` | `var(--o-line_height-h3)` | 标题行高 |
+| `--collapse-item-body-text-size` | `var(--o-font_size-text1)` | 内容区文字字号 |
+| `--collapse-item-body-text-height` | `var(--o-line_height-text1)` | 内容区文字行高 |
+| `--collapse-item-icon-color` | `var(--o-color-info1)` | 展开图标颜色 |
+| `--collapse-item-icon-size` | `var(--o-icon_size_control-m)` | 展开图标大小 |
+| `--collapse-item-gap` | `var(--o-gap-5)` | 内容区底部间距 |
+
+**使用示例**��
+```vue
+<OCollapse style="--collapse-bg-color: transparent; --collapse-padding: 0">
+  <OCollapseItem title="面板" :value="1">内容</OCollapseItem>
+</OCollapse>
+```
+
 ### 响应式行为表
 
 | 维度 | ≤840px | 841–1200px | >1200px |

@@ -162,14 +162,26 @@ const score = ref(3);
 | 带提示 | `:labels="[...]"` | 悬停文字 |
 | 可取消 | `clearable` | 再次点击清空 |
 
-### CSS 变量
+### 可覆盖的 CSS 变量
 
-| 变量名 | 说明 |
-|--------|------|
-| `--rate-size` | 图标尺寸（large: 控件 l, medium: 控件 xs） |
-| `--rate-gap` | 图标间距（large: 12px, medium: 8px） |
-| `--rate-color` | 未选中颜色 |
-| `--rate-color-selected` | 选中颜色（跟随 color prop） |
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--rate-color` | `var(--o-color-control1)` | 未选中图标颜色 |
+| `--rate-color-selected` | 跟随 `color` prop（normal 时为 `rgb(var(--o-yellow-6))`） | 选中图标颜色 |
+| `--rate-size` | `var(--o-icon_size_control-xs)`（medium） | 图标尺寸 |
+| `--rate-gap` | `8px`（medium） | 图标间距 |
+| `--rate-popover-color` | `var(--o-color-info1)` | 气泡文字颜色 |
+| `--rate-popover-text-size` | `var(--o-font_size-tip1)` | 气泡文字字号 |
+| `--rate-popover-text-height` | `var(--o-line_height-tip2)` | 气泡文字行高 |
+| `--rate-popover-radius` | `var(--o-radius_control-s)` | 气泡圆角 |
+| `--rate-popover-padding` | `2px 8px` | 气泡内边距 |
+
+**使用示例**：
+```vue
+<ORate v-model="score" style="--rate-color-selected: #7c3aed; --rate-gap: 16px" />
+```
 
 ### 响应式行为表
 

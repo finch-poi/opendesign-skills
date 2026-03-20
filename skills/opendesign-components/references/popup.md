@@ -215,6 +215,40 @@ const visible = ref(false);
 | 手动控制 | `v-model:visible` + `trigger="none"` | 完全受控 |
 | 不自适应 | `:adaptive="false"` | 固定位置 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--popup-bg-color` | — | 弹出层背景色 |
+| `--popup-shadow` | — | 弹出层阴影 |
+| `--popup-radius` | — | 弹出层圆角 |
+| `--popup-bd` | — | 弹出层边框 |
+| `--popup-padding` | — | 弹出层内边距 |
+| `--popup-min-width` | — | 弹出层最小宽度 |
+| `--popup-z-index` | — | 弹出层层级 |
+| `--popup-edge-offset` | — | 边缘偏移量 |
+
+> 注：OPopup 本身不预设这些变量的默认值，默认外观由上层封装组件（如 OPopover）通过其自身 var.scss 设置。直接使用 OPopup 时，可通过 `wrap-class` 传入自定义类名，在该类名上覆盖 CSS 变量。
+
+**使用示例**:
+```vue
+<OPopup wrap-class="my-popup">
+  <div>自定义内容</div>
+  <template #target><OButton>触发</OButton></template>
+</OPopup>
+
+<style>
+.my-popup {
+  --popup-bg-color: var(--o-color-fill2);
+  --popup-shadow: var(--o-shadow-1);
+  --popup-radius: var(--o-radius_control-s);
+  --popup-padding: 12px 16px;
+}
+</style>
+```
+
 ### CSS 变量
 
 | 变量名 | 说明 |

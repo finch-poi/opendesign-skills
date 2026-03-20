@@ -187,6 +187,32 @@ import { OCarousel, OCarouselItem } from '@opensig/opendesign';
 | 卡片轮播 | `click-to-switch` + Gallery 模式 | OCarouselItem 宽度 < 100% |
 | 全屏切换 | `effect="toggle"` | 直接切换 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--carousel-arrow-size` | `var(--o-icon_size_control-l)` | 箭头图标大小 |
+| `--carousel-arrow-color` | `var(--o-color-info1)` | 箭头图标颜色 |
+| `--carousel-arrow-color-hover` | `var(--o-color-info2)` | 箭头悬停颜色 |
+| `--carousel-arrow-color-active` | `var(--o-color-info3)` | 箭头按下颜色 |
+| `--carousel-indicator-width` | `48px` | 指示器宽度（>1200px 默认值） |
+| `--carousel-indicator-height` | `3px` | 指示器高度 |
+| `--carousel-indicator-gap` | `12px` | 指示器之间的间距 |
+| `--carousel-indicator-offset` | `19px` | 指示器距底部的偏移量 |
+| `--carousel-indicator-bg-color` | `var(--o-color-control1)` | 指示器默认背景色 |
+| `--carousel-indicator-bg-color-hover` | `var(--o-color-primary2)` | 指示器悬停背景色 |
+| `--carousel-indicator-bg-color-active` | `var(--o-color-primary3)` | 指示器按下背景色 |
+| `--carousel-indicator-bg-color-selected` | `var(--o-color-primary1)` | 指示器选中背景色 |
+
+**使用示例**：
+```vue
+<OCarousel style="--carousel-indicator-width: 32px; --carousel-indicator-bg-color-selected: var(--o-color-danger1)">
+  <OCarouselItem v-for="i in 4" :key="i">内容 {{ i }}</OCarouselItem>
+</OCarousel>
+```
+
 ### 响应式行为表
 
 | 维度 | ≤600px | 601–840px | 841–1200px | >1200px |

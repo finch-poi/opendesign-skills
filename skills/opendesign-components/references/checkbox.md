@@ -237,6 +237,53 @@ const handleChangeAll = () => {
 | 全选控件 | `indeterminate` + `@change` | 配合计算属性 |
 | 垂直排列 | OCheckboxGroup + `direction="v"` | 垂直布局 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+**OCheckbox 变量：**
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--checkbox-text-size` | `var(--o-font_size-text1)` | 标签文字大小（>1200px 默认值） |
+| `--checkbox-text-height` | `var(--o-line_height-text1)` | 标签文字行高 |
+| `--checkbox-label-gap` | `8px` | 勾选框与文字标签的间距 |
+| `--checkbox-align` | `center` | 勾选框与标签的垂直对齐方式 |
+| `--checkbox-color` | `var(--o-color-info1)` | 标签文字颜色 |
+| `--checkbox-color-disabled` | `var(--o-color-info4)` | 禁用状态文字颜色 |
+| `--checkbox-radius` | `var(--o-radius_control-xs)` | 勾选框圆角 |
+| `--checkbox-input-wrap-size` | `var(--o-control_size-s)` | 勾选框外层容器尺寸 |
+| `--checkbox-input-size` | `var(--o-control_size-xs)` | 勾选框实际尺寸 |
+| `--checkbox-input-bg-color` | `var(--o-color-control5-light)` | 勾选框未选中背景色 |
+| `--checkbox-input-bg-color-disabled` | `var(--o-color-control4-light)` | 勾选框禁用背景色 |
+| `--checkbox-input-bg-color-checked` | `var(--o-color-primary1)` | 勾选框选中背景色 |
+| `--checkbox-input-bg-color-checked-hover` | `var(--o-color-primary2)` | 勾选框选中悬停背景色 |
+| `--checkbox-input-bg-color-checked-active` | `var(--o-color-primary3)` | 勾选框选中按下背景色 |
+| `--checkbox-input-bg-color-checked-disabled` | `var(--o-color-primary4)` | 勾选框选中禁用背景色 |
+| `--checkbox-input-bd-color` | `var(--o-color-control1)` | 勾选框未选中边框颜色 |
+| `--checkbox-input-bd-color-hover` | `var(--o-color-primary2)` | 勾选框未选中悬停边框颜色 |
+| `--checkbox-input-bd-color-active` | `var(--o-color-primary3)` | 勾选框未选中按下边框颜色 |
+| `--checkbox-input-bd-color-disabled` | `var(--o-color-control4)` | 勾选框禁用边框颜色 |
+| `--checkbox-input-bd-color-checked` | `var(--o-color-primary1)` | 勾选框选中边框颜色 |
+| `--checkbox-input-bd-color-checked-hover` | `var(--o-color-primary2)` | 勾选框选中悬停边框颜色 |
+| `--checkbox-input-bd-color-checked-active` | `var(--o-color-primary3)` | 勾选框选中按下边框颜色 |
+| `--checkbox-input-bd-color-checked-disabled` | `var(--o-color-primary4)` | 勾选框选中禁用边框颜色 |
+| `--checkbox-input-icon-size` | `calc(var(--checkbox-input-size) / 2)` | 勾号/横线图标大小 |
+| `--checkbox-input-icon-color` | `var(--o-color-fill2)` | 勾号/横线图标颜色 |
+
+**OCheckboxGroup 变量：**
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--checkbox-group-gap` | `24px`（水平）/ `16px`（垂直） | 多选框之间的间距 |
+
+**使用示例**：
+```vue
+<OCheckbox v-model="selected" value="1" style="--checkbox-input-bg-color-checked: var(--o-color-success1); --checkbox-input-bd-color-checked: var(--o-color-success1)">
+  自定义颜色
+</OCheckbox>
+```
+
 ### 响应式行为表
 
 | 维度 | ≤1200px | >1200px |

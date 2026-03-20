@@ -218,6 +218,40 @@ const visible = ref(false);
 | 自定义宽度 | `option-width-mode="width"` | 面板宽度与触发元素一致 |
 | 运营主题按钮 | `color="brand"` + `variant="solid"` | 品牌色实心样式 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--dropdown-list-bg-color` | `var(--o-color-control5-light)` | 下拉列表背景色 |
+| `--dropdown-list-shadow` | `var(--o-shadow-2)` | 下拉列表阴影 |
+| `--dropdown-list-bd` | `none` | 下拉列表边框 |
+| `--dropdown-list-radius` | `var(--o-radius_control-m)` | 下拉列表圆角 |
+| `--dropdown-list-padding` | `4px` | 下拉列表内边距 |
+| `--dropdown-item-color` | `var(--o-color-info2)` | 选项文字颜色（默认） |
+| `--dropdown-item-color-hover` | `var(--o-color-primary2)` | 选项文字颜色（悬停） |
+| `--dropdown-item-color-disabled` | `var(--o-color-info4)` | 选项文字颜色（禁用） |
+| `--dropdown-item-bg-color` | `transparent` | 选项背景色（默认） |
+| `--dropdown-item-bg-color-hover` | `var(--o-color-control2-light)` | 选项背景色（悬停） |
+| `--dropdown-item-bg-color-disabled` | `transparent` | 选项背景色（禁用） |
+| `--dropdown-item-text-size` | `var(--o-font_size-text1)` | 选项文字字号（large 尺寸） |
+| `--dropdown-item-text-height` | `var(--o-line_height-text1)` | 选项文字行高（large 尺寸） |
+| `--dropdown-item-justify` | `left` | 选项文字对齐方式 |
+| `--dropdown-item-padding` | `7px 12px` | 选项内边距（large 尺寸） |
+| `--dropdown-item-gap` | `2px` | 选项之间的间距 |
+| `--dropdown-item-radius` | `var(--o-radius_control-s)` | 选项圆角 |
+
+**使用示例**：
+```vue
+<ODropdown style="--dropdown-list-radius: var(--o-radius_control-l); --dropdown-item-justify: center">
+  <OButton>操作</OButton>
+  <template #dropdown>
+    <ODropdownItem label="选项一" value="opt1" />
+  </template>
+</ODropdown>
+```
+
 ### 响应式行为表
 
 | 维度 | ≤840px | 841–1200px | >1200px |

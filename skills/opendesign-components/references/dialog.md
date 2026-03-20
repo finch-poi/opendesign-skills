@@ -246,6 +246,37 @@ const actions = [
 | 阻止意外关闭 | `:mask-close="false"` + `before-hide` | 需要确认才能关闭 |
 | 局部对话框 | `:wrapper="null"` | 挂载到父容器 |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--dlg-close-size` | `var(--o-icon_size_control-m)` | 关闭按钮图标大小 |
+| `--dlg-close-color` | `var(--o-color-info2)` | 关闭按钮默认颜色 |
+| `--dlg-close-color-hover` | `var(--o-color-primary2)` | 关闭按钮悬停颜色 |
+| `--dlg-close-color-active` | `var(--o-color-primary3)` | 关闭按钮激活颜色 |
+| `--dlg-color` | `var(--o-color-info1)` | 内容文字颜色 |
+| `--dlg-header-color` | `var(--o-color-info1)` | 标题文字颜色 |
+| `--dlg-bg-color` | `var(--o-color-control5-light)` | 对话框背景色 |
+| `--dlg-radius` | `var(--o-radius_control-l)` | 对话框圆角 |
+| `--dlg-shadow` | `var(--o-shadow-1)` | 对话框阴影 |
+| `--dlg-max-height` | `100%` | 对话框最大高度（auto 模式为 80%） |
+| `--dlg-min-width` | `272px` | 对话框最小宽度 |
+| `--dlg-margin` | `0px` | 对话框外边距 |
+| `--dlg-edge-gap` | `32px` | 对话框内边距（四周） |
+| `--dlg-inner-gap` | `24px` | header/body/footer 区域间距 |
+| `--dlg-actions-justify` | `center` | 底部按钮对齐方式（可设为 `flex-end` 等） |
+| `--dlg-btn-gap` | `16px` | 底部按钮之间的间距 |
+
+**使用示例**：
+```vue
+<ODialog v-model:visible="visible" style="--dlg-actions-justify: flex-end; --dlg-btn-gap: 8px">
+  <template #header>标题</template>
+  <p>内容</p>
+</ODialog>
+```
+
 ### 响应式行为表
 
 | 维度 | ≤600px (手机) | 601–840px (平板竖) | 841–1200px (平板横) | >1200px (笔记本+) |

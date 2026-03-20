@@ -286,9 +286,46 @@ const fileList = ref([]);
 | 多文件 | `multiple` | 批量选择 |
 | 进度条 | `show-progress` | 显示上传进度 |
 
-### 响应式行为表
+### 可覆盖的 CSS 变量
 
-| 维度 | ≤840px | 841–1080px | 1081–1440px | >1440px |
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--upload-icon-size` | `var(--o-icon_size_control-xs)` | 文件列表图标尺寸（小） |
+| `--upload-icon-size-l` | `var(--o-icon_size_control-m)` | 文件列表图标尺寸（中） |
+| `--upload-icon-size-xl` | `var(--o-icon_size_control-l)` | 文件列表图标尺寸（大） |
+| `--upload-color` | `var(--o-color-info1)` | 文件名文字颜色 |
+| `--upload-color-error` | `var(--o-color-danger1)` | 上传失败文字颜色 |
+| `--upload-color-disabled` | `var(--o-color-info4)` | 禁用状态文字颜色 |
+| `--upload-item-bg-hover` | `var(--o-color-control2-light)` | 列表项 hover 背景色 |
+| `--upload-item-radius` | `var(--o-radius_control-s)` | 列表项圆角 |
+| `--upload-item-picture-size` | `var(--o-icon_size-2xl)` | picture 模式缩略图尺寸 |
+| `--upload-progress-height` | `1px` | 进度条高度 |
+| `--upload-progress-bg-color` | `var(--o-color-control3-light)` | 进度条轨道背景色 |
+| `--upload-progress-value-bg-color` | `var(--o-color-primary1)` | 进度条填充色 |
+| `--upload-drag-padding` | `32px 24px` | 拖拽区域内边距 |
+| `--upload-drag-width` | `100%` | 拖拽区域宽度 |
+| `--upload-drag-max-width` | `480px` | 拖拽区域最大宽度 |
+| `--upload-drag-radius` | `var(--o-radius_control-s)` | 拖拽区域圆角 |
+| `--upload-drag-color` | `var(--o-color-info2)` | 拖拽区域文字颜色 |
+| `--upload-drag-bg-color` | `var(--o-color-control2-light)` | 拖拽区域背景色 |
+| `--upload-drag-bd` | `1px solid var(--o-color-control1)` | 拖拽区域边框 |
+| `--upload-card-radius` | `var(--o-radius_control-s)` | 图片卡片圆角 |
+| `--upload-card-width` | `120px` | 图片卡片宽度 |
+| `--upload-card-height` | `var(--upload-card-width)` | 图片卡片高度（正方形） |
+| `--upload-card-gap` | `8px` | 图片卡片间距 |
+| `--upload-card-bd` | `1px solid var(--o-color-control1)` | 图片卡片边框 |
+| `--upload-card-bg-color` | `var(--o-color-control2-light)` | 图片卡片背景色 |
+| `--upload-card-img-fit` | `cover` | 图片填充方式 |
+| `--upload-card-mask` | `var(--o-color-mask1)` | 图片卡片操作遮罩色 |
+
+**使用示例**:
+```vue
+<OUpload style="--upload-card-width: 96px; --upload-drag-max-width: 360px" list-type="picture-card" v-model="fileList" />
+```
+
+### 响应式行为表
 |------|--------|-----------|------------|---------|
 | 拖拽区内边距 | 16px 8px | 16px 8px | 16px 8px | 32px 24px |
 | 拖拽区最大宽度 | 240px | 400px | 400px | 480px |

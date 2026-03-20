@@ -281,6 +281,24 @@ const value = ref('');
 | 纯文字 | `variant="text"` | 无边框 |
 | 禁用响应式 | `no-responsive` | 移动端也用 Popup |
 
+### 可覆盖的 CSS 变量
+
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值（medium size） | 说明 |
+|--------|----------------------|------|
+| `--select-height` | `var(--o-control_size-m)` | 选择框高度 |
+| `--select-padding` | `0 15px` | 水平内边距（s: `0 8px`） |
+| `--select-radius` | `var(--o-radius_control-s)` | 圆角 |
+| `--select-text-size` | `var(--o-font_size-tip1)` | 文字字号 |
+| `--select-icon-size` | `var(--o-icon_size_control-xs)` | 箭头图标尺寸 |
+| `--select-icon-gap` | `var(--o-gap-2)` | 图标与文字间距 |
+| `--select-multiple-max-height` | `64px` | 多选时输入框最大高度 |
+| `--select-tag-padding` | `2px 8px` | 多选标签内边距 |
+| `--select-tag-radius` | `24px` | 多选标签圆角 |
+
+> **注意**：`width` 不由组件变量控制，直接在调用处设置 CSS `width` 即可。
+
 ### 响应式行为表
 
 | 维度 | ≤840px | 841–1440px | >1440px |

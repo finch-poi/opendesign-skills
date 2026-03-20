@@ -316,9 +316,43 @@ const marks = {
 | 自定义范围 | `:min` + `:max` + `:step` | 限定范围 |
 | 自定义单位插槽 | `show-input` + `#unit` | 复杂单位内容 |
 
-### 响应式行为表
+### 可覆盖的 CSS 变量
 
-| 维度 | <=840px | 841-1440px | >1440px |
+在调用处覆盖以下变量调整组件外观，**无需 `:deep` hack**：
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `--slider-height` | `32px` | 滑动条整体高度 |
+| `--slider-runway-wrap-padding` | `0 4px` | 轨道容器内边距 |
+| `--slider-runway-wrap-bg` | `var(--o-color-control4)` | 轨道容器背景色 |
+| `--slider-runway-height` | `4px` | 轨道高度（间隔模式 8px） |
+| `--slider-bar-height` | `4px` | 进度条高度（间隔模式 10px） |
+| `--slider-bar-bg` | `var(--o-color-control2)` | 进度条颜色 |
+| `--slider-btn-width` | `16px` | 滑块按钮宽度（间隔模式 20px，悬停时 24px） |
+| `--slider-btn-bg` | `var(--o-color-info1-inverse)` | 滑块按钮背景色 |
+| `--slider-btn-border` | `4px solid var(--o-color-control4)` | 滑块按钮边框 |
+| `--slider-btn-shadow` | `var(--o-shadow-1)` | 滑块按钮阴影 |
+| `--slider-circle-width` | `6px` | 滑块内圆宽度（showStops 时显示） |
+| `--slider-circle-bg` | `var(--o-color-main1)` | 滑块内圆颜色 |
+| `--slider-stop-width` | `2px` | 刻度点宽度 |
+| `--slider-stop-bg` | `var(--o-color-info4)` | 刻度点颜色（已到达时为白色） |
+| `--slider-marks-font-size` | `var(--o-font_size-tip1)` | 标记文字字号 |
+| `--slider-marks-line-height` | `var(--o-line_height-tip1)` | 标记文字行高 |
+| `--slider-marks-gap` | `8px` | 标记文字与轨道间距 |
+| `--slider-input-width` | `60px` | 输入框宽度 |
+| `--slider-input-unit-gap` | `8px` | 输入框与单位文字间距 |
+| `--slider-popover-font-size` | `var(--o-font_size-text1)` | 气泡文字字号 |
+| `--slider-popover-line-height` | `var(--o-line_height-text1)` | 气泡文字行高 |
+| `--slider-unit-font-size` | `var(--o-font_size-tip2)` | 单位文字字号 |
+| `--slider-unit-line-height` | `var(--o-line_height-tip2)` | 单位文字行高 |
+| `--sldier-unit-color` | `var(--o-color-info3)` | 单位文字颜色（⚠️ 源码拼写错误，实为 `sldier` 非 `slider`，覆盖时必须使用此错误拼写） |
+
+**使用示例**：
+```vue
+<OSlider v-model="value" style="--slider-bar-bg: var(--o-color-success1); --slider-btn-width: 20px" />
+```
+
+### 响应式行为表
 |------|---------|-----------|---------|
 | 气泡文字 | 标准 | tip1 | 标准 |
 | 滑块按钮宽度 | 24px | 16px | 16px |
