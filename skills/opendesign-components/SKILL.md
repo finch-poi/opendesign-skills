@@ -150,6 +150,233 @@ import { OButton, OInput, OCard } from '@opensig/opendesign';
 .my-form :deep(.o-form-item) { margin-bottom: 0; }
 ```
 
+### 响应式样式：使用 `respond` mixin
+
+**在生成任何包含响应式样式的代码前**，按以下顺序检查并初始化：
+
+1. **检查 mixin 文件是否存在**：在项目 `src/` 目录下搜索包含 `@mixin respond` 的 `.scss` 文件
+2. **若不存在**：在 `src/styles/mixin.scss`（或项目约定的公共样式目录）创建下方的初始化文件
+3. **检查构建工具配置，注册为全局自动注入**（见「构建工具全局注入」章节）——注册后组件内无需手动 `@use`，可直接使用所有 mixin
+
+**初始化文件内容（`src/styles/mixin.scss`）：**
+
+```scss
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:meta';
+
+// OpenDesign V2 断点定义
+// 关键断点：840px（手机/平板竖屏）、1200px（移动/桌面）、1680px（笔记本/大屏）
+$o-breakpoints: (
+  // phone：≤600px
+  'phone': (0, 600px),
+  '>phone': 601px,
+  // pad：601–1200px（平板竖屏 + 横屏）
+  'pad': (601px, 1200px),
+  '<=pad': (0, 1200px),
+  '>pad': 1201px,
+  // pad-v：601–840px（平板竖屏）
+  'pad_v': (601px, 840px),
+  '<=pad_v': (0, 840px),
+  '>pad_v': 841px,
+  // pad-h：841–1200px（平板横屏）
+  'pad_h': (841px, 1200px),
+  // laptop：1201–1680px（笔记本/桌面）
+  'laptop': (1201px, 1680px),
+  '<=laptop': (0, 1680px),
+  '>laptop': 1681px,
+  'pad-laptop': (601px, 1680px),
+  'pad_v-laptop': (841px, 1680px),
+  'laptop_s': (1201px, 1440px),
+  '<=laptop_s': (0, 1440px),
+  '>laptop_l': 1441px,
+  // pc：>1680px（大屏）
+  'pc': (1680px, 1920px),
+  '>pc': 1921px,
+);
+
+/// 响应式媒体查询 mixin（V2）
+/// 用法：@include respond('<=pad') { ... }
+@mixin respond($breakname) {
+  $bp: map.get($o-breakpoints, $breakname);
+  @if meta.type-of($bp) == 'list' {
+    $min: list.nth($bp, 1);
+    $max: list.nth($bp, 2);
+    @if $min == 0 {
+      @media (max-width: $max) {
+        @content;
+      }
+    } @else {
+      @media (min-width: $min) and (max-width: $max) {
+        @content;
+      }
+    }
+  } @else {
+    @media (min-width: $bp) {
+      @content;
+    }
+  }
+}
+
+/// 设备悬停能力查询
+/// 用法：@include hoverable { ... }（仅在支持 hover 的设备生效）
+///      @include hoverable(none) { ... }（仅在触控等不支持 hover 的设备生效）
+@mixin hoverable($hover: hover) {
+  @media (hover: $hover) {
+    @content;
+  }
+}
+
+/// 安全 hover 样式——仅在支持 hover 的指针设备上追加 :hover
+/// 触控设备不会产生粘连残留状态
+/// 用法：@include hover { color: red; }
+@mixin hover() {
+  @media (hover: hover) {
+    &:hover {
+      @content;
+    }
+  }
+}
+
+/// 移动端常显 + 桌面端 hover 同时触发
+/// 触控设备上内容始终可见，指针设备上仅在 :hover 时显示
+/// 用法：@include me-hover { visibility: visible; }
+@mixin me-hover() {
+  @content;
+  @media (hover: hover) {
+    &:hover {
+      @content;
+    }
+  }
+}
+
+/// 展开/收起箭头旋转动效（hover 时旋转 180°，带过渡动画）
+/// 用法：.arrow { @include x-hover; }
+@mixin x-hover() {
+  transition: all var(--o-duration-m1) var(--o-easing-standard-in);
+  @include hover {
+    transform: rotate(180deg);
+  }
+}
+
+/// SVG 图标旋转动效（overflow:hidden + 内部 svg 旋转 180°）
+/// 用法：.icon-wrap { @include x-svg-hover; }
+@mixin x-svg-hover() {
+  & {
+    overflow: hidden;
+  }
+  svg {
+    transition: all var(--o-duration-m1) var(--o-easing-standard-in);
+  }
+  @include hover {
+    svg {
+      transform: rotate(180deg);
+    }
+  }
+}
+```
+
+**在组件样式中使用（全局注入后无需 `@use`，直接调用）：**
+
+```scss
+// SomeComponent.vue <style lang="scss">
+// ✅ 全局注入后不需要 @use，直接使用
+
+.my-component {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+
+  @include respond('pad_h') {        // 841–1200px：3列
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include respond('<=pad_v') {      // ≤840px：1列
+    grid-template-columns: 1fr;
+  }
+}
+
+// 安全 hover（触控设备不残留）
+.my-btn {
+  opacity: 0.8;
+  @include hover {
+    opacity: 1;
+  }
+}
+
+// 移动端常显、桌面端 hover 触发
+.action-area {
+  @include me-hover {
+    visibility: visible;
+  }
+}
+
+// 展开/收起箭头旋转
+.expand-icon {
+  @include x-hover;
+}
+```
+
+**构建工具全局注入（必须配置，避免每个文件手动 `@use`）：**
+
+首先分析项目的构建工具：检查根目录下是否有 `vite.config.ts`（或 `.js`）、`nuxt.config.ts`，再决定采用哪种方式注入。
+
+**Vite 项目（`vite.config.ts`）：**
+
+```typescript
+export default defineConfig({
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // 路径为 mixin 文件相对于 vite.config.ts 的路径（或 alias 路径）
+        additionalData: '@use "@/styles/mixin" as *;\n',
+      },
+    },
+  },
+});
+```
+
+**Nuxt 项目（`nuxt.config.ts`）：**
+
+```typescript
+export default defineNuxtConfig({
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: '@use "@/styles/mixin" as *;\n',
+        },
+      },
+    },
+  },
+});
+```
+
+> ⚠️ **注意**：`additionalData` 中路径的 `@` 别名需与 `resolve.alias` 的配置一致。若项目用绝对路径，改为 `'@use "/abs/path/to/mixin" as *;\n'`。配置后 **所有 `.scss` 文件自动注入**，组件里不再需要 `@use`。
+
+**断点速查（最常用）：**
+
+| 断点名 | 范围 | 典型场景 |
+|--------|------|---------|
+| `'<=pad_v'` | ≤840px | 手机 + 平板竖屏 |
+| `'pad_h'` | 841–1200px | 平板横屏 |
+| `'<=pad'` | ≤1200px | 所有移动端（isPhonePad） |
+| `'>pad'` | ≥1201px | 桌面端 |
+| `'laptop'` | 1201–1680px | 笔记本 |
+| `'>laptop'` | ≥1681px | 大屏 |
+
+**Hover mixin 选用速查：**
+
+| 场景 | 用哪个 |
+|------|--------|
+| 鼠标悬停改变样式（触控设备跳过） | `@include hover { ... }` |
+| 某段样式仅限支持 hover 的设备 | `@include hoverable { ... }` |
+| 某段样式仅限触控设备 | `@include hoverable(none) { ... }` |
+| 移动端常显、桌面端 hover 也触发 | `@include me-hover { ... }` |
+| 展开/收起箭头旋转动效 | `@include x-hover` |
+| 带 overflow 裁切的 SVG 旋转动效 | `@include x-svg-hover` |
+
+> ⚠️ **不要直接写裸 `@media (hover: hover)` 或 `@media` 断点查询**，统一通过对应 mixin 保持与组件库行为一致。
+
 ## 组件索引
 
 - [OAnchor](#oanchor) — 锚点

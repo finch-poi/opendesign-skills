@@ -253,6 +253,8 @@ const onSubmit = (results) => {
 ```scss
 // src/styles/form-controls.scss
 
+@use 'sass:map';
+
 // ─── SCSS 配置变量 ───────────────────────────────────
 $bp-tablet: 1200px;
 $bp-mobile:  840px;
@@ -265,10 +267,10 @@ $_widget-heights: (
 );
 
 @mixin _apply-widget-heights($bp) {
-  $h: map-get($_widget-heights, $bp);
-  --form-widget-height-l: #{map-get($h, l)};
-  --form-widget-height-m: #{map-get($h, m)};
-  --form-widget-height-s: #{map-get($h, s)};
+  $h: map.get($_widget-heights, $bp);
+  --form-widget-height-l: #{map.get($h, l)};
+  --form-widget-height-m: #{map.get($h, m)};
+  --form-widget-height-s: #{map.get($h, s)};
 }
 
 // ─── CSS 自定义属性声明 ──────────────────────────────
