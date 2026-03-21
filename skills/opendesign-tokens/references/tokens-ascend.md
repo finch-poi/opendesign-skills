@@ -1,3 +1,5 @@
+> ← [Token 索引](../SKILL.md) · [README](../../../README.md)
+
 # Ascend 主题 Token 色值参考（a）
 
 主题标识：`a`

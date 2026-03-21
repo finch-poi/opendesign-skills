@@ -1,3 +1,5 @@
+> ← [命令索引](../SKILL.md#命令索引) · [README](../../../README.md)
+
 # build:component — Vue 组件库构建
 
 ## Part A：功能简介

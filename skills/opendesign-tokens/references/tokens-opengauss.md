@@ -1,3 +1,5 @@
+> ← [Token 索引](../SKILL.md) · [README](../../../README.md)
+
 # openGauss 主题 Token 色值参考（g）
 
 主题标识：`g`

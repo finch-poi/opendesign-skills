@@ -1,3 +1,5 @@
+> ← [组件索引](../SKILL.md#组件索引) · [README](../../../README.md)
+
 # OSkeleton 骨架屏
 
 ## Part A：设计理解卡

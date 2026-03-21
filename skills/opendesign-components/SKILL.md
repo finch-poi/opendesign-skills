@@ -403,52 +403,52 @@ export default defineNuxtConfig({
 
 ## 组件索引
 
-- [OAnchor](#oanchor) — 锚点
-- [OBadge](#obadge) — 徽标
-- [OBreadcrumb](#obreadcrumb) — 面包屑
-- [OButton](#obutton) — 按钮
-- [OCard](#ocard) — 卡片
-- [OCarousel](#ocarousel) — 幻灯片
-- [OCascader](#ocascader) — 级联选择
-- [OCheckbox / OCheckboxGroup](#ocheckbox--ocheckboxgroup) — 多选框
-- [OCollapse](#ocollapse) — 折叠面板
-- [OConfigProvider](#oconfigprovider) — 全局配置
-- [ODataTable](#odatatable) — 数据表格（高级）
-- [ODialog](#odialog) — 对话框
-- [ODivider](#odivider) — 分割线
-- [ODropdown](#odropdown) — 下拉菜单
-- [OFigure](#ofigure) — 图片
-- [OForm / OFormItem](#oform--oformitem) — 表单
-- [OGrid / ORow / OCol](#ogrid--orow--ocol) — 栅格布局
-- [OIcon](#oicon) — 图标
-- [OInput](#oinput) — 输入框
-- [OInputNumber](#oinputnumber) — 数字输入框
-- [OIpInput](#oipinput) — IP 地址输入框
-- [OLayer](#olayer) — 浮层
-- [OLink](#olink) — 链接
-- [OLoading](#oloading) — 加载中
-- [OMenu](#omenu) — 菜单
-- [OMessage](#omessage) — 消息提示
-- [OPagination](#opagination) — 分页
-- [OPopover](#opopover) — 气泡卡片
-- [OPopup](#opopup) — 弹出层
-- [OProgress](#oprogress) — 进度条
-- [ORadio / ORadioGroup](#oradio--oradiogroup) — 单选框
-- [ORate](#orate) — 评分
-- [OResult](#oresult) — 结果
-- [OScrollbar / OScroller](#oscrollbar--oscroller) — 滚动条
-- [OSelect](#oselect) — 选择器
-- [OSkeleton](#oskeleton) — 骨架屏
-- [OSlider](#oslider) — 滑块
-- [OStep / OStepItem](#ostep--ostepitem) — 步骤条
-- [OSwitch](#oswitch) — 开关
-- [OTab / OTabPane](#otab--otabpane) — 标签页
-- [OTag](#otag) — 标签
-- [OTextarea](#otextarea) — 文本域
-- [OToast](#otoast) — 轻提示
-- [OToggle](#otoggle) — 选择块
-- [OUpload](#oupload) — 上传
-- [OVirtualList](#ovirtuallist) — 虚拟列表
+- [OAnchor](#oanchor) — 锚点 · [参考文档](references/anchor.md)
+- [OBadge](#obadge) — 徽标 · [参考文档](references/badge.md)
+- [OBreadcrumb](#obreadcrumb) — 面包屑 · [参考文档](references/breadcrumb.md)
+- [OButton](#obutton) — 按钮 · [参考文档](references/button.md)
+- [OCard](#ocard) — 卡片 · [参考文档](references/card.md)
+- [OCarousel](#ocarousel) — 幻灯片 · [参考文档](references/carousel.md)
+- [OCascader](#ocascader) — 级联选择 · [参考文档](references/cascader.md)
+- [OCheckbox / OCheckboxGroup](#ocheckbox--ocheckboxgroup) — 多选框 · [参考文档](references/checkbox.md)
+- [OCollapse](#ocollapse) — 折叠面板 · [参考文档](references/collapse.md)
+- [OConfigProvider](#oconfigprovider) — 全局配置 · [参考文档](references/config-provider.md)
+- [ODataTable](#odatatable) — 数据表格（高级） · [参考文档](references/data-table.md)
+- [ODialog](#odialog) — 对话框 · [参考文档](references/dialog.md)
+- [ODivider](#odivider) — 分割线 · [参考文档](references/divider.md)
+- [ODropdown](#odropdown) — 下拉菜单 · [参考文档](references/dropdown.md)
+- [OFigure](#ofigure) — 图片 · [参考文档](references/figure.md)
+- [OForm / OFormItem](#oform--oformitem) — 表单 · [参考文档](references/form.md)
+- [OGrid / ORow / OCol](#ogrid--orow--ocol) — 栅格布局 · [参考文档](references/grid.md)
+- [OIcon](#oicon) — 图标 · [参考文档](references/icon.md)
+- [OInput](#oinput) — 输入框 · [参考文档](references/input.md)
+- [OInputNumber](#oinputnumber) — 数字输入框 · [参考文档](references/input-number.md)
+- [OIpInput](#oipinput) — IP 地址输入框 · [参考文档](references/ip-input.md)
+- [OLayer](#olayer) — 浮层 · [参考文档](references/layer.md)
+- [OLink](#olink) — 链接 · [参考文档](references/link.md)
+- [OLoading](#oloading) — 加载中 · [参考文档](references/loading.md)
+- [OMenu](#omenu) — 菜单 · [参考文档](references/menu.md)
+- [OMessage](#omessage) — 消息提示 · [参考文档](references/message.md)
+- [OPagination](#opagination) — 分页 · [参考文档](references/pagination.md)
+- [OPopover](#opopover) — 气泡卡片 · [参考文档](references/popover.md)
+- [OPopup](#opopup) — 弹出层 · [参考文档](references/popup.md)
+- [OProgress](#oprogress) — 进度条 · [参考文档](references/progress.md)
+- [ORadio / ORadioGroup](#oradio--oradiogroup) — 单选框 · [参考文档](references/radio.md)
+- [ORate](#orate) — 评分 · [参考文档](references/rate.md)
+- [OResult](#oresult) — 结果 · [参考文档](references/result.md)
+- [OScrollbar / OScroller](#oscrollbar--oscroller) — 滚动条 · [参考文档](references/scrollbar.md)
+- [OSelect](#oselect) — 选择器 · [参考文档](references/select.md)
+- [OSkeleton](#oskeleton) — 骨架屏 · [参考文档](references/skeleton.md)
+- [OSlider](#oslider) — 滑块 · [参考文档](references/slider.md)
+- [OStep / OStepItem](#ostep--ostepitem) — 步骤条 · [参考文档](references/step.md)
+- [OSwitch](#oswitch) — 开关 · [参考文档](references/switch.md)
+- [OTab / OTabPane](#otab--otabpane) — 标签页 · [参考文档](references/tab.md)
+- [OTag](#otag) — 标签 · [参考文档](references/tag.md)
+- [OTextarea](#otextarea) — 文本域 · [参考文档](references/textarea.md)
+- [OToast](#otoast) — 轻提示 · [参考文档](references/toast.md)
+- [OToggle](#otoggle) — 选择块 · [参考文档](references/toggle.md)
+- [OUpload](#oupload) — 上传 · [参考文档](references/upload.md)
+- [OVirtualList](#ovirtuallist) — 虚拟列表 · [参考文档](references/virtual-list.md)
 
 ---
 

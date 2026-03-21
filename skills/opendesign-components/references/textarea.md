@@ -1,3 +1,5 @@
+> ← [组件索引](../SKILL.md#组件索引) · [README](../../../README.md)
+
 # OTextarea 多行文本输入框
 
 ## Part A：设计理解卡

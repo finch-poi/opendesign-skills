@@ -1,3 +1,5 @@
+> ← [Token 索引](../SKILL.md) · [README](../../../README.md)
+
 # Kunpeng 主题 Token 色值参考（k）
 
 主题标识：`k`

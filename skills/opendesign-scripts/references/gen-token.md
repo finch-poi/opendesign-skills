@@ -1,3 +1,5 @@
+> ← [命令索引](../SKILL.md#命令索引) · [README](../../../README.md)
+
 # gen:token — 设计令牌生成
 
 ## Part A：功能简介

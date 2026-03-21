@@ -1,3 +1,5 @@
+> ← [命令索引](../SKILL.md#命令索引) · [README](../../../README.md)
+
 # gen:icon — SVG 图标生成 Vue 组件
 
 ## Part A：功能简介

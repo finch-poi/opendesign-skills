@@ -1,3 +1,5 @@
+> ← [组件索引](../SKILL.md#组件索引) · [README](../../../README.md)
+
 # ODialog 对话框
 
 ## Part A：设计理解卡

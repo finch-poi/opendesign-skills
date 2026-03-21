@@ -1,3 +1,5 @@
+> ← [Token 索引](../SKILL.md) · [README](../../../README.md)
+
 # Token 参考文档
 
 本文档包含所有可用的设计 token。

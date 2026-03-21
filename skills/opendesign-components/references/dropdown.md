@@ -1,3 +1,5 @@
+> ← [组件索引](../SKILL.md#组件索引) · [README](../../../README.md)
+
 # ODropdown 下拉菜单
 
 ## Part A：设计理解卡

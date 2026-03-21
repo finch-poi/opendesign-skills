@@ -1,3 +1,5 @@
+> ← [Token 索引](../SKILL.md) · [README](../../../README.md)
+
 # openEuler 主题 Token 色值参考（e）
 
 主题标识：`e`

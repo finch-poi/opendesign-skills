@@ -1,3 +1,5 @@
+> ← [命令索引](../SKILL.md#命令索引) · [README](../../../README.md)
+
 # build:style — SCSS 样式编译
 
 ## Part A：功能简介

@@ -1,3 +1,5 @@
+> ← [工具索引](../SKILL.md) · [README](../../../README.md)
+
 # Composables 参考文档
 
 本文档详细说明 openEuler Portal 项目中所有可用的 Vue 3 Composables。

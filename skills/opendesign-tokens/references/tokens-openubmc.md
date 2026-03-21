@@ -1,3 +1,5 @@
+> ← [Token 索引](../SKILL.md) · [README](../../../README.md)
+
 # openUBMC 主题 Token 色值参考（u）
 
 主题标识：`u`

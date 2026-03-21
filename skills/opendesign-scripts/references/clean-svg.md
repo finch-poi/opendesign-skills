@@ -1,3 +1,5 @@
+> ← [命令索引](../SKILL.md#命令索引) · [README](../../../README.md)
+
 # clean:svg — SVG 清理优化
 
 ## Part A：功能简介

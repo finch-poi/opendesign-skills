@@ -1,3 +1,5 @@
+> ← [工具索引](../SKILL.md) · [README](../../../README.md)
+
 # SCSS Mixins 参考文档
 
 本文档详细说明 openEuler Portal 项目中所有可用的 SCSS Mixins。

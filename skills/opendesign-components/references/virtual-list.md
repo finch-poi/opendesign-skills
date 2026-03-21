@@ -1,3 +1,5 @@
+> ← [组件索引](../SKILL.md#组件索引) · [README](../../../README.md)
+
 # OVirtualList 虚拟滚动列表
 
 ## Part A：设计理解卡
