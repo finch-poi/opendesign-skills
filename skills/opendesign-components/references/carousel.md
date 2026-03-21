@@ -74,6 +74,49 @@ regions: [carousel-wrap(内容容器), indicator-wrap(指示器栏), arrow-wrap(
 - **Token → Prop 映射**：指示器宽度 48px → 默认尺寸；若相邻内容部分露出 → effect="gallery"；若内容一次只显示一张完整切换 → effect="toggle"；箭头常驻可见 → arrow="always"
 - **易混淆组件区分**：与 OTabs（标签页）区分——OCarousel 底部是短横条指示器而非文字标签，内容区支持滑动/动画切换；与图片列表区分——OCarousel 同时只显示一项（或少量）内容并带有切换控件
 
+### ⚠️ toggle 模式必须显式设置高度
+
+**`effect="toggle"` 模式下，所有 OCarouselItem 均为 `position: absolute; height: 100%`，整条高度链依赖父容器——若 `.o-carousel` 未定义高度，实际高度为 0。**
+
+后果：
+- 幻灯片内容 overflow 出来，视觉上可见（.o-carousel 无 overflow:hidden）
+- 箭头：`top: 50%` of 0-height → 贴顶显示，看起来"在内容区"
+- **指示器：`bottom: 19px` of 0-height → 跑到容器顶部以上 19px，被页面其他元素遮盖，不可见**
+
+```css
+/* ✅ 必须给 OCarousel 设置显式高度（toggle 模式） */
+.my-carousel {
+  height: 360px;   /* 根据设计稿的 banner 高度设定 */
+}
+
+/* ✅ 同时让 banner-slide 填满该高度 */
+.my-slide {
+  height: 100%;
+  overflow: hidden;
+}
+```
+
+> **为什么 gallery 模式没有此问题？** gallery 模式下 OCarouselItem 通过 transform 水平排列，高度由内容自然撑开（非 position:absolute），无需显式设置高度。仅 toggle 模式有此限制。
+
+**页面顶部的大幅 Banner 区域（首屏 Hero 区）极大概率是轮播图，不可直接按静态 HTML 实现。**
+
+在 Step 1 分析设计稿时，凡遇到以下情况之一，**必须**对该区域执行轮播检测清单：
+- 页面顶部有全宽或大幅背景图/渐变色块
+- 该区域高度明显大于普通内容行（通常 ≥ 300px）
+- 该区域视觉上与普通内容区隔离、独立成块
+
+**轮播检测清单**（逐项检查 Pixso DSL，任意一项成立 → 使用 OCarousel）：
+
+| 检测项 | 在 DSL 中的信号 |
+|--------|---------------|
+| ① 图层命名 | 节点 `name` 含 `carousel`、`slider`、`轮播`、`Swiper`，或子项命名为 `Slide N`、`Item N`、`Banner N` |
+| ② 多个平级同结构子项 | 容器直接子节点有 2+ 个同类型同结构的 Frame/Group（每个都有独立背景/图片/文字） |
+| ③ 底部指示器层 | 容器内有一层包含 3+ 个等宽小矩形或圆点的横排组，且其中一个颜色与其他不同 |
+| ④ 左右箭头层 | 容器内有两个绝对定位的图标节点，分别位于左侧和右侧，内容为 `<`/`>` 或箭头图形 |
+| ⑤ Pixso 交互 | 节点上绑定了 Auto-animate 或 Navigate 交互（DSL `interactions` 字段非空） |
+
+> **静默陷阱**：设计稿通常只展示轮播的第一帧，指示器、箭头可能因设计稿状态而不明显。若图层名或子项数量出现②，即使没有看到指示器也应使用 OCarousel。
+
 ---
 
 ## Part B：代码调用参考
@@ -236,6 +279,10 @@ root: .o-carousel
               direction: row (gallery 模式，通过 transform 滑动)
               children:
                 - slot[default] → OCarouselItem × N
+                  # OCarouselItem 根节点 class 因 effect 而异：
+                  # effect="gallery"  → .o-carousel-item-gallery
+                  # effect="toggle"   → .o-carousel-item-toggle
+                  # 注意：没有通用的 .o-carousel-item 类，Playwright 选择器必须带 effect 后缀
     - .o-carousel-indicator-wrap:
         role: 指示器栏
         condition: hideIndicator !== true

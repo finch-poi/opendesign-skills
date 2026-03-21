@@ -209,14 +209,16 @@ const value = ref('a');
 
 **使用示例**：
 ```vue
-<!-- 将 Radio 组间距从默认 24px 改为 8px -->
-<ORadioGroup v-model="value" style="--radio-group-gap: 8px">
+<!-- 将 Radio 组间距覆盖为设计稿对应的 token（不要用硬编码 px） -->
+<ORadioGroup v-model="value" style="--radio-group-gap: var(--o-gap-2)">
   <ORadio value="a">选项 A</ORadio>
   <ORadio value="b">选项 B</ORadio>
 </ORadioGroup>
 ```
 
-> ⚠️ **注意**：若同时在父元素上设置 `gap`（flex/grid），会与 `--radio-group-gap`（margin 实现）叠加，导致间距偏大。只需覆盖 `--radio-group-gap`，不要额外设置 `gap`。
+> ⚠️ **注意**：
+> - 覆盖值必须使用 token 变量（如 `var(--r-o-gap-2)`），不要直接写 `8px`。token 变量在不同断点下会自动缩放，硬编码 px 不会。
+> - 若同时在父元素上设置 `gap`（flex/grid），会与 `--radio-group-gap`（margin 实现）叠加，导致间距偏大。只需覆盖 `--radio-group-gap`，不要额外设置 `gap`。
 
 ### 响应式行为表
 
