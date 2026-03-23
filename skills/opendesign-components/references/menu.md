@@ -272,7 +272,23 @@ const selected = ref('item1');
 | `--menu-color-disabled` | `var(--o-color-info4)` | 禁用项文字颜色 |
 | `--menu-color-selected` | `var(--o-color-primary1)` | 选中项文字颜色 |
 | `--menu-bg-color-hover` | `var(--o-color-control2-light)` | 悬停时背景色 |
-| `--menu-bg-color-selected` | `var(--o-color-control3-light)` | 选中时背景色 |
+| `--menu-bg-color-selected` | `var(--o-color-control3-light)` | 选中时背景色（**仅支持纯色**，见下方注意） |
+
+> ⚠️ **`--menu-bg-color-selected` 只接受纯色值**：组件内部将该变量用于 `background-color` 属性，而 `background-color` 不支持渐变函数（`linear-gradient` 等）。如需**渐变选中背景**，必须使用 `:deep()` 直接覆盖 `background` 属性：
+>
+> ```scss
+> /* ❌ 无效：background-color 不接受渐变 */
+> .my-menu { --menu-bg-color-selected: linear-gradient(...); }
+>
+> /* ✅ 正确：用 :deep() 仅覆盖叶节点 OMenuItem 的 background */
+> /* ⚠️ 不要对 .o-sub-menu-selected/.o-sub-menu-associated-selected 加渐变 */
+> /* 渐变高亮只应作用于叶节点菜单项，父级 OSubMenu 标题不高亮 */
+> .my-menu {
+>   :deep(.o-menu-item-selected) {
+>     background: linear-gradient(to right, rgba(46,83,250,0.15), rgba(123,37,244,0.15));
+>   }
+> }
+> ```
 | `--menu-icon-color` | `currentColor` | 图标颜色 |
 | `--menu-icon-color-selected` | `currentColor` | 选中图标颜色 |
 | `--menu-item-padding-v` | `8px`（medium） | 菜单项垂直内边距 |
@@ -423,3 +439,24 @@ layout:
 | OMenu | OTab | OTab 是水平排列的选项卡切换面板，OMenu 是垂直排列的层级导航列表 |
 | OMenu | ODropdown | ODropdown 是弹出式浮层菜单，OMenu 是页面内嵌的固定侧边栏导航 |
 | OMenu | OTree | OTree 有复选框和节点连线，OMenu 无复选框仅有选中高亮 |
+
+**DSL 识别规则（避免遗漏）**
+
+- **图标判断**：M size 变体（属性3=ic_Enabled/ic_Actived）中的图标是 ODesign 内置图标（如 OIconFilter）。**不要**用项目自定义图标替代，应从 `@opensig/opendesign` 导入
+- **S size 无图标**：S size 所有变体均无图标，不要添加 icon 插槽
+- **多 OMenu 识别**：DSL 同一列中出现**多个独立的 assembled Group**（各自有完整菜单结构，且 top 坐标相差 > 100px），应渲染为多个独立 `<OMenu>` 实例，而不是一个带 Group 标签的 OMenu
+- **渐变选中背景**：DSL 的 `fill` 中若有 `GRADIENT_LINEAR`（非纯色），选中态背景需用 `:deep()` 覆盖 `background`（见上方"可覆盖的 CSS 变量"一节）
+
+**Playwright 测试注意事项**
+
+- 点击嵌套子菜单项（三层以上）时，`.o-sub-menu-children-wrap` 可能拦截点击事件，需加 `{ force: true }`：
+  ```typescript
+  await item.click({ force: true })
+  ```
+- 嵌套菜单中 `.o-sub-menu-children` 可能有多个匹配元素（strict mode 违规），等待可见时需用 `.first()`：
+  ```typescript
+  // ❌ 报 strict mode violation
+  await expect(menu.locator('.o-sub-menu-children')).toBeVisible()
+  // ✅ 正确
+  await expect(menu.locator('.o-sub-menu-children').first()).toBeVisible()
+  ```

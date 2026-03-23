@@ -898,12 +898,21 @@ filter-panel:
 
 **设计 Token → Prop 值映射表**
 
+⚠️ **border prop 识别规则（重要）**：
+- ODataTable 的边框由 `border` prop 控制，**不体现在 DSL 容器节点的 `strokes` 属性中**
+- DSL 容器 `strokes:[]` 不代表没有边框，需从**设计图视觉截图**判断边框样式
+- 识别方式：截取表格区域图，观察是否有外框线（frame）和竖分隔线（column），再选对应值
+
 | 设计稿 Token / 视觉特征 | 对应 Prop / 配置 | 说明 |
 |---|---|---|
 | 表头填充背景 `--o-color-control3-light` | `headerStyle="fill"` (默认) | 填充式表头 |
 | 表头仅底部线分隔 | `headerStyle="split-line"` | 分割线表头 |
-| 行底部细线 | `border="row"` (默认) | 仅行线边框 |
-| 完整网格线 | `border="all"` | 全边框 |
+| 行底部细线，无外框，无竖线 | `border="row"` (默认) | 仅行线边框 |
+| 行底部细线 + 外框，无竖线 | `border="row-frame"` | 行线+外框 |
+| 完整网格线（行+竖+外框） | `border="all"` | 全边框 |
+| 仅外框 | `border="frame"` | 仅外框 |
+| 仅竖分隔线 | `border="column"` | 仅列线 |
+| 无任何边框 | `border="none"` | 无边框 |
 | 奇偶行交替背景 | `stripe` | 斑马纹 |
 | 鼠标悬停行高亮 | `highlightCurrentRow` | 行悬停高亮 |
 | 行首复选框 | `selection` | 行选择模式 |

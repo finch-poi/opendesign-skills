@@ -58,7 +58,11 @@ regions: [OStepItem(head(symbol+line) + main(title+desc)), ...]
 
 🔍 **设计稿识别指南**：
 - **视觉特征指纹**：多个圆形标识（含数字或图标）+ 水平/垂直连接线 + 每个圆下方/右侧有标题文字 → 匹配 OStep；圆形颜色不同（绿/蓝/灰/红）表示不同状态 → OStepItem 不同 status
-- **Token → Prop 映射**：绿色圆形+对勾图标 → status="finished" + icon=true；蓝色圆形+加粗标题 → status="processing"；灰色/浅色圆形 → status="waiting"；红色圆形+感叹号 → status="failed" + icon=true；圆内显示数字 → icon=false（默认）；水平排列 → direction="h"；垂直排列 → direction="v"
+- **Token → Prop 映射**：
+  - 绿色圆形+**对勾图标（✓）** → status="finished" + icon=true
+  - 绿色圆形+**数字** → status="finished"（**不传 icon，默认显示序号**）
+  - ⚠️ **finished 状态圆圈内是数字还是对勾，必须看设计图！** 两种情况都是绿色圆形，不能默认用 icon=true
+  - 蓝色圆形+加粗标题 → status="processing"；灰色/浅色圆形 → status="waiting"；红色圆形+感叹号图标 → status="failed" + icon=true；圆内显示数字 → 不传 icon（默认）；水平排列 → direction="h"；垂直排列 → direction="v"
 - **易混淆组件区分**：与 OTimeline 区分——OTimeline 是时间线事件记录，OStep 是流程步骤导航，OStep 有明确的状态色（finished/processing/waiting/failed）且每步有圆形数字标识；与 OBreadcrumb 区分——OBreadcrumb 是导航路径面包屑，没有圆形标识和连接线
 
 ---

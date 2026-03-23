@@ -138,10 +138,64 @@ const lang = getCurrentLocale();
 
 ## 注意事项
 
-1. **路径别名**：项目使用 `~@/` 作为 `src-new` 目录的别名
+1. **路径别名**：项目使用 `~@/` 作为 `src-new` 目录的别名；新项目通常用 `@/`，导入路径相应调整
 2. **响应式断点**：屏幕断点定义在 `screen.scss` 中，与 `useScreen` composable 保持一致
 3. **字体规范**：使用 `font.scss` 中的 mixin 确保字体大小符合设计规范
 4. **类型安全**：所有 composables 和 utils 都提供完整的 TypeScript 类型定义
+
+## 在新项目中配置 SCSS Mixin 文件
+
+SCSS mixin 文件不随 npm 包分发，需要在项目中手动创建。参考 [Mixins 参考文档](references/mixins.md) 在以下路径创建同名文件：
+
+```
+src/assets/style/mixin/
+├── screen.scss   ← 响应式断点（respond-to mixin）
+├── font.scss     ← 响应式字体（h1~h4, text1-2, tip1-2, display1-3 mixin）
+└── common.scss   ← 通用样式（in-dark, text-truncate, scrollbar, hover mixin）
+```
+
+**断点值**（与 opendesign token 体系保持一致）：
+
+| 断点名 | 范围 |
+|--------|------|
+| `phone` | 0–600px |
+| `pad_v` | 601–840px |
+| `pad_h` | 841–1200px |
+| `laptop` | 1201–1440px |
+| 桌面（无 mixin） | >1440px（默认样式） |
+
+**vite.config.ts 配置**（全局自动注入，所有 SCSS 文件无需手动 `@use`）：
+
+```typescript
+css: {
+  preprocessorOptions: {
+    scss: {
+      additionalData: `
+@use "@/assets/style/mixin/screen.scss" as *;
+@use "@/assets/style/mixin/font.scss" as *;
+@use "@/assets/style/mixin/common.scss" as *;
+`,
+    },
+  },
+},
+```
+
+⚠️ **配置后禁止在各 `.vue` 文件或 `.scss` 文件中手动 `@use` 上述 mixin 文件**，否则会报"cannot use module twice"错误。
+
+⚠️ **`screen.scss` map 值必须用引号包裹**（字符串），否则 SCSS 把括号解析为 list 导致编译错误：
+
+```scss
+// ✅ 正确
+$breakpoints: (
+  '<=pad_v': '(max-width: 840px)',
+  'laptop':  '(min-width: 1201px) and (max-width: 1440px)',
+);
+
+// ❌ 错误（括号被解析为 SCSS list）
+$breakpoints: (
+  '<=pad_v': (max-width: 840px),
+);
+```
 
 
 

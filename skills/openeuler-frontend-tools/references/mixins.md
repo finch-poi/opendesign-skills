@@ -6,7 +6,10 @@
 
 ## 导入方式
 
+> **注意：** 在使用 vite + `css.preprocessorOptions.scss.additionalData` 全局注入的项目中，无需手动 `@use`，直接 `@include` 即可。
+
 ```scss
+// 仅在未全局注入时需要手动导入
 @use '~@/assets/style/mixin/screen.scss' as *;
 @use '~@/assets/style/mixin/font.scss' as *;
 @use '~@/assets/style/mixin/common.scss' as *;
@@ -16,9 +19,9 @@
 
 提供响应式断点 mixin，用于根据屏幕尺寸应用不同的样式。
 
-### respond-to
+### respond（⚠️ 注意：不是 respond-to）
 
-响应式断点 mixin，根据屏幕尺寸应用样式。
+响应式断点 mixin，根据屏幕尺寸应用样式。**mixin 名为 `respond`，不是 `respond-to`。**
 
 #### 可用断点
 
@@ -29,7 +32,7 @@
 
 // 平板
 'pad': (601px, 1200px)         // 601-1200px
-'<=pad': (0, 1200px)           // 0-1200px
+'<=pad': (0, 1200px)           // 0-1200px（最常用——隐藏桌面导航）
 '>pad': 1201px                  // 大于 1200px
 
 // 竖屏平板
@@ -37,17 +40,24 @@
 '<=pad_v': (0, 840px)          // 0-840px
 '>pad_v': 841px                // 大于 840px
 
-// 横屏平板
-'pad_h': (841px, 1200px)       // 841-1200px
+// 横屏平板（⚠️ 没有 <=pad_h，请用 <=pad 替代）
+'pad_h': (841px, 1200px)       // 841-1200px（仅范围断点，无 <=pad_h）
 
-// 笔记本
-'laptop': (1201px, 1440px)     // 1201-1440px
-'<=laptop': (0, 1440px)        // 0-1440px
-'>laptop': 1441px              // 大于 1440px
+// 笔记本（实际范围 1201-1680px，不是 1201-1440px）
+'laptop': (1201px, 1680px)     // 1201-1680px
+'<=laptop': (0, 1680px)        // 0-1680px
+'>laptop': 1681px              // 大于 1680px
+'laptop_s': (1201px, 1440px)   // 1201-1440px（笔记本小尺寸）
+'<=laptop_s': (0, 1440px)      // 0-1440px
+'>laptop_l': 1441px            // 大于 1440px
 
 // 组合断点
-'pad-laptop': (601px, 1440px)  // 601-1440px
-'pad_v-laptop': (841px, 1440px) // 841-1440px
+'pad-laptop': (601px, 1680px)  // 601-1680px
+'pad_v-laptop': (841px, 1680px) // 841-1680px
+
+// PC
+'pc': (1680px, 1920px)         // 1680-1920px
+'>pc': 1921px                  // 大于 1920px
 ```
 
 #### 使用方法
@@ -55,24 +65,24 @@
 ```scss
 .container {
   padding: 20px;
-  
-  // 手机端样式
-  @include respond-to('phone') {
+
+  // 手机端样式（0-600px）
+  @include respond('phone') {
     padding: 16px;
   }
-  
-  // 平板端样式
-  @include respond-to('pad') {
-    padding: 24px;
+
+  // 平板及以下（0-1200px）——隐藏桌面导航常用
+  @include respond('<=pad') {
+    display: none;
   }
-  
-  // 笔记本及以上样式
-  @include respond-to('laptop') {
+
+  // 笔记本端样式（1201-1680px）
+  @include respond('laptop') {
     padding: 32px;
   }
-  
-  // 大于手机尺寸
-  @include respond-to('>phone') {
+
+  // 大于手机尺寸（>600px）
+  @include respond('>phone') {
     display: flex;
   }
 }
@@ -85,15 +95,15 @@
   width: 100%;
   margin: 16px;
   
-  @include respond-to('phone') {
+  @include respond('phone') {
     margin: 8px;
   }
   
-  @include respond-to('pad') {
+  @include respond('pad') {
     width: calc(50% - 32px);
   }
   
-  @include respond-to('laptop') {
+  @include respond('laptop') {
     width: calc(33.333% - 48px);
     margin: 24px;
   }
@@ -456,11 +466,11 @@ SVG X 图标旋转悬停效果。
 .responsive-page {
   padding: 32px;
   
-  @include respond-to('pad') {
+  @include respond('pad') {
     padding: 24px;
   }
   
-  @include respond-to('phone') {
+  @include respond('phone') {
     padding: 16px;
   }
 }
@@ -469,7 +479,7 @@ SVG X 图标旋转悬停效果。
   @include h1;
   margin-bottom: 24px;
   
-  @include respond-to('phone') {
+  @include respond('phone') {
     margin-bottom: 16px;
   }
 }
