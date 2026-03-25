@@ -59,6 +59,7 @@ regions: [wrap(handler(icon) + label(on/off文字))]
 - **视觉特征指纹**：圆角矩形轨道 + 内嵌圆形滑块 + 两种状态切换（左/右位置） → 匹配 OSwitch；轨道右侧有 ON/OFF 文字 → 有 on/off 插槽；滑块内有太阳/月亮等图标 → 有 active/inactive 插槽
 - **Token → Prop 映射**：轨道高度 32px（control_size-s）→ size="medium"（默认）；轨道高度 24px（control_size-xs）→ size="small"；全圆角 → round="pill"；蓝色轨道背景 → 开启状态（checked）；灰色轨道背景 → 关闭状态（unchecked）；滑块内有旋转图标 → loading=true
 - **易混淆组件区分**：与 OCheckbox 区分——OCheckbox 是方形勾选框+文字标签，OSwitch 是圆角滑动轨道+圆形滑块；与 ORadio 区分——ORadio 是圆形单选按钮组，OSwitch 是单个开关切换器
+- **⚠️ 必填星号 → 用 OFormItem 包裹**：设计稿中开关控件标签旁有红色星号（必填），应将 OSwitch 放入 `<OFormItem required>` 实现，**不要**手写星号。详见 form.md。
 
 ---
 

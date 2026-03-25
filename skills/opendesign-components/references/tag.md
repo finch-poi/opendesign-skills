@@ -12,9 +12,9 @@ OTag 是标签组件，用于标记和分类信息。支持六种颜色、两种
 
 **variant**（属性）：标签样式。"solid" 实心填充、"outline" 线框描边。默认 solid。
 
-**size**（属性）：标签尺寸。"large" 大号、"medium" 中号、"small" 小号。默认 large。
+**size**（属性）：标签尺寸。"large" 大号（高度 24px，≤1680px 断点下收缩为 20px）、"medium" 中号（高度 20px，≤840px 收缩为 16px）、"small" 小号（高度 16px，文字通过 scale(0.833) 视觉缩小至约 10px）。默认 large。
 
-**round**（属性）：圆角值。"pill" 半圆或 CSS 值。
+**round**（属性）：圆角值。"pill" 胶囊全圆（组件 JS 注入内联样式 `--tag-radius: 100vh`，不受 CSS 变量覆盖影响）；也可传任意 CSS 长度值。
 
 ### 可见性
 
@@ -49,7 +49,7 @@ regions: [icon(前缀图标), label(文字内容), close(关闭按钮)]
 
 🔍 **设计稿识别指南**：
 - **视觉特征指纹**：小尺寸圆角矩形色块，内含短文本，可能带图标和关闭 × 号 → 匹配 OTag；实心填充或线框描边的小标记 → 匹配 OTag
-- **Token → Prop 映射**：实心填充背景 → variant="solid"；仅边框透明背景 → variant="outline"；蓝色系 → color="primary"；绿色系 → color="success"；橙色系 → color="warning"；红色系 → color="danger"；灰色系 → color="normal"；高度 28px → size="large"，20px → size="medium"，16px → size="small"；半圆角 → round="pill"；带 × 关闭图标 → closable
+- **Token → Prop 映射**：实心填充背景 → variant="solid"；仅边框透明背景 → variant="outline"；蓝色系 → color="primary"；绿色系 → color="success"；橙色系 → color="warning"；红色系 → color="danger"；灰色系 → color="normal"；高度 24px（>1680px断点，≤1680px为20px） → size="large"，20px → size="medium"，16px → size="small"；胶囊全圆角 → round="pill"；带 × 关闭图标 → closable
 - **易混淆组件区分**：与 OButton 区分——OTag 是静态标签展示用于分类标记，OButton 是交互操作触发器；与 OBadge 区分——OBadge 是附着在其他元素上的角标，OTag 是独立的标签元素；与 OToggle 区分——OToggle 有选中/未选中状态切换交互，OTag 无选中态
 
 ---
@@ -79,7 +79,7 @@ type SizeT = 'large' | 'medium' | 'small';
 | color | `TagColorT` | `'normal'` / `'info'` / `'primary'` / `'success'` / `'warning'` / `'danger'` | `'normal'` | 颜色 |
 | variant | `TagVariantT` | `'solid'` / `'outline'` | `'solid'` | 样式 |
 | size | `SizeT` | `'large'` / `'medium'` / `'small'` | `'large'` | 尺寸 |
-| round | `RoundT` | `'pill'` / CSS 值 | — | 圆角 |
+| round | `RoundT` | `'pill'` / CSS 值 | — | 圆角。`pill` 时组件 JS 注入 `--tag-radius: 100vh` 内联样式（完全圆形） |
 | closable | `boolean` | — | `false` | 可关闭 |
 | visible | `boolean` | — | `undefined` | 是否可见（v-model） |
 | defaultVisible | `boolean` | — | `true` | 默认可见 |
@@ -167,9 +167,9 @@ const visible = ref(true);
 
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
-| `--tag-radius` | `var(--o-radius_control-xs)` | 标签圆角（pill 模式下为 control_size-l） |
+| `--tag-radius` | `var(--o-radius_control-xs)`（4px） | 标签圆角。**⚠️ pill 模式下组件通过内联样式注入 `--tag-radius: 100vh`（完全圆形），覆盖此变量无效** |
 | `--tag-color` | `var(--o-color-info1)`（normal） | 标签文字颜色（随 color 变化） |
-| `--tag-bg-color` | `var(--o-color-control2-light)`（normal） | 标签背景色（随 color/variant 变化） |
+| `--tag-bg-color` | `var(--o-color-control2-light)`（normal） | 标签背景色（随 color/variant 变化）。**⚠️ 仅支持纯色**，渐变色无效（见下方「渐变背景」说明） |
 | `--tag-bd-color` | `var(--o-color-control2-light)`（normal） | 标签边框颜色（随 color/variant 变化） |
 | `--tag-icon-close-color` | `var(--o-color-info2)`（normal） | 关闭按钮图标颜色 |
 | `--tag-icon-close-color-hover` | `var(--o-color-info1)`（normal） | 关闭按钮 hover 颜色 |
@@ -180,10 +180,38 @@ const visible = ref(true);
 | `--tag-icon-size` | `var(--o-icon_size_control-xs)` | 前缀图标尺寸 |
 | `--tag-icon-gap` | `4px`（large/medium）/ `2px`（small） | 图标与文字间距 |
 
-**使用示例**:
+**使用示例（纯色）**:
 ```vue
 <OTag style="--tag-bg-color: var(--o-color-primary4); --tag-color: var(--o-color-primary1)">自定义标签</OTag>
 ```
+
+**渐变背景**
+
+OTag 内部使用 `background-color: var(--tag-bg-color)` 渲染背景，CSS 变量只支持纯色值。若需要**渐变背景**，必须通过自定义 class 直接覆盖 `background` 属性（利用 Vue scoped 样式带来的 `[data-v-xxx]` 属性选择器优先级高于组件库单类选择器的特性）：
+
+```vue
+<!-- template -->
+<OTag round="pill" class="tag-gradient">标签</OTag>
+
+<!-- scoped style -->
+<style lang="scss" scoped>
+.tag-gradient {
+  /* background 简写会同时重置 background-color（覆盖组件内 --tag-bg-color）和设置 background-image */
+  background: linear-gradient(to right, rgba(46, 83, 250, 0.15), rgba(123, 37, 244, 0.15));
+  --tag-bd-color: transparent;
+  --tag-color: var(--o-color-info1); /* 浅色底 → 深色字；深色底 → 浅色字 */
+}
+</style>
+```
+
+> **原理**：`.tag-gradient[data-v-xxx]`（specificity 0,2,0）高于组件库的 `.o-tag`（0,1,0），因此 scoped 的 `background` 规则优先生效，同时因为 `background` 简写会隐式将 `background-color` 重置为 transparent，所以不需要额外清除 `--tag-bg-color`。
+
+**渐变色设计值参考**（运营标签 DSL 16:4646）：
+
+| 模式 | 渐变起点 | 渐变终点 | 方向 |
+|------|---------|---------|------|
+| light | `rgba(46, 83, 250, 0.15)` | `rgba(123, 37, 244, 0.15)` | → 水平 |
+| dark  | `rgba(84, 120, 251, 0.25)` | `rgba(152, 74, 246, 0.25)` | → 水平 |
 
 ### 响应式行为表
 | large 内边距 | — | 0 7px | 0 11px |
@@ -216,10 +244,10 @@ layout:
       children:
         - IconClose  # 关闭图标
   variants:
-    large: { height: 28px, padding: "0 11px", font-size: tip2, icon-size: xs, icon-gap: 4px }
+    large: { height: "24px(>1680px) / 20px(≤1680px)", padding: "0 11px / 0 7px", font-size: tip2, icon-size: xs, icon-gap: 4px }
     medium: { height: 20px, padding: "0 7px", font-size: tip2, icon-size: xs, icon-gap: 4px }
     small: { height: 16px, padding: "0 5px", font-size: tip2, icon-size: xs, icon-gap: 2px }
-    pill: { border-radius: "var(--o-control_size-l)" }
+    pill: { border-radius: "100vh (组件JS内联注入，非CSS变量，不可被外部覆盖)" }
   color-schemes:
     normal-solid: { color: info1, bg: control2-light, border: control2-light }
     normal-outline: { color: info1, bg: transparent, border: control1 }

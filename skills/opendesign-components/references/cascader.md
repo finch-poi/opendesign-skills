@@ -57,6 +57,7 @@ regions: [OSelect(触发按钮), cascader-panel(弹出面板 → 横向多列)]
 - **视觉特征指纹**：下拉触发按钮 + 弹出面板内横向并排多列选项列表，每列由竖线分隔，非叶子选项右侧有 `>` 箭头图标
 - **Token → Prop 映射**：按钮边框样式 → variant（outline/solid/text）；按钮圆角为半圆 → round="pill"；按钮高度 → size（small/medium/large）；面板弹出方向 → optionPosition
 - **易混淆组件区分**：与 OSelect（普通选择器）区分——OCascader 弹出面板是多列逐级展开，OSelect 只有单列下拉列表；与 OTreeSelect 区分——OCascader 以平铺多列展示层级，TreeSelect 以缩进树形展示
+- **⚠️ 错误状态 / 必填星号 → 用 OFormItem 包裹**：设计稿中级联选择器边框变红（错误态）或标签旁有红色星号（必填），应将 OCascader 放入 `<OFormItem>` 实现，**不要**手写星号。详见 form.md。
 
 ---
 

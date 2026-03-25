@@ -165,6 +165,155 @@ const loading = ref(true);
 </OLoading>
 ```
 
+### v-loading 指令
+
+除组件写法外，可用 `v-loading` 指令将加载层叠加到现有容器元素上，无需在模板中插入 `<OLoading />`。
+
+#### 导入与注册
+
+```vue
+<script setup>
+import { vLoading } from '@opensig/opendesign';
+// 在 <script setup> 中 import 后，v-loading 自动可用于模板
+</script>
+```
+
+#### ⚠️ 关键约束：容器必须有 `position: relative`
+
+`v-loading` 指令的加载覆盖层使用 `position: absolute` 定位，相对于**最近的非 static 定位祖先**。
+若容器缺少 `position: relative`，覆盖层会逃出容器范围，覆盖错误区域。
+
+```vue
+<!-- ✅ 正确：容器有 position: relative -->
+<div style="position: relative; min-height: 100px;" v-loading="isLoading">
+  <p>卡片内容</p>
+</div>
+
+<!-- ❌ 错误：无定位，覆盖层会定位到错误位置 -->
+<div v-loading="isLoading">
+  <p>卡片内容</p>
+</div>
+```
+
+#### Binding 值类型
+
+| 类型 | wrapper 默认 | mask 默认 | 说明 |
+|------|------------|----------|------|
+| `boolean` | `null`（容器内渲染） | `true` | 快捷写法，`true` 显示 / `false` 隐藏 |
+| `Partial<LoadingPropsT>` | `null`（容器内渲染） | `true` | 完整配置对象，支持所有 LoadingProps |
+
+当传入响应式对象（`reactive()`）时，指令会自动 `watch` 变化，无需手动触发更新。
+
+#### 修饰符（仅 boolean binding 时有效）
+
+| 修饰符 | 说明 |
+|--------|------|
+| `.body` | 将 Loading 挂载到 body（全屏模式），忽略容器定位 |
+| `.nomask` | 禁用遮罩层（等价于 `mask: false`） |
+
+#### 典型用法
+
+```vue
+<!-- 简洁：boolean binding，默认带遮罩 -->
+<div style="position: relative;" v-loading="isLoading">
+  <p>内容区域</p>
+</div>
+
+<!-- 完整配置：object binding，指定 label 和 size -->
+<div style="position: relative;" v-loading="{ visible: isLoading, label: '加载中', size: 'large' }">
+  <p>内容区域</p>
+</div>
+
+<!-- 无遮罩：object binding + mask: false -->
+<div style="position: relative;" v-loading="{ visible: isLoading, mask: false, size: 'medium', label: '处理中' }">
+  <p>内容区域</p>
+</div>
+
+<!-- 响应式对象：自动监听变化 -->
+<script setup>
+import { reactive } from 'vue';
+const loadingState = reactive({ visible: true, label: '同步中', size: 'small' });
+</script>
+<div style="position: relative;" v-loading="loadingState">
+  <p>内容区域</p>
+</div>
+
+<!-- 全屏（.body 修饰符） -->
+<div v-loading.body="isLoading"></div>
+
+<!-- boolean + 无遮罩（.nomask 修饰符） -->
+<div style="position: relative;" v-loading.nomask="isLoading"></div>
+```
+
+### useLoading 组合式函数
+
+除组件和指令外，可用 `useLoading` 以**命令式**方式控制加载层，适合在业务逻辑（非模板）中动态创建和控制加载状态。
+
+#### 导入
+
+```vue
+<script setup>
+import { useLoading } from '@opensig/opendesign';
+</script>
+```
+
+#### 签名
+
+```typescript
+function useLoading(
+  opt?: Partial<LoadingPropsT>,
+  wrap?: Ref<HTMLElement | undefined> | HTMLElement | string
+): { toggle: (show?: boolean) => void }
+```
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| opt | `Partial<LoadingPropsT>` | — | Loading 配置，支持所有 LoadingProps |
+| wrap | `Ref<HTMLElement>` / `HTMLElement` / `string` | `'body'` | 挂载目标：Vue ref、DOM 元素、CSS 选择器字符串 |
+
+返回值 `{ toggle(show?: boolean): void }`：
+- `toggle(true)` — 显示
+- `toggle(false)` — 隐藏
+- `toggle()` — 切换
+
+#### ⚠️ 关键约束
+
+- 必须在 `setup()` 或组合式函数中调用（使用了 `watch` / `onMounted`）
+- 当 `wrap` 为 CSS 选择器字符串时，查找在 `onMounted` 中执行，确保目标 DOM 已存在
+- 当 `wrap` 为 `Ref` 时，会自动 `watch` 其变化，ref 赋值后才挂载
+
+#### 典型用法
+
+```vue
+<script setup>
+import { ref } from 'vue';
+import { useLoading } from '@opensig/opendesign';
+
+// 场景 1：全屏加载（默认挂载到 body）
+const globalLoading = useLoading({ label: '加载中', size: 'large' });
+
+async function fetchData() {
+  globalLoading.toggle(true);
+  await api.loadData();
+  globalLoading.toggle(false);
+}
+
+// 场景 2：挂载到模板 ref 元素
+const containerRef = ref<HTMLElement>();
+const localLoading = useLoading({ label: '处理中', mask: true }, containerRef);
+
+// 场景 3：挂载到 CSS 选择器（须在 onMounted 后目标 DOM 存在）
+const selectorLoading = useLoading({ size: 'medium' }, '#my-panel');
+</script>
+
+<template>
+  <div ref="containerRef" style="position: relative; min-height: 100px;">
+    <!-- 内容区域 -->
+  </div>
+  <button @click="fetchData">加载数据</button>
+</template>
+```
+
 ### 常见 prop 组合速查
 
 | 场景 | 推荐 prop 组合 | 说明 |

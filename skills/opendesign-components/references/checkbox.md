@@ -68,6 +68,7 @@ regions: [OCheckbox, OCheckbox, ...]
 - **视觉特征指纹**：小方形勾选框（带圆角）+ 右侧文字标签；选中时方框填充主题色并显示勾号（✓）；半选时方框内显示一条横线而非勾号
 - **Token → Prop 映射**：方框填充主题色 → 选中状态；方框内横线 → indeterminate=true；方框灰色不可点击 → disabled=true；多个勾选框水平排列 → direction="h"；垂直排列 → direction="v"
 - **易混淆组件区分**：与 ORadio（单选框）区分——OCheckbox 为方形勾选框可多选，ORadio 为圆形可单选；与 OSwitch（开关）区分——OCheckbox 是方形带勾号，OSwitch 是椭圆滑块
+- **⚠️ 必填星号 → 用 OFormItem 包裹**：设计稿中勾选框旁边的标签有红色星号（必填），应将 OCheckbox/OCheckboxGroup 放入 `<OFormItem required>` 实现，**不要**手写星号。详见 form.md。
 
 ---
 

@@ -56,6 +56,7 @@ regions: [ORadio, ORadio, ...]
 - **视觉特征指纹**：小圆形指示器 + 右侧文字标签；选中时圆形填充主题色并显示内部白色圆点；多个选项互斥只能选一个
 - **Token → Prop 映射**：圆形指示器填充主题色 → 选中状态；灰色不可点击 → disabled=true；多个单选框水平排列 → direction="h"；垂直排列 → direction="v"
 - **易混淆组件区分**：与 OCheckbox（多选框）区分——ORadio 为圆形可单选互斥，OCheckbox 为方形可多选；与 OSelect（选择器）区分——ORadio 所有选项同时可见，OSelect 选项收纳在下拉面板中
+- **⚠️ 必填星号 → 用 OFormItem 包裹**：设计稿中单选框旁边的标签有红色星号（必填），应将 ORadio/ORadioGroup 放入 `<OFormItem required>` 实现，**不要**手写星号。详见 form.md。
 
 ---
 

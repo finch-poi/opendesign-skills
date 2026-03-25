@@ -105,6 +105,7 @@ regions: [runway-wrap(轨道: runway+bar+buttons+stops+marks), input-wrap(输入
 - **视觉特征指纹**：水平/垂直细长轨道条 + 圆形可拖拽滑块按钮 + 已选区域着色进度条 → 匹配 OSlider；轨道上有等距圆点 + 滑块按钮有实心内圆 → showStops 间隔模式；轨道右侧有数值输入框 → showInput 模式
 - **Token → Prop 映射**：轨道水平 → direction="h"（默认）；轨道垂直 → direction="v"；两个滑块按钮 → range=true；轨道上有圆形刻度点 → showStops=true；轨道下方有文字标记 → marks 属性；右侧有输入框 → showInput=true；滑块上方/下方有数值气泡 → showPopover=true
 - **易混淆组件区分**：与 OProgress 区分——OProgress 是只读进度展示无滑块交互，OSlider 有可拖拽滑块按钮；与 OInputNumber 区分——OInputNumber 是独立数字输入框，OSlider 的输入框只是辅助，核心交互是拖拽滑块
+- **⚠️ 必填星号 → 用 OFormItem 包裹**：设计稿中滑块控件标签旁有红色星号（必填），应将 OSlider 放入 `<OFormItem required>` 实现，**不要**手写星号。详见 form.md。
 
 ---
 

@@ -50,6 +50,7 @@ variants: { large: icon-size l + gap 12px, medium: icon-size xs + gap 8px }
 - **视觉特征指纹**：一排等间距的星星图标（默认 5 个），选中的星星为黄色/彩色填充，未选中的为灰色描边；可能有半星填充状态
 - **Token → Prop 映射**：黄色填充 → color="normal"；品牌色填充 → color="primary"；图标大号 → size="large"；图标小号 → size="medium"；有半星填充 → allowHalf=true；悬停时有文字气泡 → 传入 labels 数组
 - **易混淆组件区分**：与 OSlider（滑块）区分——ORate 是离散的图标点选，OSlider 是连续的轨道拖拽；与图标列表区分——ORate 图标有填充/未填充二态且一组关联
+- **⚠️ 必填星号 → 用 OFormItem 包裹**：设计稿中评分控件标签旁有红色星号（必填），应将 ORate 放入 `<OFormItem required>` 实现，**不要**手写星号。详见 form.md。
 
 ---
 

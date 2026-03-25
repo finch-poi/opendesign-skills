@@ -145,8 +145,8 @@ ODropdown
 
 ### 典型使用场景与调用模板
 
-**场景 1：基础下拉按钮**
-适用于：操作菜单
+**场景 1：强调下拉按钮 / 主操作**
+适用于：核心操作的下拉菜单。触发按钮为实心背景色（primary1）。`round="pill"` 按设计图决定，加不加均可。
 ```vue
 <script setup>
 import { ref } from 'vue';
@@ -154,7 +154,7 @@ const visible = ref(false);
 </script>
 <template>
   <ODropdown v-model:visible="visible" trigger="click-outclick">
-    <OButton color="primary" variant="solid" round="pill">
+    <OButton color="primary" variant="solid">
       操作
       <template #suffix>
         <OIconChevronDown :class="{ active: visible }" />
@@ -169,12 +169,12 @@ const visible = ref(false);
 </template>
 ```
 
-**场景 2：强调下拉按钮（Primary）**
-适用于：主操作按钮的下拉
+**场景 2：普通下拉按钮**
+适用于：次要操作的下拉菜单。触发按钮为无背景色、有边框（primary1）。`round="pill"` 按设计图决定，加不加均可。
 ```vue
-<ODropdown trigger="click-outclick" class="o-dropdown-btn-wrap">
-  <OButton color="primary" variant="solid" round="pill">
-    下拉按钮
+<ODropdown trigger="click-outclick">
+  <OButton color="primary">
+    操作
     <template #suffix><OIconChevronDown /></template>
   </OButton>
   <template #dropdown>

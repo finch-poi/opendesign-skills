@@ -54,6 +54,8 @@ ODataTable 是数据驱动的表格组件，通过列配置和行数据自动渲
 
 列配置的 formatter 属性可自定义单元格渲染，返回字符串、VNode、组件或函数式组件。也可使用动态插槽 `td_{columnKey}` 自定义渲染。当 formatter 未设置时，空值单元格显示 defaultEmptyCellText，非空值调用 toString。
 
+⚠️ **推荐优先使用 `formatter`，不推荐 `td_{columnKey}` 插槽**：formatter 将渲染逻辑内聚在列配置中，便于复用和测试；`td_` 插槽仅适合确实需要在模板中使用 `v-model` 双向绑定的场景（如内联表单控件）。即便是内联输入框，也可通过 `formatter` 返回函数式组件实现响应式更新（见代码参考场景 12），因此 `td_` 插槽应视为最后手段。
+
 列配置的 showOverflowToolTip 属性控制溢出文本显示气泡提示，传入数字可设定最大行数。
 
 ### 表头渲染
@@ -77,6 +79,8 @@ ODataTable 是数据驱动的表格组件，通过列配置和行数据自动渲
 **conditions**（双向绑定属性）：筛选排序条件对象。key 对应列的 key（筛选列）或 sortKey（排序列）。筛选列值为选中值数组，排序列值为排序方式常量。
 
 筛选排序变更时组件触发 condition-update 事件，业务方在事件回调中根据 conditions 重新请求数据并更新 data。也可通过 watch conditions 实现自动请求。
+
+**业务处理规范**：在 `@condition-update` 回调（或 `watch(conditions, ...)` 中），需按 conditions 的结构逐字段处理：筛选列（key 对应列的 key）值为选中值数组，用 `Array.includes()` 或自定义 filter 函数过滤数据；排序列（key 对应 sortKey）值为 `DataTableSortMethod.ASC(1)` / `DESC(-1)` / `NA(undefined)`，据此对数据排序。后端分页场景下，将 conditions 传入接口参数即可。
 
 ### 行选择
 
@@ -347,7 +351,7 @@ interface DataTableLoadChildrenPayload {
 | empty | — | 自定义空状态显示 |
 | expand | `{ row: TableRowT, rowIndex: number }` | 行展开内容，使用后所有行均可展开 |
 | `th_{columnKey}` | `{ column: EffectiveDataTableColumnT }` | 自定义指定列的表头单元格内容（动态插槽） |
-| `td_{columnKey}` | `{ column: EffectiveDataTableColumnT, row: TableRowT, cellValue: any, index: number }` | 自定义指定列的数据单元格内容（动态插槽） |
+| `td_{columnKey}` | `{ column: EffectiveDataTableColumnT, row: TableRowT, cellValue: any, index: number }` | 自定义指定列的数据单元格内容（动态插槽）。⚠️ **不推荐**，优先使用 `column.formatter`；仅当模板 `v-model` 语法必须使用时才选此方式 |
 
 ### Expose 方法表
 
@@ -375,7 +379,8 @@ loading（替换加载中遮罩内容）
 empty（替换空状态内容）
 
 td_{columnKey}（替换单个数据单元格内容）
-  └── 与 column.formatter 二选一
+  ⚠️ 优先使用 column.formatter（推荐），td_ 插槽与 formatter 二选一
+  └── 以 formatter 为主；仅需模板 v-model 语法时才用 td_ 插槽
 ```
 
 ### 典型使用场景与调用模板
@@ -423,41 +428,97 @@ const columns: DataTableColumnT[] = [
 ```
 
 **场景 3：筛选 + 排序（事件驱动模式）**
-适用于：后端分页筛选排序
+适用于：后端分页筛选排序，或前端数据筛选排序
 ```vue
-<script setup>
-import { ref, computed } from 'vue';
-import { DataTableSortMethod } from '@opensig/opendesign';
-import type { DataTableColumnT, DataTableSortMethodT } from '@opensig/opendesign';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { ODataTable, DataTableSortMethod } from '@opensig/opendesign';
+import type { DataTableColumnT, DataTableSortMethodT, DataTableColumnFilterOption } from '@opensig/opendesign';
+
+// 薪资范围筛选项——每个 option 带自定义 filter 函数（范围判断）
+const salaryOptions: (DataTableColumnFilterOption & { filter: (row: any) => boolean })[] = [
+  { label: '< 6000', value: '<6000', filter: (row) => row.salary < 6000 },
+  { label: '6000-8000', value: '6000-8000', filter: (row) => row.salary >= 6000 && row.salary <= 8000 },
+  { label: '> 8000', value: '>8000', filter: (row) => row.salary > 8000 },
+];
 
 const columns = computed<DataTableColumnT[]>(() => [
   {
     label: '姓名', key: 'name',
     filter: {
       multiple: true,
-      optionsFn: () => [
+      showInput: true,
+      optionTitle: '选择姓名',
+      // optionsFn 接收 { column, emptyOption }；emptyOption 为内置"空值"筛选项
+      optionsFn: ({ emptyOption }) => [
         { label: '张三', value: '张三' },
         { label: '李四', value: '李四' },
+        emptyOption, // 允许用户筛选该列为空的行
       ],
     },
   },
   { label: '年龄', key: 'age', sortKey: 'ageSort' },
-  { label: '薪资', key: 'salary' },
+  {
+    label: '薪资', key: 'salary',
+    filter: {
+      optionTitle: '选择薪资范围',
+      optionsFn: () => salaryOptions,
+    },
+  },
 ]);
 
-const conditions = ref<{ name: string[]; ageSort?: DataTableSortMethodT }>({
+// conditions 的 key 对应列的 key（筛选列）或 sortKey（排序列）
+// 筛选列初始值为 []，排序列初始值用 DataTableSortMethod.NA
+const conditions = ref<{
+  name: string[];
+  salary: string[];
+  ageSort?: DataTableSortMethodT;
+}>({
   name: [],
+  salary: [],
   ageSort: DataTableSortMethod.NA,
 });
 
-const data = ref([]);
+// 原始数据（后端场景替换为 API 调用）
+const allData = [
+  { id: 1, name: '张三', age: 28, salary: 5500 },
+  { id: 2, name: '李四', age: 35, salary: 7000 },
+  { id: 3, name: '王五', age: 42, salary: 9500 },
+];
+
+const data = ref([...allData]);
 const loading = ref(false);
 
 const fetchData = async () => {
   loading.value = true;
-  // 根据 conditions.value 请求后端数据
-  // data.value = await api.getData(conditions.value);
-  loading.value = false;
+  try {
+    // ⚠️ 后端接口场景：data.value = await api.list({ ...conditions.value, page, size })
+    // 前端筛选/排序模拟：
+    let res = [...allData];
+
+    // 精确值筛选（conditions.name 存的是用户选中的 value 数组）
+    if (conditions.value.name?.length) {
+      res = res.filter((row) => conditions.value.name.includes(row.name));
+    }
+    // 范围筛选（通过 option 的自定义 filter 函数处理）
+    if (conditions.value.salary?.length) {
+      res = res.filter((row) =>
+        conditions.value.salary
+          .map((val) => salaryOptions.find((opt) => opt.value === val))
+          .some((opt) => opt?.filter(row))
+      );
+    }
+    // 排序（ASC=1 升序，DESC=-1 降序，NA=undefined 不排序）
+    if (conditions.value.ageSort === DataTableSortMethod.ASC) {
+      res.sort((a, b) => a.age - b.age);
+    } else if (conditions.value.ageSort === DataTableSortMethod.DESC) {
+      res.sort((a, b) => b.age - a.age);
+    }
+
+    data.value = res;
+  } finally {
+    loading.value = false;
+  }
 };
 
 fetchData();
@@ -655,7 +716,74 @@ fetchData();
 </template>
 ```
 
-### 常见 prop 组合速查
+**场景 12：可编辑单元格（formatter + h，推荐）**
+适用于：行内输入框、行内选择器等需要直接编辑单元格数据的场景
+```vue
+<script setup lang="ts">
+import { ref, h } from 'vue';
+import { ODataTable, OInput } from '@opensig/opendesign';
+import type { DataTableColumnT } from '@opensig/opendesign';
+
+interface EditableRow {
+  id: number;
+  name: string;
+  count: number;
+  remark: string;
+}
+
+const data = ref<EditableRow[]>([
+  { id: 1, name: '张三', count: 100, remark: '备注A' },
+  { id: 2, name: '李四', count: 200, remark: '备注B' },
+]);
+
+const columns: DataTableColumnT[] = [
+  { label: '姓名', key: 'name', width: 160 },
+  {
+    label: '数量', key: 'count', width: 120,
+    // ✅ 推荐：formatter 返回函数式组件（箭头函数），每次渲染时重新读取 row.count
+    // 不要直接返回 h(OInput, ...)，那会导致 VNode 只在初始化时生成一次，失去响应性
+    formatter: ({ row }) => () =>
+      h(OInput, {
+        modelValue: (row as EditableRow).count,
+        'onUpdate:modelValue': (v: string | number) => {
+          (row as EditableRow).count = Number(v);
+        },
+        size: 'small',
+        style: { width: '90px' },
+      }),
+  },
+  {
+    label: '备注', key: 'remark', width: 160,
+    formatter: ({ row }) => () =>
+      h(OInput, {
+        modelValue: (row as EditableRow).remark,
+        'onUpdate:modelValue': (v: string | number) => {
+          (row as EditableRow).remark = String(v);
+        },
+        size: 'small',
+        style: { width: '120px' },
+      }),
+  },
+  {
+    label: '操作', key: 'action', width: 80,
+    formatter: ({ row }) =>
+      h('span', {
+        style: { color: 'var(--o-color-danger1)', cursor: 'pointer' },
+        onClick: () => {
+          data.value = data.value.filter((r) => r.id !== (row as EditableRow).id);
+        },
+      }, '删除'),
+  },
+];
+</script>
+<template>
+  <ODataTable :columns="columns" :data="data" border="row-frame" />
+</template>
+```
+
+> **核心要点**：`formatter` 必须返回**函数式组件**（`() => h(...)`）而非直接返回 VNode（`h(...)`）。函数式组件会在每次父组件重渲染时重新调用，从而读取 `row` 中的最新值，实现响应式更新。
+
+
 
 | 场景 | 推荐 prop 组合 | 说明 |
 |------|---------------|------|

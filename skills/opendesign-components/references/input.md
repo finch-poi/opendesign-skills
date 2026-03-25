@@ -97,8 +97,15 @@ regions: [prepend(前置区域), main(prefix + input + suffix), append(后置区
 
 🔍 **设计稿识别指南**：
 - **视觉特征指纹**：矩形带边框的单行文本输入区域，内部可能有前缀图标、清空按钮、密码眼睛图标、字数统计 → 匹配 OInput；左右有灰色附加块（如 "https://" 或 ".com"）→ 使用 prepend/append 插槽
-- **Token → Prop 映射**：灰色边框 → variant="outline"（默认）；灰色填充背景 → variant="solid"；无边框无背景 → variant="text"；红色边框 → color="danger"；高度对应 size（small/medium/large）；半圆角 → round="pill"
+- **Token → Prop 映射**：灰色边框 → variant="outline"（默认）；灰色填充背景 → variant="solid"；无边框无背景 → variant="text"；红色边框 → `color="danger"`（⚠️ 仅用于无表单联动的孤立展示场景，表单内见下条规则）；高度对应 size（small/medium/large）；半圆角 → round="pill"
 - **易混淆组件区分**：与 OInputNumber 区分——OInputNumber 有加减控制按钮，OInput 无步进按钮；与 OTextarea 区分——OTextarea 是多行输入，OInput 是单行；与 OSelect 区分——OSelect 有下拉箭头和下拉面板，OInput 无下拉功能
+- **⚠️ 错误状态 / 必填星号 → 用 OFormItem 包裹**：设计稿中输入框边框变红（错误态）或标签旁有红色星号（必填），应将 OInput 放入 `<OFormItem>` 实现（必填 → `required` prop；错误态 → `rules` 校验自动驱动颜色），**不要**直接设 `color="danger"` 或手写星号 HTML。详见 form.md。
+- **前置区域模式区分**（⚠️ 关键）：
+  - 前置是**静态文字**（如 "https://"、".com"）→ 用 `#prepend` / `#append` 插槽
+  - 前置是**可点击下拉选择**（如手机区号 "+86（中国）▼"）→ 用 `OSelect + OInput` flex 并排（见场景5），**不要**用 `#prepend` 放静态文字模拟
+- **内部右侧操作按钮区分**（⚠️ 关键）：
+  - 验证码"发送验证码"等文字操作链接 → 用 `#suffix` 插槽放 `OLink` 组件
+  - `#extra` 插槽位于清空/密码按钮**之后**（末尾），适合补充图标，不适合用于主操作按钮
 
 ---
 
@@ -201,7 +208,7 @@ const value = ref('');
 ```
 
 **场景 4：带前置/后置内容**
-适用于：URL 输入等
+适用于：URL 输入等（前置是**静态文字**）
 ```vue
 <OInput v-model="domain" placeholder="输入域名">
   <template #prepend>https://</template>
@@ -209,7 +216,80 @@ const value = ref('');
 </OInput>
 ```
 
-**场景 5：密码框**
+**场景 5：手机号 + 区号下拉（Group-number 模式）**
+适用于：输入框左侧有可点击/可选择的区号前缀（下拉选择）
+⚠️ **不要**用 `#prepend` 静态文字；应将 `OSelect` 和 `OInput` 作为兄弟元素并排，用 CSS 去掉拼接处圆角和重叠边框：
+```vue
+<script setup>
+import { ref } from 'vue';
+import { OSelect, OOption, OInput } from '@opensig/opendesign';
+const selectedVal = ref('+86(中国)');
+const inputVal = ref('');
+</script>
+<template>
+  <div class="input-wrap">
+    <!-- OSelect 右侧无圆角，OInput 左侧无圆角，两者边框重叠 1px -->
+    <OSelect v-model="selectedVal" size="large" class="phone-select" @click.stop>
+      <OOption label="+86(中国)" value="+86(中国)" />
+      <OOption label="+81(日本)" value="+81(日本)" />
+    </OSelect>
+    <OInput class="phone-input" v-model="inputVal" size="large" placeholder="请输入手机号" />
+  </div>
+</template>
+<style scoped lang="scss">
+.input-wrap {
+  display: flex;
+  align-items: center;
+}
+.phone-select {
+  --select-icon-gap: 4px;
+  --select-padding: 0 7px;
+  z-index: 0;
+  width: 120px;
+  margin-right: -1px;           /* 边框重叠避免双线 */
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  &:hover { z-index: 2; }
+}
+.phone-input {
+  position: relative;
+  z-index: 1;
+  width: 220px;
+  :deep(.o_box-main) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+</style>
+```
+
+**场景 6：验证码输入框（Group-btn 模式）**
+适用于：输入框内右侧有"发送验证码"等文字操作按钮
+⚠️ 用 `#suffix` 插槽放 `OLink`（文字链样式），**不要**用 `#extra` 放 `OButton`：
+```vue
+<script setup>
+import { ref } from 'vue';
+import { OInput, OLink } from '@opensig/opendesign';
+const codeValue = ref('');
+const verifingCode = ref(false);
+const sendLabel = ref('发送验证码');
+const sendCode = async () => { /* 发送逻辑 + 倒计时 */ };
+</script>
+<template>
+  <OInput v-model="codeValue" size="large" placeholder="请输入验证码">
+    <template #suffix>
+      <OLink
+        tag="button"
+        :color="verifingCode ? 'normal' : 'primary'"
+        :disabled="verifingCode"
+        @click="sendCode"
+      >{{ sendLabel }}</OLink>
+    </template>
+  </OInput>
+</template>
+```
+
+**场景 7：密码框**
 适用于：密码输入
 ```vue
 <OInput v-model="password" type="password" />
@@ -225,6 +305,8 @@ const value = ref('');
 | 密码框 | `type="password"` | 可切换显示 |
 | 错误状态 | `color="danger"` | 红色边框 |
 | 搜索框 | `#prefix` + `clearable` | 带搜索图标 |
+| 手机区号下拉（Group-number） | `OSelect + OInput` flex 并排（见场景5） | ⚠️ 不用 #prepend |
+| 验证码按钮（Group-btn） | `#suffix` + `OLink` | ⚠️ 不用 #extra + OButton |
 
 ### 可覆盖的 CSS 变量
 

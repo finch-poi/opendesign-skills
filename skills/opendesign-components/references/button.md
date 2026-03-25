@@ -104,20 +104,16 @@ OButton
 
 ### 典型使用场景与调用模板
 
-**场景 1：主操作按钮**
-适用于：页面核心操作（如提交、确认）
+**场景 1：强调按钮 / 主操作按钮**
+适用于：页面核心操作（如提交、确认）。实心背景色（primary1），文字为反色。`round="pill"` 按设计图决定，加不加均可。
 ```vue
-<OButton color="primary" variant="solid" round="pill">
-  确认提交
-</OButton>
+<OButton color="primary" variant="solid">确认提交</OButton>
 ```
 
-**场景 2：普通辅助按钮**
-适用于：次要操作（如取消、返回）
+**场景 2：普通按钮**
+适用于：次要操作（如取消、返回）。无背景色，有边框（primary1）。`round="pill"` 按设计图决定，加不加均可。
 ```vue
-<OButton color="primary" variant="outline" round="pill">
-  取消
-</OButton>
+<OButton color="primary">取消</OButton>
 ```
 
 **场景 3：带图标的按钮**

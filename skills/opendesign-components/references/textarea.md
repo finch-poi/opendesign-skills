@@ -103,6 +103,7 @@ regions: [prepend(前置区域), textarea(文本输入区+字符计数), append(
 - **视觉特征指纹**：多行文本输入框，高度明显大于单行输入框，通常有边框包围，右下角可能有字符计数或拖拽调整手柄 → 匹配 OTextarea
 - **Token → Prop 映射**：实心填充背景 → variant="solid"；仅边框 → variant="outline"（默认）；无背景无边框 → variant="text"；右下角显示 "n/m" 字符计数 → showLength + maxLength；右下角有拖拽手柄 → resize="vertical"（默认）；框内有占位灰色文字 → placeholder；框右侧有清除 × → clearable
 - **易混淆组件区分**：与 OInput 区分——OInput 是单行输入框高度较小，OTextarea 是多行输入框高度较大且可调整；与纯 HTML textarea 区分——OTextarea 有 InBox 外层包裹提供统一样式和颜色主题
+- **⚠️ 错误状态 / 必填星号 → 用 OFormItem 包裹**：设计稿中文本域边框变红（错误态）或标签旁有红色星号（必填），应将 OTextarea 放入 `<OFormItem>` 实现，**不要**直接设 `color="danger"` 或手写星号。详见 form.md。
 
 ---
 

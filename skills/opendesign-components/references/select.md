@@ -133,6 +133,7 @@ children: [OOption × N, OOptionGroup(可选)]
 - **视觉特征指纹**：矩形输入框 + 右侧下拉箭头图标，点击展开选项面板列表；多选时输入框内有标签（tag）列表
 - **Token → Prop 映射**：边框线框 → variant="outline"；实心填充背景 → variant="solid"；无边框纯文字 → variant="text"；高度 40px → size="large"；高度 32px → size="medium"；输入框内多个标签 → multiple=true；标签超出显示 "+N..." → maxTagCount；右侧有清除按钮 → clearable=true
 - **易混淆组件区分**：与 OInput 区分——OSelect 右侧有下拉箭头且不可手动输入文字，OInput 可自由输入；与 ORadioGroup 区分——OSelect 选项收纳在下拉面板中，ORadioGroup 所有选项同时平铺可见；与 OCascader 区分——OCascader 为多级联动选择，OSelect 为单层列表选择
+- **⚠️ 错误状态 / 必填星号 → 用 OFormItem 包裹**：设计稿中选择框边框变红（错误态）或标签旁有红色星号（必填），应将 OSelect 放入 `<OFormItem>` 实现，**不要**直接设 `color="danger"` 或手写星号。详见 form.md。
 
 ---
 

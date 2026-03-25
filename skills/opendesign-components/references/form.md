@@ -77,6 +77,11 @@ item: [label(symbol+text), main(control+message+extra)]
   - 若项目设计稿与默认值不符，全局覆盖变量即可：`.o-form { --form-item-main-box-width-standard: xxx; --form-item-main-box-width-wide: xxx; }`
   - 标签宽度最小值：`label-width="96px"`（PC 多列表单），实际宽度以设计图为准
 - **易混淆组件区分**：与普通 div 排列区别——Form 有 `<form>` 语义标签、内置校验系统和 submit 事件；与 OGrid 区别——Form 专用于表单项的标签-控件对齐布局，Grid 是通用多列栅格布局
+- **⚠️ 输入类控件的错误状态 / 必填星号 → 统一用 OFormItem 包裹**（适用于所有输入类控件：OInput、OSelect、OTextarea、OInputNumber、OCheckbox、ORadio、OSlider、OSwitch、OCascader、ORate 等）：
+  - 设计稿中标签前有红色星号（必填）→ `<OFormItem required>` ，表单整体加 `hasRequired`（预留星号空间保持对齐）
+  - 设计稿中控件有红色边框 / 错误状态 → 将控件放入 `<OFormItem :rules="[...]">` ，校验触发后自动驱动控件 color
+  - 设计稿中控件下方有红色错误提示文字 → OFormItem rules 校验 message 自动渲染
+  - **禁止**：直接给控件设 `color="danger"` 来模拟错误态（失去与表单联动能力）；手写 `<span class="required">*</span>` 来模拟星号
 
 ---
 
