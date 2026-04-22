@@ -410,13 +410,18 @@ background-color: var(--o-color-white);
 | 平板竖屏 | 601–840px | 8 | 32px | 16px |
 | 手机 | ≤600px | 4 | 24px | 12px |
 
-**关键变量**：`--o-r-grid-1` ~ `--o-r-grid-24`（N 列宽度），`--o-r-grid-column-gutter`（水槽宽度）。
+**关键变量**：`--o-r-grid-1` ~ `--o-r-grid-24`（N 列宽度），`--o-r-grid-column-gutter`（水槽宽度），`--o-r-grid-full`（全栅格宽度），`--o-r-grid-padding`（栅格外侧留白），`--o-r-grid-section-width`（楼层宽度），`--o-r-grid-section-padding`（楼层边缘到视口边缘距离）。
 
 **栅格容器**：直接使用 `.o-r-grid-container` 类即可（`display:flex; max-width:1920px; margin:0 auto; padding:var(--o-r-grid-padding)`）。
 
 ```css
-.sidebar { width: var(--o-r-grid-6); margin-right: var(--o-r-grid-column-gutter); }
-.content { width: var(--o-r-grid-18); }
+/* 使用栅格列宽变量 */
+.column-6 { width: var(--o-r-grid-6); }
+.column-8 { width: var(--o-r-grid-8); }
+.column-12 { width: var(--o-r-grid-12); }
+
+/* 并排元素间距使用水槽 */
+.row { display: flex; gap: 0 var(--o-r-grid-column-gutter); }
 ```
 
 ### Pixso 画板 → grid-N 像素对照表
@@ -457,32 +462,43 @@ grid-N₁ + gutter + grid-N₂ + gutter + ... + grid-Nₙ = 内容区全宽
 | 4 块等宽 | grid-6 × 4 | grid-3 × 4 | grid-2 × 4 | — |
 | 6 块等宽 | grid-4 × 6 | grid-2 × 6 | — | — |
 
-**不等宽（按比例分配）**：各块列数 = round(比例权重 × 总列数)，确保总和 = 总列数。
+### 楼层栅格适配规范
 
-| 比例 | 24列断点 | 12列断点 | 典型场景 |
-|------|---------|---------|---------|
-| 1 : 1 : 2 | 6 + 6 + 12 | 3 + 3 + 6 | 两窄一宽 |
-| 1 : 2 : 1 | 6 + 12 + 6 | 3 + 6 + 3 | 中间主推 |
-| 1 : 3 : 1 | 5 + 14 + 5 | 2 + 8 + 2 | 突出中间 |
-| 2 : 3 | 10 + 14 | 5 + 7 | 偏宽主内容 |
+楼层（页面整体区块）的宽度应居中显示，两侧留出适当空白。以下变量已在 token 包中预定义(0.0.11版本)，无需手动创建：
 
-> **取整原则**：比例分配出现小数时，最后一块用剩余列数补齐，保证总和严格等于断点总列数。
+| 变量名 | 用途 |
+|--------|------|
+| `--o-r-grid-section-width` | 楼层宽度 |
+| `--o-r-grid-section-padding` | 从视口边缘到楼层边缘的总距离 |
 
-**验证示例（1920px，24列，col=44px，gutter=32px）**：
-- 3×grid-8：576 + 32 + 576 + 32 + 576 = **1792px** = 内容区宽 ✓
-- grid-6 + grid-12 + grid-6：424 + 32 + 880 + 32 + 424 = **1792px** ✓
+**各断点宽度规则**：
 
-### 常见多栏布局速查
+| 断点 | 楼层宽度 | 一侧空白栅格数 |
+|------|---------|---------------|
+| >1680px | `var(--o-r-grid-20)` | 2 列 |
+| 1201–1680px | `var(--o-r-grid-22)` | 1 列 |
+| ≤1200px | `var(--o-r-grid-full)` | 0 列（占满） |
 
-| 布局比例 | 列数分配 | 左栏 token | 右栏 token | 典型场景 |
-|---------|---------|-----------|-----------|---------|
-| 1 : 3 | 6 + 18 | `--o-r-grid-6` | `--o-r-grid-18` | 窄侧边导航 + 主内容 |
-| 1 : 2 | 8 + 16 | `--o-r-grid-8` | `--o-r-grid-16` | 标准侧边栏 + 主内容 |
-| 1 : 1 | 12 + 12 | `--o-r-grid-12` | `--o-r-grid-12` | 两栏等宽 |
-| 1 : 5 | 4 + 20 | `--o-r-grid-4` | `--o-r-grid-20` | 超窄图标导航 + 宽内容 |
-| 2 : 1 | 16 + 8 | `--o-r-grid-16` | `--o-r-grid-8` | 主内容 + 辅助信息栏 |
+**使用方式**：
 
-> **水槽处理**：两栏之间只需设一侧的 `margin: var(--o-r-grid-column-gutter)`，不要两侧都加（否则水槽加倍）。
+```scss
+.floor {
+  width: var(--o-r-grid-section-width);
+  margin: 0 auto;
+}
+```
+
+**布局示意**：
+
+```
+|<-- section-padding -->|<--- section-width --->|<-- section-padding -->|
+
+Desktop (>1680px):    grid-padding + 2×(col+gutter) | grid-20 | ...
+
+Laptop (1201-1680px): grid-padding + 1×(col+gutter) | grid-22 | ...
+
+Pad及以下 (≤1200px):  grid-padding               | grid-full | grid-padding
+```
 
 ### 从 Pixso frame 宽度判断 grid-N 的步骤
 
