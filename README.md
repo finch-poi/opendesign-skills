@@ -36,8 +36,6 @@ pnpx skills experimental_install
 | [opendesign-tokens](#opendesign-tokens) | `@opensig/opendesign-token` | 3 套主题的设计令牌体系 | [SKILL.md](skills/opendesign-tokens/SKILL.md) |
 | [openeuler-frontend-tools](#openeuler-frontend-tools) | — | Composables / Mixins / Utils | [SKILL.md](skills/openeuler-frontend-tools/SKILL.md) |
 
-> 全局约定（断点标准、文件组织、Slot 约定）参见 [skills/CONVENTIONS.md](skills/CONVENTIONS.md)
-
 ---
 
 ## opendesign-components

@@ -1,4 +1,5 @@
 .idea
+.agents
 
 # Skill 生成过程文件
 *.review.md
