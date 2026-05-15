@@ -4,7 +4,9 @@
 
 ## Part A：设计理解卡
 
-ODataTable 是数据驱动的表格组件，通过列配置和行数据自动渲染表格内容。支持列固定、行选择、列筛选排序、行展开、树形数据、单元格合并、列宽拖拽调整、嵌套表头、溢出气泡等功能。
+ODataTable 是数据驱动的表格组件，通过列配置和行数据自动渲染表格内容。支持列固定、行选择、行展开、树形数据、单元格合并、列宽拖拽调整、嵌套表头、溢出气泡等功能。
+
+**筛选与排序是可选的增强功能**，需显式在列配置中声明 `filter` / `sortKey` 属性并处理 `@condition-update` 事件，才能启用。基础表格无需配置筛选排序，直接传入列和数据即可使用。
 
 ### 数据源
 
@@ -70,17 +72,34 @@ ODataTable 是数据驱动的表格组件，通过列配置和行数据自动渲
 
 列配置支持 children 嵌套，形成多级分组表头。父列的 label 显示在上方横跨其所有子列，子列的表头在下一行显示。可多层嵌套。
 
-### 筛选与排序
+### 筛选与排序（可选功能）
 
-通过列配置的 filter 属性开启列筛选。filter 是一个对象，包含获取可选项的异步方法、是否多选、是否显示搜索输入框、移动端弹窗标题等配置。筛选图标出现在表头文本旁。
+⚠️ **重要**：筛选和排序是可选的增强功能。**仅当你的设计或需求明确包含筛选或排序时，才在列配置中添加 `filter` / `sortKey` 属性**。
 
-通过列配置的 sortKey 属性开启列排序。排序图标出现在表头文本旁。仅支持单列排序，切换排序列时自动清空其他列的排序。排序在升序、降序、不排序之间循环切换。
+#### 启用列筛选
+
+在列配置中添加 `filter` 对象来启用该列的筛选功能。filter 对象包含：
+- `optionsFn`：获取可选项的异步方法（必填）
+- `optionTitle`：移动端弹窗标题（可选）
+- `multiple`：是否多选（默认 true）
+- `showInput`：是否显示搜索框（默认选项超过 8 个时显示）
+
+筛选图标出现在表头文本旁，用户点击可选择筛选值。
+
+#### 启用列排序
+
+在列配置中添加 `sortKey` 属性来启用该列的排序功能。`sortKey` 是一个字符串，代表在 `conditions` 中存储排序状态的 key。排序图标出现在表头文本旁。仅支持单列排序，切换排序列时自动清空其他列的排序。排序在升序、降序、不排序之间循环切换。
+
+#### 处理筛选排序事件
 
 **conditions**（双向绑定属性）：筛选排序条件对象。key 对应列的 key（筛选列）或 sortKey（排序列）。筛选列值为选中值数组，排序列值为排序方式常量。
 
-筛选排序变更时组件触发 condition-update 事件，业务方在事件回调中根据 conditions 重新请求数据并更新 data。也可通过 watch conditions 实现自动请求。
+筛选排序变更时组件触发 `condition-update` 事件，业务方在事件回调中根据 conditions 重新请求数据并更新 data。也可通过 watch conditions 实现自动请求。
 
-**业务处理规范**：在 `@condition-update` 回调（或 `watch(conditions, ...)` 中），需按 conditions 的结构逐字段处理：筛选列（key 对应列的 key）值为选中值数组，用 `Array.includes()` 或自定义 filter 函数过滤数据；排序列（key 对应 sortKey）值为 `DataTableSortMethod.ASC(1)` / `DESC(-1)` / `NA(undefined)`，据此对数据排序。后端分页场景下，将 conditions 传入接口参数即可。
+**业务处理规范**：在 `@condition-update` 回调（或 `watch(conditions, ...)` 中），需按 conditions 的结构逐字段处理：
+- 筛选列（key 对应列的 key）：值为选中值数组，用 `Array.includes()` 或自定义 filter 函数过滤数据
+- 排序列（key 对应 sortKey）：值为 `DataTableSortMethod.ASC(1)` / `DESC(-1)` / `NA(undefined)`，据此对数据排序
+- 后端分页场景下，直接将 conditions 传入接口参数即可
 
 ### 行选择
 
@@ -148,6 +167,26 @@ regions:
   - right-shadow (条件: 无右固定列时)
   - OPopover (溢出气泡)
 ```
+
+### 使用指导
+
+**基础表格（推荐起点）**：
+```vue
+<ODataTable :columns="columns" :data="data" />
+```
+仅需传入 `columns` 和 `data`，即可展示完整表格。无需关注筛选、排序、行选择等。
+
+**何时添加筛选和排序**：
+- 🟢 **不需要**：数据量小、无业务逻辑要求、纯展示用途
+- 🟡 **可选**：用户可能需要快速查找，业务允许
+- 🔴 **需要**：设计稿明确包含筛选图标 / 排序箭头；需求明确要求支持用户搜索、排序
+
+**添加筛选排序的三个步骤**：
+1. 在列配置中添加 `filter` 对象（筛选）或 `sortKey` 属性（排序）
+2. 声明 `v-model:conditions` 来双向绑定筛选排序状态
+3. 监听 `@condition-update` 事件，根据 conditions 重新获取并更新数据
+
+---
 
 🔍 **设计稿识别指南**：
 - **视觉特征指纹**：带有填充色表头（蓝灰背景）或分割线表头的多列数据表格；表头可含筛选漏斗图标、排序箭头、描述气泡图标；行首可有复选框或展开箭头；固定列滚动时有侧边阴影
@@ -385,8 +424,8 @@ td_{columnKey}（替换单个数据单元格内容）
 
 ### 典型使用场景与调用模板
 
-**场景 1：基础数据表格**
-适用于：简单数据展示
+**场景 1：基础数据表格（推荐起点）**
+适用于：纯数据展示，无筛选排序需求
 ```vue
 <script setup>
 import { ref } from 'vue';
@@ -404,9 +443,12 @@ const data = ref([
 ]);
 </script>
 <template>
+  <!-- 无需任何额外配置，直接传入 columns 和 data -->
   <ODataTable :columns="columns" :data="data" />
 </template>
 ```
+
+> ✅ 这是最常见的用法。如无特殊需求（如筛选、排序、行选择等），保持简洁即可。
 
 **场景 2：固定高度 + 固定列 + 列宽拖拽**
 适用于：大量数据、宽表格
@@ -427,15 +469,16 @@ const columns: DataTableColumnT[] = [
 </template>
 ```
 
-**场景 3：筛选 + 排序（事件驱动模式）**
-适用于：后端分页筛选排序，或前端数据筛选排序
+**场景 3：筛选 + 排序（仅当需要时添加）**
+适用于：设计/需求明确要求筛选和排序的表格。⚠️ **该功能不会默认启用，需在列配置中显式添加 `filter` / `sortKey` 属性**
+
 ```vue
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { ODataTable, DataTableSortMethod } from '@opensig/opendesign';
 import type { DataTableColumnT, DataTableSortMethodT, DataTableColumnFilterOption } from '@opensig/opendesign';
 
-// 薪资范围筛选项——每个 option 带自定义 filter 函数（范围判断）
+// 示例：薪资范围筛选选项
 const salaryOptions: (DataTableColumnFilterOption & { filter: (row: any) => boolean })[] = [
   { label: '< 6000', value: '<6000', filter: (row) => row.salary < 6000 },
   { label: '6000-8000', value: '6000-8000', filter: (row) => row.salary >= 6000 && row.salary <= 8000 },
@@ -445,19 +488,23 @@ const salaryOptions: (DataTableColumnFilterOption & { filter: (row: any) => bool
 const columns = computed<DataTableColumnT[]>(() => [
   {
     label: '姓名', key: 'name',
+    // 🔑 关键：添加 filter 对象来启用该列的筛选功能
     filter: {
       multiple: true,
       showInput: true,
       optionTitle: '选择姓名',
-      // optionsFn 接收 { column, emptyOption }；emptyOption 为内置"空值"筛选项
       optionsFn: ({ emptyOption }) => [
         { label: '张三', value: '张三' },
         { label: '李四', value: '李四' },
-        emptyOption, // 允许用户筛选该列为空的行
+        emptyOption,
       ],
     },
   },
-  { label: '年龄', key: 'age', sortKey: 'ageSort' },
+  {
+    label: '年龄', key: 'age',
+    // 🔑 关键：添加 sortKey 来启用该列的排序功能
+    sortKey: 'ageSort',
+  },
   {
     label: '薪资', key: 'salary',
     filter: {
@@ -467,19 +514,17 @@ const columns = computed<DataTableColumnT[]>(() => [
   },
 ]);
 
-// conditions 的 key 对应列的 key（筛选列）或 sortKey（排序列）
-// 筛选列初始值为 []，排序列初始值用 DataTableSortMethod.NA
+// conditions 结构：key 对应列 key（筛选）或 sortKey（排序）
 const conditions = ref<{
-  name: string[];
+  name: string[];           // 筛选值数组
   salary: string[];
-  ageSort?: DataTableSortMethodT;
+  ageSort?: DataTableSortMethodT;  // 排序方向：1(升) / -1(降) / undefined(无)
 }>({
   name: [],
   salary: [],
   ageSort: DataTableSortMethod.NA,
 });
 
-// 原始数据（后端场景替换为 API 调用）
 const allData = [
   { id: 1, name: '张三', age: 28, salary: 5500 },
   { id: 2, name: '李四', age: 35, salary: 7000 },
@@ -492,23 +537,24 @@ const loading = ref(false);
 const fetchData = async () => {
   loading.value = true;
   try {
-    // ⚠️ 后端接口场景：data.value = await api.list({ ...conditions.value, page, size })
-    // 前端筛选/排序模拟：
+    // 后端场景：data.value = await api.list({ ...conditions.value, page, size })
+    // 前端场景模拟：
     let res = [...allData];
 
-    // 精确值筛选（conditions.name 存的是用户选中的 value 数组）
+    // 按筛选条件过滤
     if (conditions.value.name?.length) {
       res = res.filter((row) => conditions.value.name.includes(row.name));
     }
-    // 范围筛选（通过 option 的自定义 filter 函数处理）
     if (conditions.value.salary?.length) {
       res = res.filter((row) =>
-        conditions.value.salary
-          .map((val) => salaryOptions.find((opt) => opt.value === val))
-          .some((opt) => opt?.filter(row))
+        conditions.value.salary.some((val) => {
+          const opt = salaryOptions.find((o) => o.value === val);
+          return opt?.filter(row);
+        })
       );
     }
-    // 排序（ASC=1 升序，DESC=-1 降序，NA=undefined 不排序）
+
+    // 按排序条件排序
     if (conditions.value.ageSort === DataTableSortMethod.ASC) {
       res.sort((a, b) => a.age - b.age);
     } else if (conditions.value.ageSort === DataTableSortMethod.DESC) {
@@ -533,6 +579,11 @@ fetchData();
   />
 </template>
 ```
+
+> ⚠️ **重点**：
+> - 默认情况下表格没有筛选和排序
+> - 仅当**需求明确要求**筛选或排序时，才在列配置中添加 `filter` / `sortKey` 属性
+> - 必须处理 `@condition-update` 事件，否则筛选排序无效
 
 **场景 4：行选择**
 适用于：批量操作
@@ -785,25 +836,30 @@ const columns: DataTableColumnT[] = [
 
 
 
-| 场景 | 推荐 prop 组合 | 说明 |
-|------|---------------|------|
-| 基础表格 | `:columns` + `:data` | 最简用法 |
-| 固定表头滚动 | `:height="400"` | 超出高度表头固定 |
-| 列固定 | column `fixed: 'left'/'right'` | 左右固定列 |
-| 列宽调整 | `column-resizable` | 拖拽调整列宽 |
-| 全边框 | `border="all"` | 单元格全边框 |
-| 斑马纹 | `stripe` | 偶数行背景色 |
-| 行选择 | `selection` + `v-model:selected-keys` | 复选框选择 |
-| 树形选择关联 | `selection` + `:check-strictly="false"` | 父子联动 |
-| 筛选排序 | column `filter/sortKey` + `v-model:conditions` + `@condition-update` | 服务端筛选排序 |
-| 行展开 | `#expand` 或 `:expand-method` + `v-model:expanded-row-keys` | 行详情展开 |
-| 树形懒加载 | `row.hasChildren` + `@load-children` | 异步加载子节点 |
-| 分割线表头 | `header-style="split-line"` | 线分割表头风格 |
-| 竖向表头 | column `asHeader` + `:show-header="false"` | 属性-值对照 |
-| 加载中 | `loading` + `loading-label` | 加载遮罩 |
-| 空数据 | `empty-label` 或 `#empty` | 空状态文案 |
-| 单元格合并 | `:span-method` | 合并行列 |
-| 空值占位 | `default-empty-cell-text="N/A"` | 自定义空值文案 |
+| 场景 | 推荐配置 | 说明 | 何时需要 |
+|------|---------|------|---------|
+| **基础表格** | `:columns` + `:data` | 最简用法，足以应对大多数展示需求 | 总是 ✅ |
+| 固定表头滚动 | `:height="400"` | 超出高度表头固定、内容滚动 | 数据较多或容器限高 |
+| 列固定 | column `fixed: 'left'/'right'` | 左右固定列，横向滚动时列不动 | 列数多、容器不够宽 |
+| 列宽调整 | `column-resizable` | 用户拖拽调整列宽 | 用户需手动调整布局 |
+| 全边框 | `border="all"` | 单元格全边框 | 需要清晰的单元格分割 |
+| 斑马纹 | `stripe` | 奇偶行背景色交替 | 行数多、易读性要求高 |
+| **行选择** | `selection` + `v-model:selected-keys` | 复选框多选（⚠️ 需显式启用） | 需要多选操作 |
+| 树形选择关联 | `selection` + `:check-strictly="false"` | 父子节点选择联动 | 树形数据 + 多选 + 需要联动 |
+| **筛选排序** | column `filter/sortKey` + `v-model:conditions` + `@condition-update` | ⚠️ **需显式在列配置中添加** | **仅当需求明确要求** |
+| **行展开** | `#expand` 或 `:expand-method` + `v-model:expanded-row-keys` | 点击行展开详情（⚠️ 需显式启用） | 需显示行详情 |
+| 树形懒加载 | `row.hasChildren` + `@load-children` | 异步加载子节点 | 树形数据 + 数据量大 |
+| 分割线表头 | `header-style="split-line"` | 表头仅有分割线、无背景色 | 较少使用，特殊设计需求 |
+| 竖向表头 | column `asHeader` + `:show-header="false"` | 第一列作表头、后续列为值 | 属性-值对照表 |
+| 加载中 | `loading` + `loading-label` | 加载遮罩 + 提示文案 | 异步加载数据中 |
+| 空数据 | `empty-label` 或 `#empty` | 数据为空时的提示 | 需提示空数据状态 |
+| 单元格合并 | `:span-method` | 合并单元格 | 报表、统计表格 |
+| 空值占位 | `default-empty-cell-text="N/A"` | 自定义空值文案（默认 "--"） | 需特殊展示空值 |
+
+> 💡 **速查指引**：
+> - ✅ **最常见**：基础表格 = `:columns` + `:data`
+> - 🔑 **可选增强**：需要时才添加行选择、行展开、筛选排序等
+> - ⚠️ **需显式启用**：行选择、行展开、筛选排序都需通过 prop/列配置明确启用，不会默认出现
 
 ### 可覆盖的 CSS 变量
 
