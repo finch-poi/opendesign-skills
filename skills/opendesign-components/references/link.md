@@ -173,6 +173,19 @@ const handleClick = () => {
 </OConfigProvider>
 ```
 
+**场景 7：表格操作列**
+适用于：数据表格的操作列（编辑、删除、详情等）
+```vue
+<template>
+  <ODataTable :columns="columns" :data="data">
+    <template #cell-operations="{ row }">
+      <OLink color="primary" @click="handleEdit(row)">编辑</OLink>
+      <OLink color="danger" @click="handleDelete(row)">删除</OLink>
+    </template>
+  </ODataTable>
+</template>
+```
+
 ### 常见 prop 组合速查
 
 | 场景 | 推荐 prop 组合 | 说明 |
@@ -182,6 +195,8 @@ const handleClick = () => {
 | 导航箭头 | `suffix` | 显示右箭头 |
 | 悬停效果 | `hover-bg` + `:hover-underline="false"` | 背景高亮代替下划线 |
 | 异步操作 | `:loading` + `@click` | 点击后显示加载 |
+| 表格主要操作 | `color="primary"` | 表格操作列中的主要操作（编辑、详情等） |
+| 表格危险操作 | `color="danger"` | 表格操作列中的危险操作（删除等） |
 
 ### 可覆盖的 CSS 变量
 
@@ -268,6 +283,7 @@ layout:
 3. 行内文字 + 右侧小箭头图标 → 匹配 OLink（suffix=true）
 4. 行内文字 + 左侧有旋转加载图标 → 匹配 OLink（loading=true）
 5. **设计稿标注为"文字按钮"** → 优先匹配 OLink（`color="primary"`），而非 OButton text 变体
+6. **表格操作列中的文字操作** → 匹配 OLink，主要操作用 `color="primary"`，危险操作（删除等）用 `color="danger"`
 
 **设计 Token → Prop 值映射表**
 

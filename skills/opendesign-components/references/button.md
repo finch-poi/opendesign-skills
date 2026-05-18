@@ -158,6 +158,16 @@ OButton
 </OButton>
 ```
 
+**场景 8：表格操作列（推荐使用 OLink）**
+适用于：数据表格的操作列（编辑、删除等文字操作）。**推荐使用 OLink 组件**而非 OButton，主要操作用 `color="primary"`，危险操作用 `color="danger"`。
+```vue
+<!-- 推荐：表格操作列使用 OLink -->
+<template #cell-operations="{ row }">
+  <OLink color="primary" @click="handleEdit(row)">编辑</OLink>
+  <OLink color="danger" @click="handleDelete(row)">删除</OLink>
+</template>
+```
+
 ### 常见 prop 组合速查
 
 | 场景 | 推荐 prop 组合 | 说明 |
@@ -273,4 +283,5 @@ layout:
 | OButton | OTag | OTag 是静态标签展示（无 click 交互），OButton 是操作触发器 |
 | OButton（text） | OLink | OButton text 变体有 padding 和 hover 背景色变化，OLink 仅文字颜色变化 |
 | OButton（icon-only） | OIcon | OIcon 是纯展示图标无交互容器，OButton icon-only 有 hover/active 态 |
+| OButton | OLink（表格操作列） | 表格操作列推荐使用 OLink（主要操作 primary，危险操作 danger），OButton 适用于工具栏图标按钮或批量操作按钮 |
 

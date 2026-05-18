@@ -767,12 +767,12 @@ fetchData();
 </template>
 ```
 
-**场景 12：可编辑单元格（formatter + h，推荐）**
+**场景 12：可编辑单元格（formatter + JSX，推荐）**
 适用于：行内输入框、行内选择器等需要直接编辑单元格数据的场景
 ```vue
-<script setup lang="ts">
-import { ref, h } from 'vue';
-import { ODataTable, OInput } from '@opensig/opendesign';
+<script setup lang="tsx">
+import { ref } from 'vue';
+import { ODataTable, OInput, OLink } from '@opensig/opendesign';
 import type { DataTableColumnT } from '@opensig/opendesign';
 
 interface EditableRow {
@@ -787,43 +787,41 @@ const data = ref<EditableRow[]>([
   { id: 2, name: '李四', count: 200, remark: '备注B' },
 ]);
 
+const handleDelete = (row: EditableRow) => {
+  data.value = data.value.filter((r) => r.id !== row.id);
+};
+
 const columns: DataTableColumnT[] = [
   { label: '姓名', key: 'name', width: 160 },
   {
     label: '数量', key: 'count', width: 120,
-    // ✅ 推荐：formatter 返回函数式组件（箭头函数），每次渲染时重新读取 row.count
-    // 不要直接返回 h(OInput, ...)，那会导致 VNode 只在初始化时生成一次，失去响应性
-    formatter: ({ row }) => () =>
-      h(OInput, {
-        modelValue: (row as EditableRow).count,
-        'onUpdate:modelValue': (v: string | number) => {
-          (row as EditableRow).count = Number(v);
-        },
-        size: 'small',
-        style: { width: '90px' },
-      }),
+    // ✅ 推荐：formatter 返回 JSX 函数式组件，每次渲染时重新读取 row.count
+    // 不要直接返回 JSX 元素，那会导致 VNode 只在初始化时生成一次，失去响应性
+    formatter: ({ row }) => () => (
+      <OInput
+        v-model={(row as EditableRow).count}
+        size="small"
+        style={{ width: '90px' }}
+      />
+    ),
   },
   {
     label: '备注', key: 'remark', width: 160,
-    formatter: ({ row }) => () =>
-      h(OInput, {
-        modelValue: (row as EditableRow).remark,
-        'onUpdate:modelValue': (v: string | number) => {
-          (row as EditableRow).remark = String(v);
-        },
-        size: 'small',
-        style: { width: '120px' },
-      }),
+    formatter: ({ row }) => () => (
+      <OInput
+        v-model={(row as EditableRow).remark}
+        size="small"
+        style={{ width: '120px' }}
+      />
+    ),
   },
   {
     label: '操作', key: 'action', width: 80,
-    formatter: ({ row }) =>
-      h('span', {
-        style: { color: 'var(--o-color-danger1)', cursor: 'pointer' },
-        onClick: () => {
-          data.value = data.value.filter((r) => r.id !== (row as EditableRow).id);
-        },
-      }, '删除'),
+    formatter: ({ row }) => () => (
+      <OLink color="danger" onClick={() => handleDelete(row as EditableRow)}>
+        删除
+      </OLink>
+    ),
   },
 ];
 </script>
@@ -832,7 +830,53 @@ const columns: DataTableColumnT[] = [
 </template>
 ```
 
-> **核心要点**：`formatter` 必须返回**函数式组件**（`() => h(...)`）而非直接返回 VNode（`h(...)`）。函数式组件会在每次父组件重渲染时重新调用，从而读取 `row` 中的最新值，实现响应式更新。
+> **核心要点**：`formatter` 必须返回**JSX 函数式组件**（`() => <Component ...>`）而非直接返回 JSX 元素。函数式组件会在每次父组件重渲染时重新调用，从而读取 `row` 中的最新值，实现响应式更新。
+
+**场景 13：操作列（推荐使用 OLink）**
+适用于：表格操作列中的编辑、删除、详情等文字操作。**推荐使用 OLink 组件**而非原生 span 或 OButton，主要操作用 `color="primary"`，危险操作用 `color="danger"`。
+```vue
+<script setup lang="tsx">
+import { ref } from 'vue';
+import { ODataTable, OLink } from '@opensig/opendesign';
+import type { DataTableColumnT } from '@opensig/opendesign';
+
+interface RowData {
+  id: number;
+  name: string;
+}
+
+const data = ref<RowData[]>([
+  { id: 1, name: '张三' },
+  { id: 2, name: '李四' },
+]);
+
+const handleEdit = (row: RowData) => console.log('编辑', row.id);
+const handleDelete = (row: RowData) => {
+  data.value = data.value.filter((r) => r.id !== row.id);
+};
+
+const columns: DataTableColumnT[] = [
+  { label: '姓名', key: 'name' },
+  {
+    label: '操作', key: 'action', width: 120,
+    formatter: ({ row }) => () => (
+      <div style={{ display: 'flex', gap: '8px' }}>
+        <OLink color="primary" onClick={() => handleEdit(row as RowData)}>编辑</OLink>
+        <OLink color="danger" onClick={() => handleDelete(row as RowData)}>删除</OLink>
+      </div>
+    ),
+  },
+];
+</script>
+<template>
+  <ODataTable :columns="columns" :data="data" />
+</template>
+```
+
+> **操作列组件选择规则**：
+> - 表格操作列中的**文字操作**（编辑、删除、详情等）→ 使用 **OLink**（主要操作 `color="primary"`，危险操作 `color="danger"`）
+> - 表格操作列中的**图标操作**（单独图标按钮）→ 使用 **OButton**（icon-only 模式）
+> - 表格工具栏的**批量操作按钮**（新增、导出等）→ 使用 **OButton**（位于表格外部）
 
 
 
@@ -855,6 +899,8 @@ const columns: DataTableColumnT[] = [
 | 空数据 | `empty-label` 或 `#empty` | 数据为空时的提示 | 需提示空数据状态 |
 | 单元格合并 | `:span-method` | 合并单元格 | 报表、统计表格 |
 | 空值占位 | `default-empty-cell-text="N/A"` | 自定义空值文案（默认 "--"） | 需特殊展示空值 |
+| **操作列（文字）** | column `formatter` 返回 **OLink** | 主要操作 `color="primary"`，危险操作 `color="danger"` | 表格行操作（编辑、删除等） |
+| **操作列（图标）** | column `formatter` 返回 **OButton**（icon-only） | 纯图标按钮 | 工具栏图标操作 |
 
 > 💡 **速查指引**：
 > - ✅ **最常见**：基础表格 = `:columns` + `:data`
@@ -1110,6 +1156,16 @@ filter-panel:
 | 拖拽调整列宽手柄 | `columnResizable` | 列宽拖拽 |
 | 单元格文字省略 + 悬停气泡 | 列配置 `showOverflowToolTip` | 溢出提示 |
 | 紧凑行高 | `size="small"` | 小尺寸模式 |
+| **操作列文字链接** | formatter 返回 OLink | 主要操作蓝色（primary），危险操作红色（danger） |
+
+**操作列组件选择规则**：
+
+| 设计稿视觉特征 | 推荐组件 | Prop 配置 | 说明 |
+|--------------|---------|---------|------|
+| 表格行内的文字操作（编辑、详情、查看） | OLink | `color="primary"` | 主要操作用品牌色 |
+| 表格行内的危险操作（删除、移除） | OLink | `color="danger"` | 危险操作用红色 |
+| 表格行内的单独图标按钮 | OButton | icon-only 模式 | 纯图标操作 |
+| 表格外部的工具栏按钮（新增、导出） | OButton | `color="primary" variant="solid"` | 表格上方工具栏 |
 
 **易混淆组件区分表**
 
