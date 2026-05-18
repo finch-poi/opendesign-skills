@@ -183,26 +183,29 @@ const handleClick = () => {
 </template>
 ```
 
-**场景 4：长提示与自定义 VNode 内容**
+**场景 4：长提示与自定义 TSX 内容**
 适用于：需要较长展示时间和复杂内容的提示
-```vue
-<script setup>
-import { h } from 'vue';
+```tsx
 import { useToast, OLink, OIconChevronRight } from '@opensig/opendesign';
+
 const { show: showToast } = useToast();
+
 const handleClick = () => {
   showToast({
     long: true,
-    content: () => [
-      h('span', { style: { marginRight: '6px' } }, 'toast提示'),
-      h(OLink, { color: 'normal' }, {
-        default: () => '文字按钮',
-        suffix: () => h(OIconChevronRight),
-      }),
-    ],
+    content: () => (
+      <>
+        <span style={{ marginRight: '6px' }}>toast提示</span>
+        <OLink color="normal">
+          {{
+            default: () => '文字按钮',
+            suffix: () => <OIconChevronRight />,
+          }}
+        </OLink>
+      </>
+    ),
   });
 };
-</script>
 ```
 
 **场景 5：指定目标元素附近显示**
