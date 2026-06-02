@@ -176,6 +176,20 @@ OCheckbox（HORIZONTAL，自适应宽度，固定高度 24px）
 
 ---
 
+### 图标资源
+
+本 skill 自带 3 个状态图标 SVG，位于 [`references/assets/checkbox/`](../assets/checkbox/)，覆盖复选框全部 check 变体状态。
+
+| 文件 | 对应状态 | SVG 文件尺寸 | 视觉元素尺寸 | 说明 |
+|------|---------|------------|------------|------|
+| [`Selected.svg`](../assets/checkbox/Selected.svg) | `check=Selected` | 24×24 | 16×16（偏移 4,4） | 选中状态，品牌色框体 + 白色勾号 |
+| [`Unselected.svg`](../assets/checkbox/Unselected.svg) | `check=Unselected` | 24×24 | 16×16（偏移 4,4） | 未选中状态，白色框体 + 灰色描边 |
+| [`indeterminate.svg`](../assets/checkbox/indeterminate.svg) | `check=indeterminate` | 24×24 | 16×16（偏移 4,4） | 半选状态，品牌色框体 + 白色减号 |
+
+> **HTML 内联使用注意**：SVG 文件尺寸为 24×24，视觉元素（方框）位于内部 `(4,4)` 偏移处。内联时保持 `viewBox="0 0 24 24"`、`width="24" height="24"`，图标与文字之间设置 `gap: 8px` 即可。
+
+---
+
 ### 组件层级结构
 
 ```

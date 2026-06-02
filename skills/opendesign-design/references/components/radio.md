@@ -160,6 +160,19 @@ ORadio（HORIZONTAL，自适应宽度，固定高度 24px）
 
 ---
 
+### 图标资源
+
+本 skill 自带 2 个状态图标 SVG，位于 [`references/assets/radio/`](../assets/radio/)，覆盖单选框全部 check 变体状态。
+
+| 文件 | 对应状态 | SVG 文件尺寸 | 视觉元素尺寸 | 说明 |
+|------|---------|------------|------------|------|
+| [`Selected.svg`](../assets/radio/Selected.svg) | `check=Selected` | 24×24 | 16×16（圆心 12,12，r=8） | 选中状态，品牌色外圈 + 白色内圈指示点 |
+| [`Unselected.svg`](../assets/radio/Unselected.svg) | `check=Unselected` | 24×24 | 16×16（圆心 12,12，r=8） | 未选中状态，白色外圈 + 灰色描边 |
+
+> **HTML 内联使用注意**：SVG 文件尺寸为 24×24，视觉元素（外圈 r=8）中心在 `(12,12)`。内联时保持 `viewBox="0 0 24 24"`、`width="24" height="24"`，图标与文字之间设置 `gap: 8px` 即可。
+
+---
+
 ### 组件层级结构
 
 ```

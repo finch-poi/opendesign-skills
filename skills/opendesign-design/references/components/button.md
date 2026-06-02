@@ -225,3 +225,33 @@ OButton（HORIZONTAL，自适应宽，固定高）
 - `text` 变体水平内边距为 0，宽度完全由内容决定，无最小宽度约束——不适合用于需要固定宽度的布局
 - 内部图标层为占位符（Icon/占位符号），替换时进入实例修改图标内容，不要直接绑定外部图标组件
 - 按钮宽度默认随文字自适应，如需固定宽度需手动覆盖 Auto Layout 的自适应规则
+
+---
+
+## Part C：Assets 图标资源
+
+> 路径：`references/assets/public icons/`
+
+| 文件名 | 使用场景 | 说明 |
+|--------|---------|------|
+| `icon-占位.svg` | 按钮内左侧图标（默认占位） | 可替换为任意业务图标，设计稿中作为占位符存在 |
+| `icon-右箭头.svg` | `text` 变体按钮的右侧图标，表示继续/跳转 | 主要配合 Variant=text 使用，引导用户进入下一步或查看详情 |
+| `icon-外链.svg` | 按钮右侧浮层图标 / 表示跳转到外部链接 | 用于打开新标签页的操作按钮 |
+
+**图标颜色与尺寸规则**
+
+图标颜色和尺寸完全跟随 OButton 组件内部定义，**不单独设置**：
+
+| size | 图标尺寸 | Token |
+|------|---------|-------|
+| `large` | 24×24px | `icon_size_control-m` |
+| `medium` | 16×16px | `icon_size_control-xs` |
+| `small` | 16×16px | `icon_size_control-xs` |
+
+| Variant / state | 图标颜色 Token |
+|----------------|--------------|
+| solid · Enabled & Disabled | `white` |
+| outline · Enabled | `color-primary1` |
+| outline · Disabled | `color-primary4` |
+| text · Enabled | `grey-14` |
+| text · Disabled | `grey-14` @ 40% |
