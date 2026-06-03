@@ -424,6 +424,25 @@ OMessage-内联提示2（FRAME，VERTICAL，自适应宽高）
 
 ---
 
+## Part F：Assets 图标资源
+
+> 路径：`references/assets/message/`
+
+| 文件名 | 对应 status | 使用位置 |
+|--------|-------------|---------|
+| `成功.svg` | `success` | 全局提示 / 内联提示1 / 内联提示2 左侧状态图标，fill: `color-success1` |
+| `提示.svg` | `info` | 全局提示 / 内联提示1 / 内联提示2 左侧状态图标，fill: `color-primary1` |
+| `警示.svg` | `warning` | 全局提示 / 内联提示1 / 内联提示2 左侧状态图标，fill: `color-warning1` |
+| `错误.svg` | `danger` | 全局提示 / 内联提示1 / 内联提示2 左侧状态图标，fill: `color-danger1` |
+
+**使用规则**
+- 图标尺寸固定为 24×24px
+- fill 颜色跟随 status 的 Token（见上表），深色模式使用同名 Token 深色值
+- `loading` 状态无独立图标文件，使用旋转动效的加载图标（`icon-加载.svg` from `public icons`），fill: `color-info2`
+- 生成 HTML 时内联 SVG 路径：`references/assets/message/<文件名>`
+
+---
+
 ## 技术备注
 
 - 组件节点 ID：`1042:21437`（组件集）

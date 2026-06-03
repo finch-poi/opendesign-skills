@@ -1,8 +1,8 @@
 > ← [组件索引](../../SKILL.md#组件索引) · [README](../../../../README.md)
 
-# ODropdown 下拉选择 · 设计 Skill
+# ODropdown 下拉菜单 · 设计 Skill
 
-> 组件集合节点：`1042:17221` · 组件名：ODropdown 下拉选择 · 变体总数：18
+> 组件集合节点：`1042:17221` · 组件名：ODropdown 下拉菜单 · 变体总数：18
 
 ---
 
@@ -10,7 +10,7 @@
 
 ### 组件概览
 
-**ODropdown 下拉选择**：用于触发下拉菜单的按钮组件，常配合下拉面板使用。通过外观（实心/描边/文字）和尺寸传达视觉层级。
+**ODropdown 下拉菜单**：用于触发下拉菜单的按钮组件，常配合下拉面板使用。通过外观（实心/描边/文字）和尺寸传达视觉层级。
 
 ---
 
@@ -67,6 +67,28 @@ ODropdown（HORIZONTAL，自适应宽度，固定高度）
 └── [图标 Icon/下箭头 INSTANCE]（24×24）
       fill: white（solid）/ color-primary1（outline）/ color-info1（text）
       与文字颜色一致
+```
+
+**展开下拉面板（配套浮层）**
+
+> 点击 ODropdown 按钮后，在按钮正下方 **4px** 处渲染浮层面板。面板宽度与触发按钮一致，高度随选项数量动态伸缩。
+
+```
+ODropdown-Panel（FRAME，浮层）
+├── 与触发按钮间距: 4px（垂直方向）
+├── Width: 与触发按钮同宽（自适应）
+├── Height: 4px（上内边距）+ N × 40px（large）/ N × 32px（medium）+ 4px（下内边距）
+│          示例 5 项 × large = 208px；5 项 × medium = 168px
+├── cornerRadius: 4px → Token: `radius_control-xs`
+├── fill: rgb(255,255,255) → Token: `color-fill2`（Light）/ rgb(36,36,39) → Dark
+├── boxShadow: DROP_SHADOW x=0 y=6 blur=24 spread=0 rgba(18,20,23,0.08)
+├── padding: 4px（四周）
+├── autoLayout: VERTICAL，子项自适应宽度
+│
+└── [菜单项 × N]（Height: 40px large / 32px medium）
+      ├── padding: 上下 8px，左右 12px，item spacing: 8px
+      ├── [文字 PARAGRAPH]（fill: color-info1，rgb(0,0,0)）
+      └── hover 态背景: color-fill3
 ```
 
 ---
@@ -130,6 +152,26 @@ ODropdown（HORIZONTAL，自适应宽度，固定高度）
 | Token（间距） | `gap-1` | `gap-1` | `gap-1` |
 | 圆角 | 100px | 100px | 100px |
 | 描边宽度（outline） | 1px | 1px | 1px |
+
+---
+
+### 展开面板规格
+
+| 规格项 | large | medium |
+|--------|-------|--------|
+| 与触发按钮间距 | 4px | 4px |
+| 面板圆角 | 4px（`radius_control-xs`） | 4px |
+| 面板内边距（四周） | 4px | 4px |
+| 阴影 | DROP_SHADOW x=0 y=6 blur=24 spread=0 rgba(18,20,23,0.08) | 同 large |
+| 每菜单项高度 | 40px（`control_size-l`） | 32px（`control_size-m`） |
+| 菜单项内边距（上/下） | 8px | 8px |
+| 菜单项内边距（左/右） | 12px | 12px |
+| 菜单项 item spacing | 8px | 8px |
+| 示例高度（5 项） | 208px | 168px |
+| 面板背景（Light） | rgb(255,255,255)（`color-fill2`） | 同 large |
+| 面板背景（Dark） | rgb(36,36,39)（`color-fill2` Dark） | 同 large |
+| 菜单项文字颜色 | `color-info1`（rgb(0,0,0)） | 同 large |
+| 菜单项 hover 背景 | `color-fill3` | 同 large |
 
 ---
 
@@ -298,9 +340,12 @@ ODropdown 支持 Enabled 和 Disabled 两种状态，颜色规则如下：
 
 ### 下拉面板交互
 
-- **点击触发**：点击 ODropdown 按钮展开下拉面板
-- **面板定位**：下拉面板通常位于按钮下方，与按钮对齐
-- **选项点击**：点击面板中的选项后，面板关闭，按钮文字更新为选中项
+- **点击触发**：点击 ODropdown 按钮，按钮下方 4px 处渲染浮层面板，按钮图标切换为 `icon-上箭头.svg`
+- **面板定位**：浮层位于触发按钮正下方，垂直间距 4px，宽度与按钮一致，高度随选项数量动态伸缩
+- **面板样式**：圆角 4px，白色背景（`color-fill2`），卡片投影 `DROP_SHADOW x=0 y=6 blur=24 rgba(18,20,23,0.08)`，四周内边距 4px
+- **菜单项**：高度 large=40px / medium=32px，内边距上下 8px 左右 12px，文字颜色 `color-info1`，hover 背景 `color-fill3`
+- **选项点击**：选中后面板关闭，按钮图标恢复为 `icon-下箭头.svg`，按钮文字更新为选中项
+- **收起**：再次点击按钮或点击面板外区域，面板收起，图标恢复下箭头
 
 ---
 
@@ -345,6 +390,39 @@ ODropdown 支持 Enabled 和 Disabled 两种状态，颜色规则如下：
 - 下拉按钮宽度随内容自适应，建议设置合理的文字长度
 - 深色模式下注意背景色和描边色同步切换
 - 下拉面板的视觉风格应与按钮风格保持一致
+
+---
+
+## Part F：Assets 图标资源
+
+> 路径：`references/assets/public icons/`
+
+| 文件名 | 使用场景 | 结构性质 |
+|--------|---------|---------|
+| `icon-下箭头.svg` | 组件内后缀图标，表示下拉展开 | **固定结构**，始终存在 |
+| `icon-上箭头.svg` | 下拉展开后切换为上箭头，表示收起 | 与下箭头成对使用 |
+
+**使用逻辑**
+- **收起状态**（默认）：显示 `icon-下箭头.svg`
+- **展开状态**：切换为 `icon-上箭头.svg`
+
+**图标颜色与尺寸规则**
+
+颜色和尺寸完全跟随 ODropdown 组件内部定义，**不单独设置**：
+
+| 尺寸（所有 size） | 图标尺寸 | Token |
+|-----------------|---------|-------|
+| large / medium / small | 24×24px | `icon_size_control-m` |
+
+| Variant / state | 图标颜色 Token |
+|----------------|--------------|
+| solid · Enabled & Disabled | `white` |
+| outline · Enabled | `color-primary1` |
+| outline · Disabled | `color-primary4` |
+| text · Enabled | `color-info1` |
+| text · Disabled | `color-info4` |
+
+> 图标颜色始终与文字颜色一致，深色模式下同名 Token 自动切换为深色值。
 
 ---
 

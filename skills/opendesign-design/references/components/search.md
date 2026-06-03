@@ -423,6 +423,34 @@ Focus 状态即 Actived 状态，显示光标和清除图标。
 
 ---
 
+## Part F：Assets 图标资源
+
+> 路径：`references/assets/public icons/`
+
+| 文件名 | 使用位置 | 显示时机 |
+|--------|---------|---------|
+| `icon-搜索.svg` | 组件左侧前缀图标 | **始终显示**，Enabled 和 Actived 状态均可见 |
+| `icon-关闭.svg` | 组件右侧清除图标 | **仅 Actived 状态**显示，用于清除输入内容 |
+
+**图标颜色与尺寸规则**
+
+颜色和尺寸完全跟随 OSearch 组件内部定义，**不单独设置**：
+
+| 图标 | size | 尺寸 | Token |
+|------|------|------|-------|
+| 搜索图标 | large / medium | 24×24px | `icon_size_control-m` |
+| 搜索图标 | small / Mb | 16×16px | `icon_size_control-s` |
+| 关闭图标 | large / medium / Mb | 24×24px | `icon_size_control-m` |
+| 关闭图标 | small | 16×16px | `icon_size_control-s` |
+
+| state | 图标颜色 Token |
+|-------|--------------|
+| Enabled / Actived（两个图标均同） | `color-info1`（grey-14） |
+
+> 图标颜色在所有状态下保持一致，深色模式下同名 Token 自动切换为深色值（rgb(255,255,255)）。
+
+---
+
 ## 技术备注
 
 - 组件节点 ID：`1042:18112`（组件集）
