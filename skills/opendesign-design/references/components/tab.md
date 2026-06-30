@@ -64,7 +64,7 @@ OTab text（HORIZONTAL，自适应宽度，固定高度）
 │     fontSize: 20px（large）/ 18px（medium）
 │
 └── [选中指示器 RECTANGLE]（绝对定位，宽度 = 组件宽，高 2px，底部贴边，圆角 100px）
-      仅 Actived 状态显示，fill: color-primary1
+      仅 Actived 状态显示，fill: --o-color-primary1
 ```
 
 > 🧩 **布局结构（text 变体，small）**：垂直排列（VERTICAL），图标居上，文字居下，两者居中对齐；整体宽高均为 56×56px。选中指示器为 16px 宽的短线（非全宽），绝对定位在文字下方。
@@ -84,9 +84,9 @@ OTab button Group（HORIZONTAL，固定高度，内边距 4px）
 │  fill: grey-3（浅色模式）
 │  cornerRadius: 4px（radius_control-s）
 │
-├── [选中标签项 FRAME]（白色背景，strokeColor=color-control4，cr=4px）
+├── [选中标签项 FRAME]（白色背景，strokeColor=--o-color-control4，cr=4px）
 │   ├── [图标 INSTANCE]（24×24 large / 16×16 medium）
-│   └── [text PARAGRAPH]（SemiBold，color-primary1）
+│   └── [text PARAGRAPH]（SemiBold，--o-color-primary1）
 │
 └── [未选中标签项 FRAME] × N（透明背景，cr=2px）
     ├── [图标 INSTANCE]
@@ -108,7 +108,7 @@ OTab button Group（HORIZONTAL，固定高度，内边距 4px）
 ### 设计稿识别指南
 
 > 🔍 **识别特征（text 变体）**：
-> - 水平排列的多个同高度文字节点，部分文字颜色为品牌主色（`color-primary1`），其余为 80% 透明度黑色
+> - 水平排列的多个同高度文字节点，部分文字颜色为品牌主色（`--o-color-primary1`），其余为 80% 透明度黑色
 > - 选中项下方有 2px 矩形条（全圆角，品牌色），Enabled 项无任何指示线
 > - 整体无背景填充，视觉轻量
 > - `small` 尺寸时图标在文字上方（竖向结构），外层为正方形容器（56×56）
@@ -192,8 +192,8 @@ OTab button Group（HORIZONTAL，固定高度，内边距 4px）
 | 区域 | 状态 | Light 模式 Token | Dark 模式 Token | 说明 |
 |------|------|-----------------|----------------|------|
 | 文字 / 图标 | Enabled | `grey-14 @ 80%` | `grey-14 @ 80%` | Light: rgba(0,0,0,0.8)；Dark: rgba(255,255,255,0.8) |
-| 文字 / 图标 | Actived | `color-primary1` | `color-primary1` | brand-6：rgb(0,47,167) → rgb(73,122,248) |
-| 选中指示器 | Actived | `color-primary1` | `color-primary1` | 同文字色 |
+| 文字 / 图标 | Actived | `--o-color-primary1` | `--o-color-primary1` | brand-6：rgb(0,47,167) → rgb(73,122,248) |
+| 选中指示器 | Actived | `--o-color-primary1` | `--o-color-primary1` | 同文字色 |
 | 背景 | — | 无 | 无 | 无背景填充 |
 
 #### button 变体
@@ -202,8 +202,8 @@ OTab button Group（HORIZONTAL，固定高度，内边距 4px）
 |------|------|-----------------|----------------|------|
 | 外容器背景 | — | `grey-3` | `grey-3` | Light: rgb(237,237,240)；Dark: rgb(26,26,28) |
 | 选中项背景 | Actived | `white` | — | rgb(255,255,255)；Dark 模式下可能为 grey-4 |
-| 选中项边框 | Actived | `color-control4` | `color-control4` | rgba(grey-14, 0.1)，strokeWeight=1px INSIDE |
-| 选中项文字 | Actived | `color-primary1` | `color-primary1` | brand-6：rgb(0,47,167) → rgb(73,122,248) |
+| 选中项边框 | Actived | `--o-color-control4` | `--o-color-control4` | rgba(grey-14, 0.1)，strokeWeight=1px INSIDE |
+| 选中项文字 | Actived | `--o-color-primary1` | `--o-color-primary1` | brand-6：rgb(0,47,167) → rgb(73,122,248) |
 | 未选中项文字 | Enabled | `grey-14 @ 80%` | `grey-14 @ 80%` | Light: rgba(0,0,0,0.8)；Dark: rgba(255,255,255,0.8) |
 | 未选中项背景 | Enabled | 透明 | 透明 | 无填充 |
 
@@ -240,14 +240,14 @@ OTab text（HORIZONTAL，自适应宽，固定高 48/44px）
 │  fill: 无
 │
 ├── [图标 Icon/占位符号 INSTANCE]（32×32 large / 24×24 medium，可选）
-│     fill: color-primary1（Actived）/ grey-14 @ 80%（Enabled）
+│     fill: --o-color-primary1（Actived）/ grey-14 @ 80%（Enabled）
 │
 ├── [文字 PARAGRAPH]（自适应宽，行高固定）
 │     font: HarmonyHeiTi Regular（Enabled）/ Medium or SemiBold（Actived）
-│     fill: color-primary1（Actived）/ grey-14 @ 80%（Enabled）
+│     fill: --o-color-primary1（Actived）/ grey-14 @ 80%（Enabled）
 │
 └── [选中指示器 RECTANGLE]（绝对定位，全宽×2px，底部，圆角 100px）
-      fill: color-primary1（仅 Actived 显示）
+      fill: --o-color-primary1（仅 Actived 显示）
 ```
 
 #### text 变体（small，竖向）
@@ -255,12 +255,12 @@ OTab text（HORIZONTAL，自适应宽，固定高 48/44px）
 ```
 OTab text small（VERTICAL，56×56px）
 ├── [图标 Icon/占位符号 INSTANCE]（24×24，居上居中）
-│     fill: color-primary1（Actived）/ grey-14 @ 80%（Enabled）
+│     fill: --o-color-primary1（Actived）/ grey-14 @ 80%（Enabled）
 └── [下方容器 FRAME]（VERTICAL，居中对齐，paddingTop 4px，paddingBottom 2/6px）
     ├── [文字 PARAGRAPH]（14px，居中，固定行高 22px）
-    │     fill: color-primary1（Actived）/ grey-14 @ 80%（Enabled）
+    │     fill: --o-color-primary1（Actived）/ grey-14 @ 80%（Enabled）
     └── [选中指示器 RECTANGLE]（16px×2px，圆角 9px，仅 Actived 显示）
-          fill: color-primary1
+          fill: --o-color-primary1
 ```
 
 #### button 变体
@@ -271,10 +271,10 @@ OTab button Group（HORIZONTAL，自适应宽，固定高）
 │  padding: 4px（large）/ 2px（medium）
 │
 ├── [选中标签项 FRAME]（固定高 40/28px，HORIZONTAL，gap 4px）
-│   │  fill: white | strokeColor: color-control4 | strokeWeight: 1px INSIDE
+│   │  fill: white | strokeColor: --o-color-control4 | strokeWeight: 1px INSIDE
 │   │  cornerRadius: 4px | paddingLeft/Right: 16px
 │   ├── [图标 INSTANCE]（24×24 large / 16×16 medium，可选）
-│   └── [text PARAGRAPH]（SemiBold，fill: color-primary1）
+│   └── [text PARAGRAPH]（SemiBold，fill: --o-color-primary1）
 │
 └── [未选中标签项 FRAME] × N（固定高，HORIZONTAL，gap 4px）
     │  fill: 透明 | cornerRadius: 2px | paddingLeft/Right: 16px
@@ -323,3 +323,41 @@ OTab button Group（HORIZONTAL，自适应宽，固定高）
 - `Group 反色` 变体用于深色背景（如 Banner 图上），颜色方案与普通 Group 相反，使用前确认背景色是否匹配
 - Actived 态的字重加粗（Medium/SemiBold）会导致文字宽度略微变化，若标签宽度为自适应，切换选中态时可能出现轻微布局偏移——对于固定宽度布局建议手动设置标签项最小宽度
 - `small` 尺寸的选中指示器为 16px 宽短线（非全宽），视觉上类似"点状"指示，与 large/medium 全宽指示线风格不同
+---
+
+## Part C：交互状态
+
+### text 变体交互状态
+
+| 交互状态 | 标签类型 | 字号 | 字重 | 色值 | 下划线 |
+|---------|---------|------|------|------|--------|
+| Default | 非选中 | 18px | Regular | `--o-color-info2` | 无 |
+| Default | 选中 | 18px | **SemiBold** | `--o-color-primary1` | 2px 高, `--o-color-primary1` |
+| Hover | 非选中 | 18px | **SemiBold** | `--o-color-primary2` | 无 |
+| Hover | 选中 | 18px | **SemiBold** | `--o-color-primary1` | 2px 高, `--o-color-primary1` |
+| Press | 非选中 | 18px | **SemiBold** | `--o-color-primary3` | 2px 高, `--o-color-primary3` |
+| Press | 选中 | 18px | **SemiBold** | `--o-color-primary3` | 2px 高, `--o-color-primary3` |
+| Actived | 非选中 | 18px | **SemiBold** | `--o-color-primary1` | 2px 高, `--o-color-primary1` |
+| Actived | 选中 | 18px | **SemiBold** | `--o-color-primary1` | 2px 高, `--o-color-primary1` |
+| Disabled | 非选中 | 18px | Regular | `--o-color-info4` | 无 |
+| Disabled | 选中 | 18px | Regular | `--o-color-info4` | 无 |
+
+### button 变体交互状态
+
+| 交互状态 | 字号 | 字重 | 色值 | 图标尺寸及颜色 | 底色/背景色 |
+|---------|------|------|------|-------------|------------|
+| Default | 16px | Regular | `--o-color-info2` | 16×16, `--o-color-info2` | — |
+| Hover | 16px | Regular | `--o-color-primary2` | 16×16, `--o-color-primary2` | — |
+| Press | 16px | Regular | `--o-color-primary3` | 16×16, `--o-color-primary3` | `--o-color-fill2` |
+| Actived | 16px | Regular | `--o-color-primary1` | 16×16, `--o-color-primary1` | `--o-color-fill2` |
+| Disabled | 16px | Regular | `--o-color-info4` | 16×16, `--o-color-info4` | — |
+
+### 交互行为说明
+
+- **Default（默认）**：标签的基础显示态，非选中项使用常规字重和 info 色；选中项使用 SemiBold 字重、品牌主色和底部指示线
+- **Hover（悬浮）**：鼠标悬停时，文字颜色提升至 primary2（较浅的品牌色），字重加粗为 SemiBold 提示可交互性；选中项保持 primary1 不变
+- **Press（按下）**：鼠标按下瞬间，颜色加深至 primary3（深品牌色）；text 变体此时显示同色下划线；button 变体增加 fill2 背景色
+- **Actived（选中）**：当前激活标签的稳定态，使用最强的视觉强调（primary1 + 指示线/背景）；同一时刻仅一个标签处于此状态
+- **Disabled（禁用）**：不可交互状态，退化为 info4 弱化色，字重恢复 Regular，移除所有指示器和特殊背景
+
+> **注意**：text 变体的下划线仅在 Actived 和 Press 状态下的非选中标签上出现（表示正在操作的目标）；button 变体的背景色仅在 Press 和 Actived 状态下生效

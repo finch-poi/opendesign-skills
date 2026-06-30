@@ -93,7 +93,7 @@ ONavigation Header Mb（SYMBOL）
 │  boxShadow: 0px 3px 8px 0px rgba(0,0,0,0.078)
 │  backdropFilter: blur(1.67px)
 │
-├── [状态栏 FRAME]（348.5px × 18px，overflow: hidden，top: 0）
+├── [状态栏 FRAME]（348.5px × 18px，overflow: hidden，top: 0
 │   信号图标（38.34px × 10px）+ 时间"9:41 AM" + 蓝牙/电量图标
 │
 ├── [汉堡菜单图标 FRAME]（24px × 24px）
@@ -495,11 +495,65 @@ ONavigation Footer Mb（SYMBOL）
 - PC 页脚导航列使用绝对定位，6 列左起 x 坐标：0 / 221.5 / 409.5 / 646.5 / 834.5 / 1022.5px
 - 移动端页脚平台 Logo 分两行排列（第一行 3 个，第二行 2 个），注意保持间距对齐
 
----
+### 用户操作区交互状态（登录后）
 
-## Part F：Logo 自定义（仅顶导）
+> 适用场景：PC 顶导右侧已登录用户区域（type=PC）
+> 
+> 该区域为**下拉菜单触发器**，包含：头像 + 用户名称 + 下拉箭头
 
-> 顶导左侧 Logo 区域是**可替换插槽**。本 skill 已自带 **openEuler 默认 Logo 的 4 个 SVG 变体**（见下方「默认 Logo 资源」），与 ONavigation Symbol 内置 Logo 视觉一致；调用方也可用自家品牌的 SVG / PNG 切图替换。本节定义默认资源、自定义资源要求、目标尺寸、主题适配与 Pixso 操作流程。
+#### 触发器规格（用户名区域）
+
+| 属性 | 值 |
+|------|---|
+| 头像尺寸 | 20×20px（圆形裁剪） |
+| 用户名称 | 字号 14px，文本限宽 96px（超出显示省略号） |
+| 箭头图标 | 16×16px |
+| 组成结构 | 头像 + 用户名称 + 下拉箭头 |
+
+#### 触发器状态明细
+
+| 状态 | 字号 | 字重 | 文字色值 | 背景色 | 下拉菜单 |
+|------|------|------|---------|--------|---------|
+| **默认态** | 14px | Regular | #000000 100% (--o-color-info1) | 透明 | 不显示 |
+| **悬浮态(Hover)** | 14px | Regular | #000000 80% (--o-color-info2) | 透明 | 显示 |
+| **按下态(Press)** | 14px | Semibold | #002FA7 (--o-color-primary1) | #EBF1FA (--o-color-control3-light) | 显示 |
+| **选中态(Selected)**<br>（菜单展开时） | 14px | Semibold | #002FA7 (--o-color-primary1) | #EBF1FA (--o-color-control3-light) | 显示 |
+| **禁用态(Disabled)** | 14px | Regular | #000000 40% (--o-color-info4) | 透明 | 不显示 |
+
+#### 下拉菜单（悬浮/按下/选中态时弹出）
+
+##### 菜单容器样式
+
+| 属性 | 值 |
+|------|---|
+| 背景色 | #FFFFFF (--o-color-control5-light) |
+| 阴影 | X: 0, Y: 2, Blur: 24px, 颜色: #000000 15% |
+
+##### 菜单项列表
+
+1. **个人中心**
+2. **消息中心**（未读时显示红点提示）
+3. **退出登录**
+
+##### 菜单项样式
+
+| 状态 | 字号 | 字重 | 文字色值 | 背景色 |
+|------|------|------|---------|--------|
+| 默认态 | 14px | Regular | #000000 80% (--o-color-info2) | 透明 |
+| 悬浮态 | 14px | Regular | #000000 80% (--o-color-info2) | #EBF1FA (--o-color-control2-light) |
+
+#### 未登录状态
+
+当用户未登录时，该区域显示为**用户图标**：
+
+| 属性 | 值 |
+|------|---|
+| 图标尺寸 | 24×24px |
+| 图标资源 | `header-pc-头像.svg`（位于 `references/assets/navigation/`） |
+| 使用方式 | CSS mask（可着色） |
+| 点击行为 | 跳转至登录页面 |
+
+> 📌 **参考位置**：PC 顶导布局> 顶导左侧 Logo 区域是**可替换插槽**。本 skill 已自带 **openEuler 默认 Logo 的 4 个 SVG 变体**（见下方「默认 Logo 资源」），与 ONavigation Symbol 内置 Logo 视觉一致；调用方也可用自家品牌的 SVG / PNG 切图替换。本节定义默认资源、自定义资源要求、目标尺寸、主题适配与 Pixso 操作流程。
 
 ### 适用范围
 
@@ -642,14 +696,14 @@ ONavigation Footer Mb（SYMBOL）
 .nav-right  { display: flex; align-items: center; gap: 20px; }  /* ⚠️ gap=20 不是 16 */
 .icon-btn   { width: 24px; height: 24px; }
 
-/* OSearch small 变体：背景白色(color-fill2)，描边 rgba(0,0,0,.25)(grey-14@0.25) */
+/* OSearch small 变体：背景白色(--o-color-fill2)，描边 rgba(0,0,0,.25)(grey-14@0.25) */
 .nav-search { width: 160px; height: 32px;
               background: rgb(255,255,255);            /* ⚠️ 不是 rgba(0,0,0,.04) */
               border: 1px solid rgba(0,0,0,.25);       /* ⚠️ 不是 rgba(0,0,0,.12) */
               border-radius: 4px; }
 .nav-search span { font-size: 14px; line-height: 22px; color: rgba(0,0,0,.4); }
 
-/* ODropdown text 变体：无背景无描边无Padding，颜色 color-info1 = rgba(0,0,0,.85) */
+/* ODropdown text 变体：无背景无描边无Padding，颜色 --o-color-info1 = rgba(0,0,0,.85) */
 .nav-btn    { padding: 0; border: none; background: transparent;
               color: rgba(0,0,0,.85);                  /* ⚠️ 不是 #002FA7 */
               font-size: 14px; line-height: 22px;
@@ -869,8 +923,8 @@ ONavigation Footer Mb（SYMBOL）
 | 14 | 源码 height 32px，无下拉箭头 | height **24px**，含下拉箭头 16×16 |
 | 15 | 主题切换图标缺失 | 必须有，24×24px，位于国际化与用户之间 |
 | 16 | nav-right gap 16px | gap **20px** |
-| 17 | 搜索框背景 `rgba(0,0,0,.04)`，描边 `.12` | OSearch small：背景 **`rgb(255,255,255)`**（white/color-fill2），描边 **`rgba(0,0,0,.25)`**（grey-14@0.25） |
-| 18 | 源码按钮蓝色描边 pill，颜色 `#002FA7` | ODropdown **text 变体**：无背景无描边，颜色 **`rgba(0,0,0,.85)`**（color-info1），padding=0 |
+| 17 | 搜索框背景 `rgba(0,0,0,.04)`，描边 `.12` | OSearch small：背景 **`rgb(255,255,255)`**（white/--o-color-fill2），描边 **`rgba(0,0,0,.25)`**（grey-14@0.25） |
+| 18 | 源码按钮蓝色描边 pill，颜色 `#002FA7` | ODropdown **text 变体**：无背景无描边，颜色 **`rgba(0,0,0,.85)`**（--o-color-info1），padding=0 |
 
 ---
 
